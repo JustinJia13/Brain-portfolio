@@ -172,7 +172,6 @@ alpha_enhancement/     the AI enhancement engine           -> README
 tools/                 operational CLIs over all three layers
   harnesses/             manual diagnostics (not pytest-collectable)
 samples/               truncated real output from each lane, as evidence of a run
-docs/lanes/            earlier per-lane write-ups
 ```
 
 The layering is enforced and verified: `core` imports nothing from `alpha_discovery` or
