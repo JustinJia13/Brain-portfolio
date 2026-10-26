@@ -1,6 +1,6 @@
 # ASSUMPTIONS.md — the register tested by `VERIFICATION_PLAN.md`
 
-Each assumption the `alpha_metric` sim-slot gate rests on, with an id the plan
+Each assumption the `alpha_discovery/sim_slot_gate` sim-slot gate rests on, with an id the plan
 tests. **Status** ∈ {UNTESTED, PASS, PARTIAL, FAIL, UNVERIFIED(Case B)}.
 Append results; never delete. Dates are absolute.
 
@@ -80,7 +80,7 @@ kills-only is the automatic fallback.
 **Cutover conditions (PRE_DEPLOYMENT_VALIDATION.md):**
 1. Post-prune frontier on the table — ✅ DONE.
 2. Task 2 favours challenger — ✅ MET decisively.
-3. Live shadow confirms (Task 4) — ⏳ **trigger BUILT** (`alpha_metric/cutover.py`:
+3. Live shadow confirms (Task 4) — ⏳ **trigger BUILT** (`alpha_discovery/sim_slot_gate/cutover.py`:
    3-condition monitor w/ power; recall≥0.88, coverage|err|≤0.05, novel<10%; auto-
    rollback). Gate modes wired (`--gate-mode shadow|reliable|full|auto`). Dry-run on
    synthetic in-corpus data validates plumbing (optimistic by construction). Needs

@@ -30,22 +30,17 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from alpha_grammar.run_pipeline import (
-    get_alpha_detail,
-    build_sim_record,
-    load_portfolio_alpha_data,
-    compute_max_self_corr_info,
-)
-from wq_alpha.brain.api import fetch_pnl_series_with_retry, fetch_yearly_stats_with_retry, sign_in
-from wq_alpha.logs import MASTER, merge_session_to_master
-from wq_alpha.portfolio.admission import fetch_brain_performance_comparison, score_record_admission
-from wq_alpha.workshop.core import (
+from core.selfcorr import get_alpha_detail, build_sim_record, load_portfolio_alpha_data, compute_max_self_corr_info
+from core.brain.api import fetch_pnl_series_with_retry, fetch_yearly_stats_with_retry, sign_in
+from core.logs import MASTER, merge_session_to_master
+from core.portfolio.admission import fetch_brain_performance_comparison, score_record_admission
+from alpha_enhancement.workshop.core import (
     is_passing,
     failing_checks,
     record_regime,
     record_workshop_key,
 )
-from wq_alpha.workshop.batch import (
+from alpha_enhancement.workshop.batch import (
     _workshop_alpha_iterative,
     _write_per_alpha_results,
     WORKSHOP_DIR,
@@ -267,11 +262,11 @@ def main() -> None:
         return
 
     # Build shared state
-    from wq_alpha.agents.repair import AlphaRepairAgent
+    from alpha_enhancement.agents.repair import AlphaRepairAgent
     agent = AlphaRepairAgent(api_key=api_key)
 
     # Load all existing sim records for passing-examples context
-    from wq_alpha.workshop.batch import _load_records, _resolve_input_paths
+    from alpha_enhancement.workshop.batch import _load_records, _resolve_input_paths
     try:
         ctx_paths = list((ROOT / "artifacts" / "sim").glob("*.jsonl"))
         all_records = _load_records(ctx_paths) if ctx_paths else []

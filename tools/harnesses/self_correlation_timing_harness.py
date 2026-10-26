@@ -82,7 +82,7 @@ def _trigger_check(session, alpha_id: str) -> None:
 def main() -> None:
     args = parse_args()
 
-    from wq_alpha.brain.api import sign_in
+    from core.brain.api import sign_in
     session = sign_in(args.credentials)
 
     # --- Competition alphas (submitted, selfCorrelation should be populated) ---

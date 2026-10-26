@@ -51,17 +51,17 @@ def _make_levels(n: int, fn) -> dict[str, float]:
 def run_unit_tests() -> int:
     """Run offline unit tests. Returns number of failures."""
     import json
-    from alpha_grammar.feedback import SimResult
-    from alpha_grammar.qtable import compute_q_reward
-    from alpha_grammar.run_pipeline import compute_max_self_corr, compute_max_self_corr_info
-    from wq_alpha.workshop.history import WorkshopHistory
-    from wq_alpha.workshop.core import (
+    from core.feedback import SimResult
+    from core.qtable import compute_q_reward
+    from core.selfcorr import compute_max_self_corr, compute_max_self_corr_info
+    from alpha_enhancement.workshop.history import WorkshopHistory
+    from alpha_enhancement.workshop.core import (
         generate_candidates,
         record_workshop_key,
         route_record,
     )
-    from wq_alpha.agents.repair import _build_round_feedback, _portfolio_feedback_line
-    from wq_alpha.portfolio.admission import (
+    from alpha_enhancement.agents.repair import _build_round_feedback, _portfolio_feedback_line
+    from core.portfolio.admission import (
         AdmissionConfig,
         PROMOTE,
         REJECT,
@@ -952,7 +952,7 @@ def _diff_pnl(pnl: dict[str, float]) -> dict[str, float]:
 
 def _corr_matrix(pnls: dict[str, dict[str, float]]) -> None:
     """Print pairwise |Pearson corr| matrix between all series in pnls."""
-    from alpha_grammar.run_pipeline import compute_max_self_corr
+    from core.selfcorr import compute_max_self_corr
     ids = list(pnls)
     print(f"\n  Pairwise |corr| matrix ({len(ids)} alphas):")
     header = "  " + " " * 14 + "  ".join(f"{aid[:8]:>8}" for aid in ids)
@@ -975,8 +975,8 @@ def run_integration_test(
     tol: float,
 ) -> int:
     """Fetch competition alphas, compute self-corr, compare with Brain. Returns failures."""
-    from wq_alpha.brain.api import fetch_competition_alpha_ids, fetch_pnl_series
-    from alpha_grammar.run_pipeline import compute_max_self_corr
+    from core.brain.api import fetch_competition_alpha_ids, fetch_pnl_series
+    from core.selfcorr import compute_max_self_corr
 
     print(f"\n--- Integration test: {competition_id} (n={n}, tol={tol}) ---")
 
@@ -1105,7 +1105,7 @@ def main() -> None:
     if args.unit_only:
         sys.exit(1 if unit_failures else 0)
 
-    from wq_alpha.brain.api import sign_in
+    from core.brain.api import sign_in
     session = sign_in(args.credentials)
 
     integ_failures = run_integration_test(

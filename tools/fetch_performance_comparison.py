@@ -16,7 +16,7 @@ Usage:
     python -m tools.fetch_performance_comparison --alpha-ids ID1 ID2 ID3 --competition IQC2026S1
 
     # Compare multiple alphas at once (e.g. from sim log)
-    python -m tools.fetch_performance_comparison --sim-log alpha_grammar/artifacts/all_sim.jsonl --top 10
+    python -m tools.fetch_performance_comparison --sim-log alpha_discovery/grammar_method/artifacts/all_sim.jsonl --top 10
 
     # Only show alphas that are already submitted (have "After" score)
     python -m tools.fetch_performance_comparison --sim-log ... --submitted-only
@@ -92,7 +92,7 @@ def fetch_yearly_stats(session, alpha_id: str) -> dict:
 
 def fetch_competition_alpha_performance(session, alpha_id: str, comp_id: str) -> dict | None:
     """Fetch the portal's official before/after score projection."""
-    from wq_alpha.portfolio.admission import fetch_brain_performance_comparison
+    from core.portfolio.admission import fetch_brain_performance_comparison
 
     data = fetch_brain_performance_comparison(
         session,
@@ -357,7 +357,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
 
-    from wq_alpha.brain.api import sign_in
+    from core.brain.api import sign_in
     session = sign_in(args.credentials)
 
     # Resolve competition IDs

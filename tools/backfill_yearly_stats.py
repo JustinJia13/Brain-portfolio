@@ -9,7 +9,7 @@ that passed Brain's checks but have no yearly_stats data.
 Usage (run 10+ minutes after a grammar/search batch completes):
 
     python -m tools.backfill_yearly_stats \\
-        --sim-log alpha_grammar/artifacts/all_sim.jsonl
+        --sim-log alpha_discovery/grammar_method/artifacts/all_sim.jsonl
 
 Reads the sim log in-place, updates matching records, writes back.
 A .bak backup is created before any writes.
@@ -113,7 +113,7 @@ def main() -> None:
     batch = to_fill[:args.max_records]
     print(f"Fetching yearly stats for {len(batch)} records...")
 
-    from wq_alpha.brain.api import sign_in, fetch_yearly_stats
+    from core.brain.api import sign_in, fetch_yearly_stats
     session = sign_in(args.credentials)
 
     filled = 0

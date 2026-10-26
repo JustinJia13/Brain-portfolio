@@ -29,7 +29,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from wq_alpha.brain.api import auth_attempt_budget_status, load_credentials, reserve_auth_attempt
+from core.brain.api import auth_attempt_budget_status, load_credentials, reserve_auth_attempt
 
 
 API_AUTH_URL = "https://api.worldquantbrain.com/authentication"

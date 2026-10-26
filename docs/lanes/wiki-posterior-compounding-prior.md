@@ -25,7 +25,7 @@ flowchart TD
     GATE{"prob above zero and champion field known"}
     PRIOR[("grammar_prior_from_wiki.json<br/>332 cluster_priors rows")]
     DROP[("down-weighted clusters<br/>255 of 587 get no prior weight at all")]
-    GRAM["alpha_grammar.run_pipeline --grammar-sampler probe_prior"]
+    GRAM["alpha_discovery/grammar_method.run_pipeline --grammar-sampler probe_prior"]
 
     MASTER -->|"status done rows that carry is_sharpe"| AGG
     CLUS -->|"field membership per record"| AGG
@@ -55,14 +55,14 @@ flowchart TD
 
 | Stage | Implementation | What it does |
 |---|---|---|
-| 1. Aggregate (free) | `wq_alpha/wiki/generate.py:77 build_cluster_stats` | Folds every done sim record into one evidence row per field cluster: rates, robustness, direction balance, exemplars. |
-| 2. Keep failures first-class | `wq_alpha/wiki/generate.py:145 failure_examples` | Each row carries 3 dead signals plus 2 spiky check-failers as explicit falsification evidence. |
-| 3. Incremental narrative gate | `wq_alpha/wiki/generate.py:328 generate_wiki, wiki/.state.json` | Input-hash digest skips unchanged pages; a free run never overwrites an existing LLM page. |
-| 4. Narrate one cluster | `wq_alpha/prompts/wiki_narrative.md` | LLM reads only the structured row and registry entries; What failed section is mandatory, no new facts allowed. |
+| 1. Aggregate (free) | `core/wiki/generate.py:77 build_cluster_stats` | Folds every done sim record into one evidence row per field cluster: rates, robustness, direction balance, exemplars. |
+| 2. Keep failures first-class | `core/wiki/generate.py:145 failure_examples` | Each row carries 3 dead signals plus 2 spiky check-failers as explicit falsification evidence. |
+| 3. Incremental narrative gate | `core/wiki/generate.py:328 generate_wiki, wiki/.state.json` | Input-hash digest skips unchanged pages; a free run never overwrites an existing LLM page. |
+| 4. Narrate one cluster | `core/prompts/wiki_narrative.md` | LLM reads only the structured row and registry entries; What failed section is mandatory, no new facts allowed. |
 | 5. Archaeology induction | `tools/archaeology_bootstrap.py, prompts/archaeology_cluster.md` | One call per high-evidence cluster induces 0-3 retro mechanism cards plus falsified gists; zero cards is acceptable. |
-| 6. Graveyard and dedup | `wq_alpha/theory/dedup.py:212 adjudicate` | Cosine 0.60 then adjudicator; a card ruled SAME as a FALSIFIED mechanism is rejected, not re-tested. |
-| 7. Retro stays a prior | `wq_alpha/theory/family.py:137 update_beta` | Retro cards keep total Beta pseudo-counts capped at 5 until a live family validates them. |
-| 8. Export prior to grammar | `wq_alpha/wiki/generate.py:438 export_priors, alpha_grammar/probe_prior.py` | Blends quality rate, robustness and validated count into one cluster probability that reweights grammar field and operator sampling. |
+| 6. Graveyard and dedup | `alpha_discovery/theory_method/dedup.py:212 adjudicate` | Cosine 0.60 then adjudicator; a card ruled SAME as a FALSIFIED mechanism is rejected, not re-tested. |
+| 7. Retro stays a prior | `alpha_discovery/theory_method/family.py:137 update_beta` | Retro cards keep total Beta pseudo-counts capped at 5 until a live family validates them. |
+| 8. Export prior to grammar | `core/wiki/generate.py:438 export_priors, alpha_discovery/grammar_method/probe_prior.py` | Blends quality rate, robustness and validated count into one cluster probability that reweights grammar field and operator sampling. |
 
 ## Running it
 

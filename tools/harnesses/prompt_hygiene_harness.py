@@ -13,29 +13,29 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from alpha_grammar.novelty import fingerprint_jaccard, normalized_fingerprint  # noqa: E402
-from wq_alpha.agents.semantic_workshop import (  # noqa: E402
+from alpha_discovery.grammar_method.novelty import fingerprint_jaccard, normalized_fingerprint  # noqa: E402
+from alpha_enhancement.agents.semantic_workshop import (  # noqa: E402
     SemanticDiagnosticAgent,
     SemanticGeneratorAgent,
     _diagnostic_message,
     _generator_message,
 )
-from wq_alpha.brain.submit import DEFAULT_SETTINGS  # noqa: E402
-from wq_alpha.workshop.core import find_passing_examples, record_workshop_key  # noqa: E402
-from wq_alpha.workshop.probe_cards import build_probe_card, load_probe_prior  # noqa: E402
-from wq_alpha.workshop.records import load_records  # noqa: E402
-from wq_alpha.workshop.semantic import (  # noqa: E402
+from core.brain.submit import DEFAULT_SETTINGS  # noqa: E402
+from alpha_enhancement.workshop.core import find_passing_examples, record_workshop_key  # noqa: E402
+from alpha_enhancement.workshop.probe_cards import build_probe_card, load_probe_prior  # noqa: E402
+from alpha_enhancement.workshop.records import load_records  # noqa: E402
+from alpha_enhancement.workshop.semantic import (  # noqa: E402
     DEFAULT_PROBE_PRIOR,
     _filter_variants,
     _input_paths,
     _select_seed_records,
     _variants_to_candidates,
 )
-from wq_alpha.workshop.semantic_context import (  # noqa: E402
+from alpha_enhancement.workshop.semantic_context import (  # noqa: E402
     DEFAULT_MAX_CONTEXT_CHARS,
     SemanticContextBuilder,
 )
-from wq_alpha.workshop.simulation import submit_candidate_batch  # noqa: E402
+from alpha_enhancement.workshop.simulation import submit_candidate_batch  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
@@ -209,7 +209,7 @@ def main() -> None:
                 remaining = max(0, args.max_submit - len(submitted_records))
                 candidates = candidates[:remaining]
             if candidates:
-                from wq_alpha.brain.api import sign_in
+                from core.brain.api import sign_in
 
                 session = sign_in(args.credentials)
                 submitted = submit_candidate_batch(

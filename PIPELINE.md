@@ -16,8 +16,8 @@ The pipeline was upgraded on 2026-06-12 to a theory-first architecture:
 - **Quality ordering (everywhere):** an alpha is judged 1st by whether it is
   SUBMITTABLE (sharpe >= 1.25, fitness >= 1.0, turnover < 0.70, all
   submission-relevant checks pass), 2nd by its robustness SCORE
-  (year-consistency, `wq_alpha/robustness.py`), 3rd by fitness. Fitness alone
-  never ranks an alpha as "good" — see `wq_alpha.wiki.generate.quality_rank_key`.
+  (year-consistency, `core/robustness.py`), 3rd by fitness. Fitness alone
+  never ranks an alpha as "good" — see `core/wiki.generate.quality_rank_key`.
 - **Robustness-first selection:** yearly-consistency scores feed the Q-table
   reward, workshop routing (enhance blocked below 0.30 when data exists), and
   all ranking keys. Finalist gate (`tools/finalist_gate.py`) adds
@@ -30,7 +30,7 @@ The pipeline was upgraded on 2026-06-12 to a theory-first architecture:
 - **Wiki (posterior store):** `wiki/` regenerates after every workshop/theory
   run; falsified mechanisms are first-class. `tools/build_wiki.py
   --export-priors` also feeds the grammar lane's probe-prior input.
-- **All LLM prompts live in `wq_alpha/prompts/`** (one file per prompt).
+- **All LLM prompts live in `core/prompts/`** (one file per prompt).
 
 Where to find what:
 
@@ -42,8 +42,8 @@ Where to find what:
 | Competition portfolio snapshot | `records/<account>/competition_IQC2026S1.json` |
 | Backfill resume cursor / last-run metadata | `records/<account>/state.json` |
 | Backfill/running-log implementation | `tools/fetch_brain_records.py` (module docstring covers pagination, shard rotation, resume) |
-| Record schema and master merge/dedup logic | `wq_alpha/logs.py` (`sim_record_key`, `merge_session_to_master`) |
-| Brain auth, rate-limit retries, paged fetches | `wq_alpha/brain/api.py` |
+| Record schema and master merge/dedup logic | `core/logs.py` (`sim_record_key`, `merge_session_to_master`) |
+| Brain auth, rate-limit retries, paged fetches | `core/brain/api.py` |
 
 Operational rules for this state:
 
@@ -68,23 +68,23 @@ Operational rules for this state:
 
 | Path | Role | Current status |
 |------|------|----------------|
-| `wq_alpha/theory/` | Theory lane: economist agent, mechanism dedup, family enumeration/verdicts, runner | **Primary discovery lane** |
-| `wq_alpha/prompts/` | All LLM prompts, one `.md` per prompt (`## system` / `## user`, `$placeholders`) | Shared LLM assets |
-| `wq_alpha/wiki/` | Wiki generator: structured cluster stats, narrative pages, grammar prior export | Knowledge compounding |
-| `wq_alpha/robustness.py` | Year-consistency robustness score + reward multiplier | Shared selection criterion |
-| `alpha_grammar/` | Grammar discovery, field clustering, Q-table pruning, tested-pair registry | Background discovery lane |
-| `wq_alpha/brain/` | Brain API/session helpers, simulation submission, record normalization | Shared infrastructure |
-| `wq_alpha/portfolio/` | Pool/admission scoring and same-delay contribution checks | Main submission filter |
-| `wq_alpha/workshop/` | Batch selection, routing, public simulation helpers, admission, history handling | Main repair/enhance orchestration |
-| `wq_alpha/agents/` | LLM repair/enhance prompts, semantic agents, template agents, deterministic test stubs | Structural LLM lanes |
-| `wq_alpha/semantic_templates/` | Promoted-alpha semantic template architect, router, plan builder, feedback | Active template lane |
-| `wq_alpha/search/` | Older template-search compatibility, submit pipeline, fixed regime check | Compatibility plus regime checks |
-| `alpha_probe/` | Field-level medoid probes and signal summaries | Active prior-building lane |
+| `alpha_discovery/theory_method/` | Theory lane: economist agent, mechanism dedup, family enumeration/verdicts, runner | **Primary discovery lane** |
+| `core/prompts/` | All LLM prompts, one `.md` per prompt (`## system` / `## user`, `$placeholders`) | Shared LLM assets |
+| `core/wiki/` | Wiki generator: structured cluster stats, narrative pages, grammar prior export | Knowledge compounding |
+| `core/robustness.py` | Year-consistency robustness score + reward multiplier | Shared selection criterion |
+| `alpha_discovery/grammar_method/` | Grammar discovery, field clustering, Q-table pruning, tested-pair registry | Background discovery lane |
+| `core/brain/` | Brain API/session helpers, simulation submission, record normalization | Shared infrastructure |
+| `core/portfolio/` | Pool/admission scoring and same-delay contribution checks | Main submission filter |
+| `alpha_enhancement/workshop/` | Batch selection, routing, public simulation helpers, admission, history handling | Main repair/enhance orchestration |
+| `alpha_enhancement/agents/` | LLM repair/enhance prompts, semantic agents, template agents, deterministic test stubs | Structural LLM lanes |
+| `alpha_enhancement/semantic_templates/` | Promoted-alpha semantic template architect, router, plan builder, feedback | Active template lane |
+| `alpha_discovery/template_sweep_method/` | Older template-search compatibility, submit pipeline, fixed regime check | Compatibility plus regime checks |
+| `alpha_discovery/probe_method/` | Field-level medoid probes and signal summaries | Active prior-building lane |
 | `tools/` | Maintained CLIs and harnesses; reusable logic should move into active packages | Active operational wrappers |
-| `alpha_search/`, `alpha_multi/` | Compatibility facades pointing to `wq_alpha` implementations | Keep for old scripts/tests |
+| `alpha_search/`, `alpha_multi/` | Compatibility facades pointing to `core` implementations | Keep for old scripts/tests |
 | `legacy/` | Archived historical experiment lanes | No active imports |
 
-Generated artifacts live mostly under `artifacts/`, `alpha_grammar/artifacts/`,
+Generated artifacts live mostly under `artifacts/`, `alpha_discovery/grammar_method/artifacts/`,
 `alpha_search/artifacts/`, `alpha_multi/artifacts/`, and
 `artifacts/semantic_templates/`. Treat those as run state, not core source.
 
@@ -102,7 +102,7 @@ Stage 1a: Theory lane (primary)
   -> artifacts/sim/sessions/theory_<timestamp>.jsonl -> master.jsonl -> wiki
 
 Stage 1b: Grammar discovery (background)
-  alpha_grammar.run_pipeline  (now reads artifacts/probe/grammar_prior_from_wiki.json)
+  alpha_discovery/grammar_method.run_pipeline  (now reads artifacts/probe/grammar_prior_from_wiki.json)
   -> structural FASTEXPR candidates
   -> artifacts/sim/sessions/grammar_<timestamp>.jsonl -> master.jsonl
 
@@ -166,10 +166,10 @@ Optional: Semantic template expansion
 
 Preferred implementation ownership:
 
-- Brain/session code: `wq_alpha.brain`.
-- Shared workshop candidate submission: `wq_alpha.workshop.simulation.submit_candidate_batch`.
-- Shared JSONL record loading: `wq_alpha.workshop.records.load_records`.
-- LLM agents and deterministic harness stubs: `wq_alpha.agents`.
+- Brain/session code: `core/brain`.
+- Shared workshop candidate submission: `alpha_enhancement/workshop.simulation.submit_candidate_batch`.
+- Shared JSONL record loading: `alpha_enhancement/workshop.records.load_records`.
+- LLM agents and deterministic harness stubs: `alpha_enhancement/agents`.
 - CLI-only code: `tools`.
 
 ## Stage 1a: Theory Lane (Primary)
@@ -214,11 +214,11 @@ Key artifacts:
 Good vs bad is decided lexicographically — fitness alone never ranks an alpha:
 
 1. **Submittable**: sharpe >= 1.25, fitness >= 1.0, turnover < 0.70, and all
-   submission-relevant checks pass (`wq_alpha.quality.is_submittable`).
-2. **Score**: year-consistency robustness score (`wq_alpha/robustness.py`).
+   submission-relevant checks pass (`core.quality.is_submittable`).
+2. **Score**: year-consistency robustness score (`core/robustness.py`).
 3. **Fitness**: tiebreaker only.
 
-The canonical key is `wq_alpha.quality.quality_rank_key`. It governs wiki
+The canonical key is `core.quality.quality_rank_key`. It governs wiki
 top-expression lists, archaeology exemplars, the grammar prior export quality
 signal, theory-family promotion, and review ranking.
 
@@ -241,14 +241,14 @@ robust members, the runner queues them in `artifacts/theory/promote_to_brain.jso
 `tools/promote_to_brain.py` re-simulates them on brain with the portfolio gates
 active. Only then do correlation/score-addition decide actual submission. VECTOR
 fields are auto-wrapped with `vec_avg(...)` during enumeration (raw VECTOR fields
-error on Brain), mirroring `alpha_grammar._field_node`.
+error on Brain), mirroring `alpha_discovery/grammar_method._field_node`.
 
 ## Stage 1b: Grammar Discovery (Background)
 
 Entry point:
 
 ```bash
-python -m alpha_grammar.run_pipeline \
+python -m alpha_discovery/grammar_method.run_pipeline \
     --fields-csv all_fields.csv \
     --delay 1 \
     --exclude-dataset analyst4 \
@@ -277,9 +277,9 @@ Key artifacts:
 |------|---------|
 | `artifacts/sim/master.jsonl` | Permanent deduped simulation history |
 | `artifacts/sim/sessions/grammar_<timestamp>.jsonl` | Per-run grammar session |
-| `alpha_grammar/artifacts/all_qtable.json` | Learned pruning state |
-| `alpha_grammar/artifacts/all_tested.json` | Tested field/operator registry |
-| `alpha_grammar/artifacts/all_clusters.json` | Field cluster cache |
+| `alpha_discovery/grammar_method/artifacts/all_qtable.json` | Learned pruning state |
+| `alpha_discovery/grammar_method/artifacts/all_tested.json` | Tested field/operator registry |
+| `alpha_discovery/grammar_method/artifacts/all_clusters.json` | Field cluster cache |
 
 Keep delay 0 and delay 1 as separate mining regimes. Use explicit `--delay 0`
 or `--delay 1` and keep their logs separated when comparing results.
@@ -294,13 +294,13 @@ adaptive tuning loop by itself.
 Entry point:
 
 ```bash
-python -m alpha_probe.build_plan \
-    --clusters alpha_grammar/artifacts/all_clusters.json \
+python -m alpha_discovery/probe_method.build_plan \
+    --clusters alpha_discovery/grammar_method/artifacts/all_clusters.json \
     --out artifacts/probe/probe_plan.jsonl \
     --pack core \
     --representatives champion
 
-python -m wq_alpha.brain.submit \
+python -m core/brain.submit \
     --plan artifacts/probe/probe_plan.jsonl \
     --sim-log artifacts/probe/probe_sim.jsonl \
     --batch-size 3
@@ -484,7 +484,7 @@ These paths are intentionally retained only for compatibility:
 | Path/command | Status |
 |--------------|--------|
 | `python -m alpha_search.pipeline refine` | Disabled no-op; combo optimizer submits nothing |
-| `wq_alpha.agents.enhance.OverseerAgent` | Disabled compatibility API; no parametric sweeps |
+| `alpha_enhancement/agents.enhance.OverseerAgent` | Disabled compatibility API; no parametric sweeps |
 
 Do not reintroduce combo search, window sweeps, weight sweeps, or adaptive
 setting sweeps into the main pipeline without a separate out-of-sample validation
@@ -509,10 +509,10 @@ design.
 
 ```bash
 python -m py_compile \
-    wq_alpha/search/pipeline.py \
-    wq_alpha/search/sweep.py \
-    wq_alpha/search/regime_check.py \
-    wq_alpha/semantic_templates/pipeline.py \
+    alpha_discovery/template_sweep_method/pipeline.py \
+    alpha_discovery/template_sweep_method/sweep.py \
+    alpha_discovery/template_sweep_method/regime_check.py \
+    alpha_enhancement/semantic_templates/pipeline.py \
     tools/regime_check.py \
     tools/semantic_templates.py \
     tools/alpha_multi_enhance_loop.py

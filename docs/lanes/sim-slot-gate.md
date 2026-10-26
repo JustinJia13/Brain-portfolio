@@ -10,7 +10,7 @@ A BRAIN simulation slot is the hard scarce resource and there is no cheaper part
 
 ```mermaid
 flowchart TD
-  CAND["candidate FASTEXPR from the alpha_grammar generator"]
+  CAND["candidate FASTEXPR from the alpha_discovery/grammar_method generator"]
   PARSE["parse.py + signature.py<br/>recursive-descent parse then split on top-level plus-minus<br/>99.6 pct corpus coverage"]
   A["Object A redundancy<br/>aggregate.corr_model generalised cosine then psi isotonic, 29 knots"]
   PHI["features.py phi vector<br/>196 dims pruned to 36 after dropping hashed path n-grams"]
@@ -58,22 +58,22 @@ flowchart TD
 
 | Stage | Implementation | What it does |
 |---|---|---|
-| Parse and decompose | `alpha_metric/parse.py + alpha_metric/signature.py` | Hand-written recursive-descent FastExpr parser; split under top-level plus-minus into additive primitives. 99.6% corpus coverage. |
-| Behavioural channels | `alpha_metric/fields.py + filters.py + channels.py` | Open-vocab 48-dim field embedding, TS-operator magnitude response, CS-warp monotonicity, sign orientation per primitive. |
-| Object A redundancy | `alpha_metric/aggregate.py + calibrate.py + redundancy.py` | Generalised cosine corr_model, then isotonic psi mapped to realised PnL-corr, giving c_max against the 31-alpha book. |
-| Object B surrogate | `alpha_metric/features.py + surrogate.py` | 36-dim phi into 12 quantile GBM heads on subsharpe, sharpe, ret, turnover; fitness reconstructed not regressed. |
-| Coverage density | `alpha_metric/redundancy.py CoverageIndex` | Gaussian kernel density of phi over the sim index; n_eff below 200 means B extrapolates, so simulate. |
-| The gate | `alpha_metric/gate.py` | Four ordered branches: reliable kills, eps trickle, coverage abstention, quality conjunction. Every default is simulate. |
-| Offline validation | `alpha_metric/verify.py + backtest.py` | Time-split assumption tests and the budget frontier swept over beta, plus the robustness floor with B disabled. |
-| Rollout and guard | `alpha_metric/champion_challenger.py + shadow.py + cutover.py` | Race the incumbent q-table out-of-time, log-only shadow in the live pipeline, three-condition cutover with auto-rollback. |
+| Parse and decompose | `alpha_discovery/sim_slot_gate/parse.py + alpha_discovery/sim_slot_gate/signature.py` | Hand-written recursive-descent FastExpr parser; split under top-level plus-minus into additive primitives. 99.6% corpus coverage. |
+| Behavioural channels | `alpha_discovery/sim_slot_gate/fields.py + filters.py + channels.py` | Open-vocab 48-dim field embedding, TS-operator magnitude response, CS-warp monotonicity, sign orientation per primitive. |
+| Object A redundancy | `alpha_discovery/sim_slot_gate/aggregate.py + calibrate.py + redundancy.py` | Generalised cosine corr_model, then isotonic psi mapped to realised PnL-corr, giving c_max against the 31-alpha book. |
+| Object B surrogate | `alpha_discovery/sim_slot_gate/features.py + surrogate.py` | 36-dim phi into 12 quantile GBM heads on subsharpe, sharpe, ret, turnover; fitness reconstructed not regressed. |
+| Coverage density | `alpha_discovery/sim_slot_gate/redundancy.py CoverageIndex` | Gaussian kernel density of phi over the sim index; n_eff below 200 means B extrapolates, so simulate. |
+| The gate | `alpha_discovery/sim_slot_gate/gate.py` | Four ordered branches: reliable kills, eps trickle, coverage abstention, quality conjunction. Every default is simulate. |
+| Offline validation | `alpha_discovery/sim_slot_gate/verify.py + backtest.py` | Time-split assumption tests and the budget frontier swept over beta, plus the robustness floor with B disabled. |
+| Rollout and guard | `alpha_discovery/sim_slot_gate/champion_challenger.py + shadow.py + cutover.py` | Race the incumbent q-table out-of-time, log-only shadow in the live pipeline, three-condition cutover with auto-rollback. |
 
 ## Running it
 
 ```bash
-python -m alpha_metric.verify all                       # rebuild the time-split frontier into test_results/
-python -m alpha_metric.champion_challenger              # q-table vs surrogate, out-of-time
-python -m alpha_grammar.run_pipeline --fields-csv all_fields.csv --rounds 4 --n-samples 390 --budget 10 --batch-size 3 --credentials brain2.txt --gate-mode auto
-python -m alpha_metric.cutover --beta 3.0               # live 3-condition status; --apply to flip to full; `rollback` for the kill-switch
+python -m alpha_discovery/sim_slot_gate.verify all                       # rebuild the time-split frontier into test_results/
+python -m alpha_discovery/sim_slot_gate.champion_challenger              # q-table vs surrogate, out-of-time
+python -m alpha_discovery/grammar_method.run_pipeline --fields-csv all_fields.csv --rounds 4 --n-samples 390 --budget 10 --batch-size 3 --credentials brain2.txt --gate-mode auto
+python -m alpha_discovery/sim_slot_gate.cutover --beta 3.0               # live 3-condition status; --apply to flip to full; `rollback` for the kill-switch
 ```
 
 ## Outcome

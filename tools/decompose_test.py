@@ -18,12 +18,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from wq_alpha.field_catalogs import derive_fields
-from wq_alpha.quality import is_submittable
-from wq_alpha.robustness import compute_robustness, normalize_yearly_stats
-from wq_alpha.theory import context as ctx
-from wq_alpha.theory.economist import TheoryEconomistAgent
-from wq_alpha.theory.enumerate_ import enumerate_family
+from core.field_catalogs import derive_fields
+from core.quality import is_submittable
+from core.robustness import compute_robustness, normalize_yearly_stats
+from alpha_discovery.theory_method import context as ctx
+from alpha_discovery.theory_method.economist import TheoryEconomistAgent
+from alpha_discovery.theory_method.enumerate_ import enumerate_family
 
 MASTER = Path("artifacts/sim/master.jsonl")
 OUT = Path("artifacts/theory/decompose_test.jsonl")
@@ -314,11 +314,11 @@ def run_from_saved(args) -> None:
 
 
 def simulate_on_brain(members: list[dict], credentials: str, batch_size: int) -> None:
-    from wq_alpha.brain.api import sign_in
-    from wq_alpha.brain.submit import DEFAULT_SETTINGS
-    from wq_alpha.logs import session_log_path
-    from wq_alpha.workshop.core import DEFAULT_WORKSHOP_SETTINGS
-    from wq_alpha.workshop.simulation import submit_candidate_batch
+    from core.brain.api import sign_in
+    from core.brain.submit import DEFAULT_SETTINGS
+    from core.logs import session_log_path
+    from alpha_enhancement.workshop.core import DEFAULT_WORKSHOP_SETTINGS
+    from alpha_enhancement.workshop.simulation import submit_candidate_batch
 
     print(f"\n===== SIMULATING {len(members)} expressions on {credentials} =====")
     settings = {**DEFAULT_SETTINGS, **DEFAULT_WORKSHOP_SETTINGS}
@@ -395,11 +395,11 @@ def _self_corr(record: dict):
 def fetch_score_deltas(records: list[dict], session, competition_id: str = "IQC2026S1") -> list[dict]:
     """Annotate each submittable record with the official brain_score_delta.
 
-    Mirrors wq_alpha/workshop/scoring.py: poll the before-and-after-performance
+    Mirrors alpha_enhancement/workshop/scoring.py: poll the before-and-after-performance
     endpoint, derive delta = after - before. Non-submittable or alpha_id-less
     records pass through unchanged.
     """
-    from wq_alpha.portfolio.admission import fetch_brain_performance_comparison
+    from core.portfolio.admission import fetch_brain_performance_comparison
 
     out: list[dict] = []
     scored = 0

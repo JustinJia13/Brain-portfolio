@@ -25,20 +25,20 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from wq_alpha import llm as anthropic  # noqa: E402
-from wq_alpha.agents.json_utils import parse_json_array  # noqa: E402
-from wq_alpha.brain.submit import DEFAULT_SETTINGS  # noqa: E402
-from wq_alpha.logs import merge_session_to_master, session_log_path  # noqa: E402
-from wq_alpha.prompts import load_prompt  # noqa: E402
-from wq_alpha.quality import is_submittable, quality_rank_key  # noqa: E402
-from wq_alpha.robustness import record_robustness_score  # noqa: E402
-from wq_alpha.workshop.core import (  # noqa: E402
+from core import llm as anthropic  # noqa: E402
+from core.json_utils import parse_json_array  # noqa: E402
+from core.brain.submit import DEFAULT_SETTINGS  # noqa: E402
+from core.logs import merge_session_to_master, session_log_path  # noqa: E402
+from core.prompts import load_prompt  # noqa: E402
+from core.quality import is_submittable, quality_rank_key  # noqa: E402
+from core.robustness import record_robustness_score  # noqa: E402
+from alpha_enhancement.workshop.core import (  # noqa: E402
     DEFAULT_WORKSHOP_SETTINGS,
     WORKSHOP_CONCENTRATION_LIMIT,
     _resolved_concentration_value,
     failing_checks,
 )
-from wq_alpha.workshop.records import load_records  # noqa: E402
+from alpha_enhancement.workshop.records import load_records  # noqa: E402
 
 OUT_DIR = Path("artifacts/workshop")
 SIM_LOG = OUT_DIR / "settings_repair_sim.jsonl"
@@ -173,7 +173,7 @@ def _admit_official(winners: list[dict], session, competition_id: str) -> list[d
     the official before/after competition projection directly. These survivors
     are already on brain and officially scored, so they're submit-ready (no
     promote_to_brain step needed)."""
-    from wq_alpha.portfolio.admission import fetch_brain_performance_comparison
+    from core.portfolio.admission import fetch_brain_performance_comparison
 
     survivors: list[dict] = []
     for r in winners:
@@ -194,8 +194,8 @@ def _admit_local(winners: list[dict], session, portfolio: dict) -> list[dict]:
     Score each winner's account-independent PnL against the brain portfolio on
     disk (self-corr + delta_pool_sharpe); keep low-corr, positive-contribution
     alphas for the official brain check later."""
-    from wq_alpha.brain.api import fetch_pnl_series_with_retry
-    from wq_alpha.portfolio.local_admission import passes_local_gate, score_locally
+    from core.brain.api import fetch_pnl_series_with_retry
+    from core.portfolio.local_admission import passes_local_gate, score_locally
 
     survivors: list[dict] = []
     for r in winners:
@@ -210,8 +210,8 @@ def _admit_local(winners: list[dict], session, portfolio: dict) -> list[dict]:
 
 
 def _queue_for_brain(survivors: list[dict], account: str) -> None:
-    from wq_alpha.theory.dedup import lane_lock
-    from wq_alpha.theory.runner import PROMOTE_QUEUE
+    from alpha_discovery.theory_method.dedup import lane_lock
+    from alpha_discovery.theory_method.runner import PROMOTE_QUEUE
 
     if not survivors:
         return
@@ -286,8 +286,8 @@ def main() -> None:
     prompt = load_prompt("settings_repair")
     portfolio = {} if on_brain else None  # loaded lazily for the local gate
 
-    from wq_alpha.brain.api import sign_in
-    from wq_alpha.workshop.simulation import submit_candidate_batch
+    from core.brain.api import sign_in
+    from alpha_enhancement.workshop.simulation import submit_candidate_batch
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     session = None
 
@@ -349,7 +349,7 @@ def main() -> None:
                 detail = "  ".join(f"Δscore={r.get('brain_score_delta')}" for r in survivors[:3])
             else:
                 if not portfolio:
-                    from wq_alpha.portfolio.local_admission import load_brain_portfolio
+                    from core.portfolio.local_admission import load_brain_portfolio
                     portfolio = load_brain_portfolio(args.brain_records)
                 survivors = _admit_local(winners, session, portfolio)
                 _queue_for_brain(survivors, account)

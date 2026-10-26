@@ -15,7 +15,7 @@ import json
 import shutil
 from pathlib import Path
 
-from wq_alpha.logs import compact_master_record, sim_record_key
+from core.logs import compact_master_record, sim_record_key
 
 
 ROOT = Path(__file__).parent.parent
@@ -23,10 +23,10 @@ MASTER = ROOT / "artifacts" / "sim" / "master.jsonl"
 ARCHIVE = ROOT / "artifacts" / "sim" / "archive"
 
 SOURCE_LOGS: list[Path] = [
-    ROOT / "alpha_grammar" / "artifacts" / "all_sim.jsonl",
-    ROOT / "alpha_grammar" / "artifacts" / "all_batch1.jsonl",
-    ROOT / "alpha_grammar" / "artifacts" / "all_batch2.jsonl",
-    ROOT / "alpha_grammar" / "artifacts" / "all_batch3.jsonl",
+    ROOT / "alpha_discovery/grammar_method" / "artifacts" / "all_sim.jsonl",
+    ROOT / "alpha_discovery/grammar_method" / "artifacts" / "all_batch1.jsonl",
+    ROOT / "alpha_discovery/grammar_method" / "artifacts" / "all_batch2.jsonl",
+    ROOT / "alpha_discovery/grammar_method" / "artifacts" / "all_batch3.jsonl",
     ROOT / "artifacts" / "workshop" / "workshop_sim.jsonl",
     ROOT / "alpha_search" / "artifacts" / "all_sim.jsonl",
     ROOT / "alpha_search" / "artifacts" / "model16_sim.jsonl",

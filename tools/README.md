@@ -2,7 +2,7 @@
 
 This directory contains maintained command wrappers and research harnesses.
 Keep command names stable; move reusable implementation into `wq_alpha/`,
-`alpha_grammar/`, or `alpha_probe/`.
+`alpha_discovery/grammar_method/`, or `alpha_discovery/probe_method/`.
 
 ## Active Pipeline
 

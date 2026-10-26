@@ -20,18 +20,18 @@ Chains three stages in sequence:
 
 Usage:
     python -m alpha_multi.repair_enhance_pipeline \\
-        --sim-log alpha_grammar/artifacts/all_sim.jsonl \\
+        --sim-log alpha_discovery/grammar_method/artifacts/all_sim.jsonl \\
         --fields-csv all_fields.csv \\
         --credentials brain.txt
 
 Skip already-done stages (resume):
     python -m alpha_multi.repair_enhance_pipeline \\
-        --sim-log alpha_grammar/artifacts/all_sim.jsonl \\
+        --sim-log alpha_discovery/grammar_method/artifacts/all_sim.jsonl \\
         --skip-repair --skip-enhance
 
 Dry run (no Brain submission):
     python -m alpha_multi.repair_enhance_pipeline \\
-        --sim-log alpha_grammar/artifacts/all_sim.jsonl \\
+        --sim-log alpha_discovery/grammar_method/artifacts/all_sim.jsonl \\
         --dry-run
 """
 
@@ -130,7 +130,7 @@ def run_repair_stage(
     print("STAGE 1: REPAIR (negation + LLM)")
     print("=" * 60)
 
-    from wq_alpha.workshop.repair import build_repair_plan
+    from alpha_enhancement.workshop.repair import build_repair_plan
 
     candidates = build_repair_plan(
         sim_log_paths=sim_logs,

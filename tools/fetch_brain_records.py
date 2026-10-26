@@ -44,7 +44,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from wq_alpha.brain.api import (
+from core.brain.api import (
     _request_json_with_retries,
     authenticate_session,
     fetch_pnl_series_with_retry,
@@ -418,7 +418,7 @@ def run_account(account: str, credentials: str, args) -> dict:
 
 
 def merge_into_master(out_dir: Path, accounts: list[str]) -> None:
-    from wq_alpha.logs import merge_session_to_master
+    from core.logs import merge_session_to_master
 
     for account in accounts:
         for path in sorted((out_dir / account).glob("alphas_part*.jsonl")):

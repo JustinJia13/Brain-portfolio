@@ -32,11 +32,11 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from wq_alpha.agents.enhance import (
+from alpha_enhancement.agents.enhance import (
     AlphaEnhanceAgent,
     select_passing_reps,
 )
-from wq_alpha.agents.repair import load_sim_log
+from alpha_enhancement.agents.repair import load_sim_log
 
 _ARTIFACTS_DIR = Path(__file__).parent.parent / "alpha_multi" / "artifacts"
 

@@ -27,15 +27,15 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from wq_alpha.agents.semantic_workshop import (  # noqa: E402
+from alpha_enhancement.agents.semantic_workshop import (  # noqa: E402
     GeneratedVariant,
     SemanticDiagnosticAgent,
     SemanticGeneratorAgent,
 )
-from wq_alpha.agents.testing import StubDiagnosticAgent, StubGeneratorAgent  # noqa: E402
-from wq_alpha.brain.submit import DEFAULT_SETTINGS, _regime_key  # noqa: E402
-from wq_alpha.workshop import semantic as semantic_workshop  # noqa: E402
-from wq_alpha.workshop.core import (  # noqa: E402
+from alpha_enhancement.agents.testing import StubDiagnosticAgent, StubGeneratorAgent  # noqa: E402
+from core.brain.submit import DEFAULT_SETTINGS, _regime_key  # noqa: E402
+from alpha_enhancement.workshop import semantic as semantic_workshop  # noqa: E402
+from alpha_enhancement.workshop.core import (  # noqa: E402
     _looks_like_fastexpr,
     _make_candidate,
     find_passing_examples,
@@ -43,10 +43,10 @@ from wq_alpha.workshop.core import (  # noqa: E402
     record_workshop_key,
     route_record,
 )
-from wq_alpha.workshop.records import load_records  # noqa: E402
-from wq_alpha.workshop.robustness_card import record_score_addition  # noqa: E402
-from wq_alpha.workshop.scoring import score_seed_records, with_portfolio_prompt_feedback  # noqa: E402
-from wq_alpha.workshop.simulation import submit_candidate_batch  # noqa: E402
+from alpha_enhancement.workshop.records import load_records  # noqa: E402
+from alpha_enhancement.workshop.robustness_card import record_score_addition  # noqa: E402
+from alpha_enhancement.workshop.scoring import score_seed_records, with_portfolio_prompt_feedback  # noqa: E402
+from alpha_enhancement.workshop.simulation import submit_candidate_batch  # noqa: E402
 
 
 DEFAULT_OUT_ROOT = ROOT / "artifacts" / "probe_semantic_ab"
@@ -182,7 +182,7 @@ def main() -> None:
         and (args.seed_source != "autoworkshop_submittable" or args.rescore_autoworkshop_seeds)
     )
     if should_score_seeds:
-        from wq_alpha.brain.api import sign_in
+        from core.brain.api import sign_in
 
         print("\nScoring A/B source seeds with official Brain score deltas...")
         session = sign_in(args.credentials)
@@ -243,12 +243,12 @@ def main() -> None:
 
     portfolio_alpha_data = None
     if not no_submit:
-        from wq_alpha.brain.api import sign_in
+        from core.brain.api import sign_in
 
         if session is None:
             session = sign_in(args.credentials)
         if not args.skip_portfolio_pnl:
-            from alpha_grammar.run_pipeline import load_portfolio_alpha_data
+            from core.selfcorr import load_portfolio_alpha_data
 
             portfolio_alpha_data = load_portfolio_alpha_data(
                 session,
@@ -713,7 +713,7 @@ def load_probe_prior(path: Path) -> dict[str, dict[str, Any]]:
 
 def preflight_llm(api_key: str | None = None) -> None:
     """Fail before Brain login/PnL work when LLM dependencies or key are missing."""
-    from wq_alpha import llm
+    from core import llm
 
     try:
         import openai  # noqa: F401

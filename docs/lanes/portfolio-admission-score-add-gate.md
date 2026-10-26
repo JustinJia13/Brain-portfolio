@@ -53,14 +53,14 @@ flowchart TD
 
 | Stage | Implementation | What it does |
 |---|---|---|
-| Quality ordering (repo-wide) | `wq_alpha/quality.py` | Lexicographic key: submittable, then year-consistency robustness score, then abs fitness as tiebreaker only. |
-| Robustness score | `wq_alpha/robustness.py` | Turns yearly_stats into 0-1 consistency score; 3-year minimum, bad-year haircut, Q-table reward multiplier. |
-| Local score-add proxy (no account) | `wq_alpha/portfolio/local_admission.py` | Self-corr plus same-delay pool-Sharpe delta against brain portfolio read from records shards on disk. |
+| Quality ordering (repo-wide) | `core/quality.py` | Lexicographic key: submittable, then year-consistency robustness score, then abs fitness as tiebreaker only. |
+| Robustness score | `core/robustness.py` | Turns yearly_stats into 0-1 consistency score; 3-year minimum, bad-year haircut, Q-table reward multiplier. |
+| Local score-add proxy (no account) | `core/portfolio/local_admission.py` | Self-corr plus same-delay pool-Sharpe delta against brain portfolio read from records shards on disk. |
 | Finalist perturbation gate | `tools/finalist_gate.py` | About 6 window-plateau and neutralization sims per finalist; emits robust/weak/fail cards. |
 | Brain re-simulation | `tools/promote_to_brain.py` | Re-sims brain2 winners on the competition account with portfolio gates active; dedups by expression plus regime. |
-| Official before/after projection | `wq_alpha/portfolio/admission.py` | Polls the portal competition endpoint for score before and after; brain_score_delta is the primary signal. |
-| Self-corr gate and classify | `wq_alpha/portfolio/admission.py` | Corr 0.70 rejects unless sharpe beats 1.10x the matched alpha; then PROMOTE/WATCH/REJECT on score delta. |
-| Ranked review output | `wq_alpha/portfolio/admission.py` | Sorts by decision, then score delta, then robustness; writes ranked.jsonl plus human-readable ranked.txt. |
+| Official before/after projection | `core/portfolio/admission.py` | Polls the portal competition endpoint for score before and after; brain_score_delta is the primary signal. |
+| Self-corr gate and classify | `core/portfolio/admission.py` | Corr 0.70 rejects unless sharpe beats 1.10x the matched alpha; then PROMOTE/WATCH/REJECT on score delta. |
+| Ranked review output | `core/portfolio/admission.py` | Sorts by decision, then score delta, then robustness; writes ranked.jsonl plus human-readable ranked.txt. |
 
 ## Running it
 
@@ -68,7 +68,7 @@ flowchart TD
 ./run_promote_brain.sh                      # DRY-RUN: print the promotion queue, no sims, no auth
 ./run_promote_brain.sh go                   # re-sim on brain.txt, fetch the OFFICIAL score delta
 python tools/finalist_gate.py --top 5       # ~6 perturbation sims per finalist -> finalist_cards.jsonl
-python -m wq_alpha.portfolio.admission --credentials brain.txt --competition-id IQC2026S1 \
+python -m core/portfolio.admission --credentials brain.txt --competition-id IQC2026S1 \
     --candidates artifacts/workshop/workshop_admission.jsonl --top 200
 ```
 

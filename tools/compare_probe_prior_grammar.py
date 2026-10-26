@@ -21,24 +21,20 @@ from typing import Any, Sequence
 
 import numpy as np
 
-from alpha_grammar import GrammarConfig, GrammarPlanner
-from alpha_grammar.grammar import _stratified_field
-from alpha_grammar.models import DataProfile, FieldCluster
-from alpha_grammar.novelty import TestedFingerprintRegistry
-from alpha_grammar.qtable import QTable, SkeletonCounter
-from alpha_grammar.run_pipeline import (
-    _filter_clusters_by_field_types,
-    _group_profiles_from_clusters,
-    _load_clusters,
-)
+from alpha_discovery.grammar_method import GrammarConfig, GrammarPlanner
+from alpha_discovery.grammar_method.grammar import _stratified_field
+from core.expr.models import DataProfile, FieldCluster
+from alpha_discovery.grammar_method.novelty import TestedFingerprintRegistry
+from core.qtable import QTable, SkeletonCounter
+from alpha_discovery.grammar_method.run_pipeline import _filter_clusters_by_field_types, _group_profiles_from_clusters, _load_clusters
 
 
 ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_CLUSTERS = ROOT / "alpha_grammar" / "artifacts" / "all_clusters.json"
+DEFAULT_CLUSTERS = ROOT / "alpha_discovery/grammar_method" / "artifacts" / "all_clusters.json"
 DEFAULT_PRIOR = ROOT / "artifacts" / "probe" / "grammar_prior_from_probe.json"
-DEFAULT_QTABLE = ROOT / "alpha_grammar" / "artifacts" / "all_qtable.json"
-DEFAULT_SKELETONS = ROOT / "alpha_grammar" / "artifacts" / "all_skeleton_counts.json"
-DEFAULT_FINGERPRINTS = ROOT / "alpha_grammar" / "artifacts" / "all_tested_fingerprints.json"
+DEFAULT_QTABLE = ROOT / "alpha_discovery/grammar_method" / "artifacts" / "all_qtable.json"
+DEFAULT_SKELETONS = ROOT / "alpha_discovery/grammar_method" / "artifacts" / "all_skeleton_counts.json"
+DEFAULT_FINGERPRINTS = ROOT / "alpha_discovery/grammar_method" / "artifacts" / "all_tested_fingerprints.json"
 DEFAULT_OUT_DIR = ROOT / "artifacts" / "probe_prior_compare"
 
 

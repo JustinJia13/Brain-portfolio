@@ -39,7 +39,7 @@ import shutil
 import time
 from pathlib import Path
 
-from alpha_grammar.qtable import is_degenerate_sim_record
+from core.qtable import is_degenerate_sim_record
 
 
 def parse_args() -> argparse.Namespace:
@@ -164,10 +164,10 @@ def main() -> None:
         print("Nothing to backfill.")
         return
 
-    from wq_alpha.brain.api import (
+    from core.brain.api import (
         sign_in, fetch_pnl_series_with_retry,
     )
-    from alpha_grammar.run_pipeline import load_portfolio_alpha_data, compute_max_self_corr_info
+    from core.selfcorr import load_portfolio_alpha_data, compute_max_self_corr_info
 
     session = sign_in(args.credentials)
 
@@ -264,7 +264,7 @@ def main() -> None:
     _save_log(sim_path, records)
     print(f"Updated: {sim_path}")
     print(f"\nNext step: rebuild Q-table from updated log:")
-    print(f"  python -m alpha_grammar.run_pipeline --fields-csv all_fields.csv --rebuild-qtable --rounds 0")
+    print(f"  python -m alpha_discovery.grammar_method.run_pipeline --fields-csv all_fields.csv --rebuild-qtable --rounds 0")
 
 
 if __name__ == "__main__":

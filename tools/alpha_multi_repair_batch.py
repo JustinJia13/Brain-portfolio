@@ -2,7 +2,7 @@
 
 Usage:
     python -m alpha_multi.repair_batch \\
-        --simulation-log alpha_grammar/artifacts/fundamental6_sim.jsonl \\
+        --simulation-log alpha_discovery/grammar_method/artifacts/fundamental6_sim.jsonl \\
         --output alpha_multi/artifacts/repair_batch.jsonl \\
         --min-sharpe 1.25 --min-fitness 1.0 \\
         --top-n 10
@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from wq_alpha.agents.repair import AlphaRepairAgent, load_sim_log, select_near_misses, RepairResult
+from alpha_enhancement.agents.repair import AlphaRepairAgent, load_sim_log, select_near_misses, RepairResult
 
 
 _ARTIFACTS_DIR = Path(__file__).parent.parent / "alpha_multi" / "artifacts"

@@ -35,11 +35,11 @@ SEARCH_SCOPE_DELAY0 = {
 }
 
 FIELDS_CSV = ROOT / "all_fields.csv"
-CLUSTERS_JSON = ROOT / "alpha_grammar" / "artifacts" / "all_clusters.json"
+CLUSTERS_JSON = ROOT / "alpha_discovery/grammar_method" / "artifacts" / "all_clusters.json"
 
 
 def fetch_all_fields(session) -> list[dict]:
-    from wq_alpha.brain.api import _paged_get
+    from core.brain.api import _paged_get
 
     def _fetch(scope: dict, label: str) -> list[dict]:
         print(f"Fetching datafields ({label}) ...")
@@ -99,7 +99,7 @@ def write_csv(fields: list[dict], path: Path) -> None:
 
 
 def rebuild_clusters(max_clusters: int) -> None:
-    from alpha_grammar.run_pipeline import load_clusters_from_csv, _save_clusters
+    from core.clusters import load_clusters_from_csv, _save_clusters
     from collections import Counter
 
     print(f"\nRebuilding clusters (max_clusters={max_clusters}) ...")
@@ -182,7 +182,7 @@ def main() -> None:
     )
     args = p.parse_args()
 
-    from wq_alpha.brain.api import sign_in
+    from core.brain.api import sign_in
     session = sign_in(args.credentials)
 
     fields = fetch_all_fields(session)

@@ -18,8 +18,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from wq_alpha.theory.context import load_clusters  # noqa: E402
-from wq_alpha.wiki.generate import (  # noqa: E402
+from alpha_discovery.theory_method.context import load_clusters  # noqa: E402
+from core.wiki.generate import (  # noqa: E402
     STATE_PATH,
     WIKI_DIR,
     _cluster_mechanisms,

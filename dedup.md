@@ -68,7 +68,7 @@ merge, same hook as the Q-table update.
    than expression-string uniqueness.
 
 **Relation to existing code.** This is a strict generalization of `GrammarCoverage`
-(`wq_alpha/theory/coverage.py`), which already prunes dead `(field, op)` pairs off the
+(`alpha_discovery/theory_method/coverage.py`), which already prunes dead `(field, op)` pairs off the
 Q-table. Stage 1 takes the same idea from coarse `(field, op)` to fine
 `(skeleton, field_set)` neighborhoods over the raw 85k. Prefer extending `coverage.py`
 over a parallel module.

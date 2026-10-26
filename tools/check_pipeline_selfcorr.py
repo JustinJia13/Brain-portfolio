@@ -102,7 +102,7 @@ def _compute_max_corr(candidate_pnl: dict, portfolio_pnls: dict) -> float | None
 def main() -> None:
     args = parse_args()
 
-    from wq_alpha.brain.api import sign_in, fetch_pnl_series, fetch_competition_alpha_ids
+    from core.brain.api import sign_in, fetch_pnl_series, fetch_competition_alpha_ids
     session = sign_in(args.credentials)
 
     # ── Step 1: portfolio PnL ─────────────────────────────────────────────

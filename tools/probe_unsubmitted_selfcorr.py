@@ -196,7 +196,7 @@ def _report_alpha(alpha_id: str, detail: dict, recordsets: dict, extras: dict) -
 def main() -> None:
     args = parse_args()
 
-    from wq_alpha.brain.api import sign_in
+    from core.brain.api import sign_in
     session = sign_in(args.credentials)
 
     if args.alpha_id:

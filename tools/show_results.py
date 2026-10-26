@@ -2,7 +2,7 @@
 
 Usage:
     python tools/show_results.py                                  # workshop results
-    python tools/show_results.py --sim-log alpha_grammar/artifacts/all_sim.jsonl
+    python tools/show_results.py --sim-log alpha_discovery/grammar_method/artifacts/all_sim.jsonl
     python tools/show_results.py --min-sharpe 1.25 --passing-only
     python tools/show_results.py --lane negate repair
     python tools/show_results.py --top 20

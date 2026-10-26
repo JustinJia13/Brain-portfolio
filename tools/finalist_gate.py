@@ -7,7 +7,7 @@ a pass/weak/fail robustness card per finalist. IS peaks that collapse under
 perturbation are exactly the alphas that decay out-of-sample — they get
 status "fail" and should not be submitted.
 
-Reuses wq_alpha.workshop.robustness_card for variant generation and verdicts,
+Reuses alpha_enhancement/workshop.robustness_card for variant generation and verdicts,
 and the shared workshop submission boundary (which skips variants already in
 the log — historical sims are free evidence).
 
@@ -27,23 +27,23 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from wq_alpha.brain.api import sign_in  # noqa: E402
-from wq_alpha.brain.submit import DEFAULT_SETTINGS  # noqa: E402
-from wq_alpha.robustness import record_robustness_score  # noqa: E402
-from wq_alpha.workshop.batch import DEFAULT_SIM_GLOBS, _rank_key, _standalone_passes  # noqa: E402
-from wq_alpha.workshop.core import DEFAULT_WORKSHOP_SETTINGS  # noqa: E402
+from core.brain.api import sign_in  # noqa: E402
+from core.brain.submit import DEFAULT_SETTINGS  # noqa: E402
+from core.robustness import record_robustness_score  # noqa: E402
+from alpha_enhancement.workshop.batch import DEFAULT_SIM_GLOBS, _rank_key, _standalone_passes  # noqa: E402
+from alpha_enhancement.workshop.core import DEFAULT_WORKSHOP_SETTINGS  # noqa: E402
 
 # submit_candidate_batch sends settings straight to the API; supply the full
 # required field set, not just the workshop axes.
 GATE_SETTINGS = {**DEFAULT_SETTINGS, **DEFAULT_WORKSHOP_SETTINGS}
-from wq_alpha.workshop.records import load_records  # noqa: E402
-from wq_alpha.workshop.robustness_card import (  # noqa: E402
+from alpha_enhancement.workshop.records import load_records  # noqa: E402
+from alpha_enhancement.workshop.robustness_card import (  # noqa: E402
     build_robustness_candidates,
     build_robustness_card,
     final_recommendation,
     format_card_text,
 )
-from wq_alpha.workshop.simulation import submit_candidate_batch  # noqa: E402
+from alpha_enhancement.workshop.simulation import submit_candidate_batch  # noqa: E402
 
 OUT_DIR = Path("artifacts/robustness")
 GATE_SIM_LOG = OUT_DIR / "finalist_gate_sim.jsonl"

@@ -2,10 +2,10 @@
 
 **Date:** 2026-06-19 · **Data case:** Case B-plus · **Ship mode:** **FULL GATE (β=2.5)**
 
-The dated answer to "does the `alpha_metric` sim-slot gate work on the data we have
+The dated answer to "does the `alpha_discovery/sim_slot_gate` sim-slot gate work on the data we have
 *now*." All tests use already-run sims (zero new sim budget) and a **time split**
 (train older, test newer) wherever a label allows — this is what makes the verdict
-honest and stresses transfer/decay. Regenerate with `alpha_metric/verify.py`.
+honest and stresses transfer/decay. Regenerate with `alpha_discovery/sim_slot_gate/verify.py`.
 
 ## Data (Stage 0)
 - Sim store `artifacts/sim/master.jsonl`: 85,221 rows; 82,136 with timestamp +
@@ -178,7 +178,7 @@ remains** before the full quality-surrogate cutover.
 
 # Shadow→cutover trigger — 2026-06-19 (condition 3 machinery)
 
-Built `alpha_metric/cutover.py` (monitor + ship-mode state + rollback) and wired
+Built `alpha_discovery/sim_slot_gate/cutover.py` (monitor + ship-mode state + rollback) and wired
 gate modes into the pipeline. Conditions 1–2 already met offline; this is how
 condition 3 (live) is decided and guarded.
 
@@ -209,9 +209,9 @@ this will be honest; do not read the synthetic numbers as the live verdict.
 PY=${PYTHON:-python3}
 
 # (A) ADOPT-NOW — dedup c_max + turnover hard-kill go LIVE (not gated by cutover):
-$PY -c "from alpha_metric.cutover import save_state; save_state('reliable',3.0,'adopt-now dedup+turnover')"
+$PY -c "from alpha_discovery/sim_slot_gate.cutover import save_state; save_state('reliable',3.0,'adopt-now dedup+turnover')"
 #     then run the live pipeline with the gate authority read from state:
-$PY -m alpha_grammar.run_pipeline --fields-csv all_fields.csv --rounds 4 --n-samples 390 \
+$PY -m alpha_discovery/grammar_method.run_pipeline --fields-csv all_fields.csv --rounds 4 --n-samples 390 \
     --budget 10 --batch-size 3 --max-candidates 0 --refetch-clusters --delay 1 \
     --credentials brain2.txt --gate-mode auto
 
@@ -219,14 +219,14 @@ $PY -m alpha_grammar.run_pipeline --fields-csv all_fields.csv --rounds 4 --n-sam
 #     (same run command as above; logs land in artifacts/gate_shadow.jsonl)
 
 # (C) CUTOVER MONITOR — 3-condition status + power + recommendation:
-$PY -m alpha_metric.cutover --beta 3.0
-$PY -m alpha_metric.cutover --beta 2.5      # compare operating points on the same logs
+$PY -m alpha_discovery/sim_slot_gate.cutover --beta 3.0
+$PY -m alpha_discovery/sim_slot_gate.cutover --beta 2.5      # compare operating points on the same logs
 
 # (D) CUTOVER FLIP — make the quality surrogate authoritative (ONLY flips if all
 #     conditions PASS & powered; otherwise prints HOLD/KEEP-ACCUMULATING):
-$PY -m alpha_metric.cutover --beta 3.0 --apply
+$PY -m alpha_discovery/sim_slot_gate.cutover --beta 3.0 --apply
 #     (live runs already on --gate-mode auto pick up 'full' on the next round)
 
 # (E) ROLLBACK kill-switch — run each round / periodically (auto-reverts full->reliable):
-$PY -m alpha_metric.cutover rollback
+$PY -m alpha_discovery/sim_slot_gate.cutover rollback
 ```

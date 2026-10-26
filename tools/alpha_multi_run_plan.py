@@ -1,9 +1,9 @@
 """Submit a multi-dataset plan to Brain and log results.
 
-This is a thin wrapper around alpha_grammar's submission logic that:
+This is a thin wrapper around alpha_discovery/grammar_method's submission logic that:
 1. Reads the JSONL plan from build_plan.py
 2. Submits each candidate to Brain
-3. Logs results to sim.jsonl (same format as alpha_grammar's runner)
+3. Logs results to sim.jsonl (same format as alpha_discovery/grammar_method's runner)
 
 Usage:
     python -m alpha_multi.run_plan \\
@@ -29,8 +29,8 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from wq_alpha.brain.api import sign_in, fetch_yearly_stats_with_retry
-from wq_alpha.logs import MASTER, merge_session_to_master, run_log_path
+from core.brain.api import sign_in, fetch_yearly_stats_with_retry
+from core.logs import MASTER, merge_session_to_master, run_log_path
 
 
 DEFAULT_SIMULATION_SETTINGS = {
@@ -100,7 +100,7 @@ def load_completed_keys(simulation_log: str) -> tuple[set[str], set[str]]:
 
 def _reauth_if_needed(session, response, credentials_path: str) -> bool:
     """Re-authenticate if Brain returned 401 (session expired)."""
-    from wq_alpha.brain.api import authenticate_session, is_auth_expired_response
+    from core.brain.api import authenticate_session, is_auth_expired_response
 
     if is_auth_expired_response(response):
         logging.warning("Brain session expired - waiting for shared re-authentication ...")

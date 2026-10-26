@@ -22,13 +22,13 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from wq_alpha import llm as anthropic  # noqa: E402
-from wq_alpha.agents.json_utils import parse_json_object  # noqa: E402
-from wq_alpha.prompts import load_prompt  # noqa: E402
-from wq_alpha.theory.context import load_clusters  # noqa: E402
-from wq_alpha.theory.dedup import MechanismRegistry, card_embed_text, embed_texts  # noqa: E402
-from wq_alpha.theory.enumerate_ import slotify_skeletons, validate_card  # noqa: E402
-from wq_alpha.wiki.generate import load_cluster_stats  # noqa: E402
+from core import llm as anthropic  # noqa: E402
+from core.json_utils import parse_json_object  # noqa: E402
+from core.prompts import load_prompt  # noqa: E402
+from alpha_discovery.theory_method.context import load_clusters  # noqa: E402
+from alpha_discovery.theory_method.dedup import MechanismRegistry, card_embed_text, embed_texts  # noqa: E402
+from alpha_discovery.theory_method.enumerate_ import slotify_skeletons, validate_card  # noqa: E402
+from core.wiki.generate import load_cluster_stats  # noqa: E402
 
 FALSIFIED_GISTS_PATH = Path("artifacts/theory/falsified_gists.jsonl")
 

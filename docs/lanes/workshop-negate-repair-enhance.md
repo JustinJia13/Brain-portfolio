@@ -57,14 +57,14 @@ flowchart TD
 
 | Stage | Implementation | What it does |
 |---|---|---|
-| 1. Select sources | `wq_alpha/workshop/batch.py:select_candidates` | Keep highest-|Sharpe| done record per expression+regime, drop 9478 already-worked keys and excluded fields, cap 200. |
-| 2. Route by defect | `wq_alpha/workshop/core.py:route_record` | fitness<=-1.2 to negate; repairable failing checks + fitness>=0.9 to repair; all-pass + fitness>=1.0 + robustness>=0.30 to enhance. |
-| 3a. Negate | `wq_alpha/workshop/repair.py:_sign_flip` | Deterministic sign flip of a strongly-negative alpha. No LLM, no cost. Blocked when concentration >= 0.40. |
-| 3b. Settings repair | `tools/settings_repair.py + wq_alpha/prompts/settings_repair.md` | One LLM call diagnoses the binding gate, returns <=4 settings_override fixes. Expression untouched, so execution-neutral. |
-| 3c. Structural repair/enhance | `wq_alpha/agents/repair.py, wq_alpha/agents/enhance.py` | 3 rounds of generate then simulate then feed the sim verdict back. Parameter-only and settings-only variants rejected. |
-| 3d. Semantic workshop | `wq_alpha/workshop/semantic.py + wq_alpha/agents/semantic_workshop.py` | Diagnostic agent types the signal and hypothesises the failure; generator agent emits 6 FASTEXPR. Hard 3-round cap. |
-| 4. Submittable gate | `wq_alpha/quality.py:is_submittable + workshop/core.py:is_passing` | Sharpe 1.25, fitness 1.0, turnover 0.70 AND every submission check PASS. Only SELF_CORRELATION and UNITS are warnings. |
-| 5. Robustness then admission | `wq_alpha/workshop/robustness_card.py, wq_alpha/portfolio/admission.py:_classify` | Perturbation retention kills IS spikes; then PROMOTE/WATCH/REJECT on brain score delta with a 0.70 global-corr veto. |
+| 1. Select sources | `alpha_enhancement/workshop/batch.py:select_candidates` | Keep highest-|Sharpe| done record per expression+regime, drop 9478 already-worked keys and excluded fields, cap 200. |
+| 2. Route by defect | `alpha_enhancement/workshop/core.py:route_record` | fitness<=-1.2 to negate; repairable failing checks + fitness>=0.9 to repair; all-pass + fitness>=1.0 + robustness>=0.30 to enhance. |
+| 3a. Negate | `alpha_enhancement/workshop/repair.py:_sign_flip` | Deterministic sign flip of a strongly-negative alpha. No LLM, no cost. Blocked when concentration >= 0.40. |
+| 3b. Settings repair | `tools/settings_repair.py + core/prompts/settings_repair.md` | One LLM call diagnoses the binding gate, returns <=4 settings_override fixes. Expression untouched, so execution-neutral. |
+| 3c. Structural repair/enhance | `alpha_enhancement/agents/repair.py, alpha_enhancement/agents/enhance.py` | 3 rounds of generate then simulate then feed the sim verdict back. Parameter-only and settings-only variants rejected. |
+| 3d. Semantic workshop | `alpha_enhancement/workshop/semantic.py + alpha_enhancement/agents/semantic_workshop.py` | Diagnostic agent types the signal and hypothesises the failure; generator agent emits 6 FASTEXPR. Hard 3-round cap. |
+| 4. Submittable gate | `core/quality.py:is_submittable + workshop/core.py:is_passing` | Sharpe 1.25, fitness 1.0, turnover 0.70 AND every submission check PASS. Only SELF_CORRELATION and UNITS are warnings. |
+| 5. Robustness then admission | `alpha_enhancement/workshop/robustness_card.py, core/portfolio/admission.py:_classify` | Perturbation retention kills IS spikes; then PROMOTE/WATCH/REJECT on brain score delta with a 0.70 global-corr veto. |
 
 ## Running it
 

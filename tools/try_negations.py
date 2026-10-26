@@ -13,7 +13,7 @@ How it works:
 Usage:
     python tools/try_negations.py
     python tools/try_negations.py --threshold -1.0 --out artifacts/negations_batch.jsonl
-    python tools/try_negations.py --sim-log alpha_grammar/artifacts/all_sim.jsonl
+    python tools/try_negations.py --sim-log alpha_discovery/grammar_method/artifacts/all_sim.jsonl
 """
 
 from __future__ import annotations
@@ -81,7 +81,7 @@ def find_strong_negatives(
 def main() -> None:
     import sys
     sys.path.insert(0, str(ROOT))
-    from wq_alpha.workshop.repair import _sign_flip
+    from alpha_enhancement.workshop.repair import _sign_flip
 
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sim-log", nargs="*",

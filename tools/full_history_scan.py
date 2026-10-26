@@ -20,9 +20,9 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from wq_alpha.brain.api import fetch_pnl_series_with_retry, sign_in
-from alpha_grammar.run_pipeline import get_alpha_detail
-from wq_alpha.portfolio.admission import (
+from core.brain.api import fetch_pnl_series_with_retry, sign_in
+from core.selfcorr import get_alpha_detail
+from core.portfolio.admission import (
     PROMOTE,
     AdmissionConfig,
     annotate_records_with_admission,

@@ -6,5 +6,5 @@ scikit-learn>=1.4
 requests>=2.31
 anthropic>=0.40
 
-# For the offline unit tests in alpha_metric/tests/
+# For the offline unit tests in alpha_discovery.sim_slot_gate/tests/
 pytest>=8.0

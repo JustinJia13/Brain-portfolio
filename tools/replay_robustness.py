@@ -3,7 +3,7 @@
 Read-only. Scores every record in master + records shards, prints the score
 distribution, and — where OS data exists (submitted alphas) — compares
 robustness_score vs is_fitness as predictors of os_sharpe via Spearman rank
-correlation. Run this before tuning wq_alpha/robustness.py weights or wiring
+correlation. Run this before tuning core/robustness.py weights or wiring
 the multiplier into rewards.
 
 Usage:
@@ -21,7 +21,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from wq_alpha.robustness import compute_robustness, record_robustness_score  # noqa: E402
+from core.robustness import compute_robustness, record_robustness_score  # noqa: E402
 
 DEFAULT_GLOBS = [
     "artifacts/sim/master.jsonl",
@@ -124,7 +124,7 @@ def main() -> None:
         print(f"  spearman(robustness_score, os_sharpe) = {spearman(list(rob), list(oss)):+.3f}")
         print(f"  spearman(|is_fitness|,    os_sharpe) = {spearman(list(fit), list(oss)):+.3f}")
         print("  -> robustness should beat |is_fitness| as an OS predictor;")
-        print("     if it does not, tune weights in wq_alpha/robustness.py before wiring in.")
+        print("     if it does not, tune weights in core/robustness.py before wiring in.")
     else:
         print(f"\nOS validation sample too small (n={len(os_rows)}); "
               "treat distribution sanity-check only.")

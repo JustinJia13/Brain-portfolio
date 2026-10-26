@@ -17,13 +17,13 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from wq_alpha.agents.semantic_templates import (  # noqa: E402
+from alpha_enhancement.agents.semantic_templates import (  # noqa: E402
     TemplateArchitectAgent,
     TemplateFieldSelectorAgent,
     TemplateRouterAgent,
 )
-from wq_alpha.brain.submit import run as submit_plan  # noqa: E402
-from wq_alpha.semantic_templates.core import (  # noqa: E402
+from core.brain.submit import run as submit_plan  # noqa: E402
+from alpha_enhancement.semantic_templates.core import (  # noqa: E402
     DEFAULT_CLUSTER_PATH,
     DEFAULT_PROBE_LOG,
     build_architect_evidence_groups,
@@ -141,7 +141,7 @@ def main() -> None:
 
     if not args.submit:
         print("No Brain simulation submitted. Re-run with --submit to simulate this plan.")
-        print(f"Submit command: python -m wq_alpha.brain.submit --plan {plan_path} --sim-log {sim_log} --batch-size {args.batch_size} --credentials {args.credentials}")
+        print(f"Submit command: python -m core.brain.submit --plan {plan_path} --sim-log {sim_log} --batch-size {args.batch_size} --credentials {args.credentials}")
         return
 
     records = submit_plan(

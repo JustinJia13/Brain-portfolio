@@ -6,7 +6,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from alpha_grammar.qtable import QTable, apply_pool_delta_reward_veto, update_qtable_from_records
+from core.qtable import QTable, apply_pool_delta_reward_veto, update_qtable_from_records
 
 
 def _base_record(**overrides):

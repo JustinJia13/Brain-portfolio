@@ -3,16 +3,16 @@ from collections import Counter
 
 import numpy as np
 
-from alpha_grammar.grammar import (
+from alpha_discovery.grammar_method.grammar import (
     BrainGrammar,
     GrammarConfig,
     _field_node,
     _stratified_field,
 )
-from alpha_grammar.models import DataProfile, FieldCluster
-from alpha_grammar.novelty import TestedFingerprintRegistry
-from alpha_grammar.operators import OPERATOR_REGISTRY
-from alpha_grammar.planner import GrammarPlanner
+from core.expr.models import DataProfile, FieldCluster
+from alpha_discovery.grammar_method.novelty import TestedFingerprintRegistry
+from core.expr.operators import OPERATOR_REGISTRY
+from alpha_discovery.grammar_method.planner import GrammarPlanner
 
 
 def profile(field_id: str, dataset_id: str, field_type: str = "MATRIX") -> DataProfile:

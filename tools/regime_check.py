@@ -30,7 +30,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from wq_alpha.search.regime_check import (
+from alpha_discovery.template_sweep_method.regime_check import (
     DEFAULT_DELAYS,
     DEFAULT_DECAYS,
     DEFAULT_NEUTRALIZATIONS,

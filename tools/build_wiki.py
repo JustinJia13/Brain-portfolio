@@ -14,7 +14,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from wq_alpha.wiki.generate import export_priors, generate_wiki  # noqa: E402
+from core.wiki.generate import export_priors, generate_wiki  # noqa: E402
 
 
 def main() -> None:
