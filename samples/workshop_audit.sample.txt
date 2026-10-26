@@ -1,0 +1,5 @@
+  tier   action   regime                      sharpe fitness   23fit    corr field                          failing                         expression
+  ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  1      negate   delay1_subindustry_top3000  -1.310  -1.860     N/A     N/A ppent                          LOW_SHARPE,LOW_FITNESS,LOW_SUB_UNIVERSE_SHARPE  group_neutralize(ts_decay_linear(ts_rank(sign(ppent/assets), 252), 20), sector)
+  1      negate   delay1_subindustry_top3000  -1.280  -1.220     N/A     N/A pcr_oi_270                     LOW_SHARPE,LOW_FITNESS          group_scale(group_neutralize(days_from_last_change(rank(pcr_oi_270)), industry), sector)
+  1      negate   delay1_subindustry_top3000  -1.160  -1.470     N/A     N/A capex                          LOW_SHARPE,LOW_FITNESS,LOW_SUB_UNIVERSE_SHARPE  rank(group_rank(hump(ts_delay(ts_corr(capex, snt1_d1_downtargetpercent, 60), 5)), market))

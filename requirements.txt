@@ -1,0 +1,10 @@
+# Runtime deps for the alpha-research pipeline.
+# Everything else used is Python 3.11 standard library.
+numpy>=1.26
+scipy>=1.11
+scikit-learn>=1.4
+requests>=2.31
+anthropic>=0.40
+
+# For the offline unit tests in alpha_metric/tests/
+pytest>=8.0

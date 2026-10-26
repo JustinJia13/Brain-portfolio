@@ -1,0 +1,8 @@
+# regenerable model artifacts (rebuild via calibrate.calibrate() / Surrogate().fit())
+surrogate.pkl
+surrogate_coverage.json
+coverage_index.npz
+_backtest_components.pkl
+__pycache__/
+_subsharpe_from_details.json
+cutover_state.json

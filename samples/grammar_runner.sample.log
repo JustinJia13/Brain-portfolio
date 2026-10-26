@@ -1,0 +1,500 @@
+2026-03-31 13:11:58,254 - INFO - Submitted: group_neutralize(kth_element(fnd6_acdo, 60, k=3), sector) | url=https://api.worldquantbrain.com/simulations/371yYl2dN4ZN9zkhmRywLZA
+2026-03-31 13:11:58,320 - INFO - Submitted: group_mean(group_neutralize(sales, market), anl4_netdebt_flag, market) | url=https://api.worldquantbrain.com/simulations/4B0Xky75Y4G9ayUsyJkW1r4
+2026-03-31 13:11:58,387 - INFO - Submitted: group_scale(receivable, subindustry) | url=https://api.worldquantbrain.com/simulations/UqLYE5si5iUcxOyIKE610D
+2026-03-31 13:13:54,662 - INFO - Logged: candidate=7b2653d3ce18950f | alpha=rKzAVEn8 | sharpe=1.030 | fitness=0.950
+2026-03-31 13:13:54,807 - INFO - Logged: candidate=9d2b0bd8b96d99c7 | alpha=886nYggm | sharpe=0.000 | fitness=N/A
+2026-03-31 13:14:15,103 - INFO - Logged: candidate=8edb3cf0262397fe | alpha=886nY6qm | sharpe=0.630 | fitness=0.400
+2026-03-31 13:14:15,166 - INFO - Submitted: group_backfill(group_rank(implied_volatility_call_120, subindustry), industry, 20) | url=https://api.worldquantbrain.com/simulations/2rYJwW1o4PNa3a7heND0El
+2026-03-31 13:14:15,223 - INFO - Submitted: group_scale(kth_element(winsorize(sales), 60, k=2), industry) | url=https://api.worldquantbrain.com/simulations/1jV4Cu5nW4o98Ig8hKj23xV
+2026-03-31 13:14:15,292 - INFO - Submitted: group_backfill(group_rank(split, sector), subindustry, 20) | url=https://api.worldquantbrain.com/simulations/4jXxWH1sJ4vobXb131SXrZV
+2026-03-31 13:16:26,913 - INFO - Logged: candidate=1db9ec3a7ee0d7cb | alpha=JjXb1GZn | sharpe=0.170 | fitness=0.050
+2026-03-31 13:16:27,117 - INFO - Logged: candidate=70f14ff9341e21cb | alpha=O0moV961 | sharpe=0.370 | fitness=0.200
+2026-03-31 13:16:27,319 - INFO - Logged: candidate=f2f042419a3a5afb | alpha=586MewNn | sharpe=-0.020 | fitness=-0.000
+2026-03-31 13:16:27,382 - INFO - Submitted: scale(last_diff_value(reverse(group_rank(sign(anl4_qf_az_eps_number), sector)), 20)) | url=https://api.worldquantbrain.com/simulations/4rqWxP7Z94nGailLmOk9rRs
+2026-03-31 13:16:27,463 - INFO - Submitted: scale(group_neutralize(is_nan(close), subindustry)) | url=https://api.worldquantbrain.com/simulations/uYKM778r4SqbwM12tbHXL4X
+2026-03-31 13:16:27,529 - INFO - Submitted: rank(kth_element(abs(ts_regression(assets_curr, ppent, 120)), 20, k=3)) | url=https://api.worldquantbrain.com/simulations/1zN8PW1F64xf8FP16GFDFnP2
+2026-03-31 13:18:03,558 - INFO - Logged: candidate=2952bd6508697f73 | alpha=586MeJoM | sharpe=0.000 | fitness=N/A
+2026-03-31 13:18:03,706 - INFO - Logged: candidate=10afed881f080fbc | alpha=YPkQJ13q | sharpe=-3.110 | fitness=-2.560
+2026-03-31 13:18:04,905 - INFO - Logged: candidate=96af57e22bf1e1c8 | alpha=1YmJPNLz | sharpe=0.430 | fitness=0.200
+2026-03-31 13:18:04,978 - INFO - Submitted: rank(kth_element(add(group_neutralize(anl4_capex_low, bucket(rank(anl4_netprofit_flag), buckets=20)), sqrt(anl4_capex_low)), 252, k=2)) | url=https://api.worldquantbrain.com/simulations/2yUOhC4e95eBbI2sE55TcG3
+2026-03-31 13:18:05,041 - INFO - Submitted: rank(ts_delay(fnd6_fopo, 5)) | url=https://api.worldquantbrain.com/simulations/UNr5878352e9xq9MRQYzL3
+2026-03-31 13:18:05,118 - INFO - Submitted: group_mean(ts_delta(ts_product(sign(sga_expense), 252), 5), inventory, subindustry) | url=https://api.worldquantbrain.com/simulations/14Bccn1mE57Bc1W14kVLj4Mm
+2026-03-31 13:20:31,772 - INFO - Logged: candidate=bd0952b8a5cee1a5 | alpha=A1akmXaQ | sharpe=0.300 | fitness=0.140
+2026-03-31 13:20:31,925 - INFO - Logged: candidate=c8e3687ddc5e3a30 | alpha=586Me16k | sharpe=1.090 | fitness=0.690
+2026-03-31 13:20:32,073 - INFO - Logged: candidate=eb374ed509f082ec | alpha=VklO5LPJ | sharpe=0.000 | fitness=N/A
+2026-03-31 13:20:32,136 - INFO - Submitted: group_neutralize(kth_element(group_backfill(inverse(adv20), subindustry, 10), 120, k=3), market) | url=https://api.worldquantbrain.com/simulations/4zrLxW7OQ4r1bOFKbpJ5Ixh
+2026-03-31 13:20:32,220 - INFO - Submitted: group_backfill(ts_regression(log(group_neutralize(fnd6_drlt, market)), ts_delay(sales, 10), 120), industry, 20) | url=https://api.worldquantbrain.com/simulations/O4iUHcpo52X8Y69NJpMpdz
+2026-03-31 13:20:32,313 - INFO - Submitted: group_backfill(scale(close), subindustry, 20) | url=https://api.worldquantbrain.com/simulations/3LTmuzezS4ub9YH11kifP1Pw
+2026-03-31 13:22:23,382 - INFO - Logged: candidate=d2e459e29f1d587e | alpha=omzVZ75E | sharpe=-0.390 | fitness=-0.190
+2026-03-31 13:22:23,507 - INFO - Logged: candidate=cb70196341756ef1 | alpha=586MYZ5z | sharpe=0.140 | fitness=0.040
+2026-03-31 13:22:23,633 - INFO - Logged: candidate=99c0068150642f71 | alpha=MP8kVPPM | sharpe=0.060 | fitness=0.010
+2026-03-31 13:22:23,759 - INFO - Submitted: group_scale(group_neutralize(ts_count_nans(implied_volatility_call_120, 40), market), subindustry) | url=https://api.worldquantbrain.com/simulations/1W30ta5Ew4RUbGHirISLKEr
+2026-03-31 13:22:23,871 - INFO - Submitted: group_backfill(group_scale(log(eps), subindustry), market, 10) | url=https://api.worldquantbrain.com/simulations/MgEU41Sg4Gdc4T101s3DGfe
+2026-03-31 13:22:23,938 - INFO - Submitted: group_zscore(winsorize(debt_st), market) | url=https://api.worldquantbrain.com/simulations/1RBspNau44PgaWk1U8XpdgO
+2026-03-31 13:23:35,020 - INFO - Logged: candidate=41edf041e2276900 | alpha=pwz83OGb | sharpe=-1.510 | fitness=-1.320
+2026-03-31 13:23:45,207 - INFO - Logged: candidate=6fd95deec8966cf5 | alpha=mLzZQkXX | sharpe=0.250 | fitness=0.080
+2026-03-31 13:23:45,329 - INFO - Logged: candidate=cfb6985c366da857 | alpha=qMzgVZvj | sharpe=-0.060 | fitness=-0.010
+2026-03-31 13:23:45,390 - INFO - Submitted: group_scale(cash_st, sector) | url=https://api.worldquantbrain.com/simulations/1smNA48SR58Lawi18TvkEc8e
+2026-03-31 13:23:45,492 - INFO - Submitted: group_mean(last_diff_value(winsorize(cashflow_fin), 10), retained_earnings, sector) | url=https://api.worldquantbrain.com/simulations/fcItp2Xd4IX9CW4fa4o7dB
+2026-03-31 13:23:45,569 - INFO - Submitted: rank(group_zscore(anl4_qf_az_eps_number, industry)) | url=https://api.worldquantbrain.com/simulations/r3Ft7aVI4Lu9cmigjNTVNS
+2026-03-31 13:26:12,914 - INFO - Logged: candidate=2a74e38a5fe50218 | alpha=6XqzNzVO | sharpe=0.130 | fitness=0.040
+2026-03-31 13:26:13,141 - INFO - Logged: candidate=7df5ea302c6cbb13 | alpha=E5akxaKJ | sharpe=0.000 | fitness=N/A
+2026-03-31 13:26:13,286 - INFO - Logged: candidate=ae0e6109c5b621ee | alpha=LLXk3lga | sharpe=1.450 | fitness=0.780
+2026-03-31 13:26:13,348 - INFO - Submitted: group_backfill(rank(hump(operating_income)), sector, 5) | url=https://api.worldquantbrain.com/simulations/Z5FiCoW5cY8yGFR4bgrpe
+2026-03-31 13:26:13,435 - INFO - Submitted: zscore(group_zscore(reverse(unsystematic_risk_last_360_days), market)) | url=https://api.worldquantbrain.com/simulations/3yp2oU2Pu4J59EZDpsdby7n
+2026-03-31 13:26:13,504 - INFO - Submitted: group_backfill(group_rank(cashflow, sector), market, 10) | url=https://api.worldquantbrain.com/simulations/3CNvOUevc4z599o14kXonRZq
+2026-03-31 13:28:56,913 - INFO - Logged: candidate=79638351b521078c | alpha=gJPxLe5J | sharpe=0.270 | fitness=0.140
+2026-03-31 13:28:57,153 - INFO - Logged: candidate=75846dc4c3b799ff | alpha=2rZJeOXY | sharpe=0.240 | fitness=0.110
+2026-03-31 13:28:57,278 - INFO - Logged: candidate=aebaf61e43e3a6ca | alpha=qMzgVWK2 | sharpe=-0.290 | fitness=-0.080
+2026-03-31 13:28:57,357 - INFO - Submitted: group_rank(kth_element(adv20, 120, k=3), industry) | url=https://api.worldquantbrain.com/simulations/T7PnQfen4ycbS6fpfTuEAe
+2026-03-31 13:28:57,449 - INFO - Submitted: winsorize(group_mean(kth_element(anl4_ebit_value, 60, k=2), ts_arg_max(income, 20), sector)) | url=https://api.worldquantbrain.com/simulations/4oiU4J9tt4O4ciQ2iolZYm6
+2026-03-31 13:28:57,508 - INFO - Submitted: scale(power(ts_quantile(high, 120, 0.75), subtract(high, high))) | url=https://api.worldquantbrain.com/simulations/pSrpW2JQ4gAbvV9M6UAKqb
+2026-03-31 13:30:13,506 - INFO - Logged: candidate=08f3c5a56ae08d2f | alpha=mLzZQ1eE | sharpe=0.400 | fitness=0.190
+2026-03-31 13:30:28,800 - INFO - Logged: candidate=f8ddae964c2ed945 | alpha=YPkQYYZJ | sharpe=0.000 | fitness=N/A
+2026-03-31 13:30:28,890 - WARNING - No alpha_id: 3925c422cae940f3 | response={'id': 'pSrpW2JQ4gAbvV9M6UAKqb', 'type': 'REGULAR', 'status': 'ERROR', 'message': 'Got invalid value "0.75" for attribute "lookback", should be a positive integer', 'location': {'line': 1, 'start': 12, 'end': 40, 'property': 'regular'}}
+2026-03-31 13:30:28,891 - INFO - Logged: candidate=3925c422cae940f3 | alpha=None | sharpe=N/A | fitness=N/A
+2026-03-31 13:30:28,958 - INFO - Submitted: group_backfill((debt) / (return_equity), sector, 20) | url=https://api.worldquantbrain.com/simulations/4h1IpucOX4Erc7p5BnIwHKc
+2026-03-31 13:30:29,034 - INFO - Submitted: scale(reverse(group_backfill(assets, subindustry, 20))) | url=https://api.worldquantbrain.com/simulations/36amBd88C4Zq8KU3LN2auAJ
+2026-03-31 13:30:29,160 - INFO - Submitted: scale(rank(sign(volume))) | url=https://api.worldquantbrain.com/simulations/3ThCRJ54e4BTb4lBOvQQ9Y7
+2026-03-31 13:31:49,899 - INFO - Logged: candidate=038d81275e8f15a5 | alpha=N1jA8dZw | sharpe=0.210 | fitness=0.060
+2026-03-31 13:31:55,154 - INFO - Logged: candidate=432a864b838d90f7 | alpha=2rZJeYJ6 | sharpe=-0.260 | fitness=-0.110
+2026-03-31 13:31:55,306 - INFO - Logged: candidate=23898820b9352ac9 | alpha=Xgl1M0Lm | sharpe=0.100 | fitness=0.020
+2026-03-31 13:31:55,385 - INFO - Submitted: rank(divide(group_zscore(inverse(implied_volatility_call_270), market), revenue)) | url=https://api.worldquantbrain.com/simulations/3WaJjNdRU4GV9PgqBR2rKMv
+2026-03-31 13:31:55,553 - INFO - Submitted: rank(group_backfill(implied_volatility_put_270, market, 5)) | url=https://api.worldquantbrain.com/simulations/2y7gM7gfl4tkbPV7Ad70ve4
+2026-03-31 13:31:55,618 - INFO - Submitted: winsorize(ts_delta(sqrt(ebitda), 10)) | url=https://api.worldquantbrain.com/simulations/3c7AAl4pj4HdadRz9eGPluz
+2026-03-31 13:33:13,181 - INFO - Logged: candidate=999d2e87948ad8ae | alpha=omzVk7Z6 | sharpe=-0.010 | fitness=-0.000
+2026-03-31 13:33:43,553 - INFO - Logged: candidate=f0196d8c516f6270 | alpha=O0mo2Evq | sharpe=-0.090 | fitness=-0.020
+2026-03-31 13:33:43,681 - INFO - Logged: candidate=4665889d17c93b91 | alpha=E5ak2XWR | sharpe=0.540 | fitness=0.200
+2026-03-31 13:33:43,757 - INFO - Submitted: rank((group_backfill(kth_element(scl12_buzz, 120, k=2), industry, 5)) / (kth_element(sign(group_neutralize(ebitda, market)), 20, k=2))) | url=https://api.worldquantbrain.com/simulations/1xunlegAf4rJck8ZJPTtfPo
+2026-03-31 13:33:43,822 - INFO - Submitted: rank(winsorize(abs(operating_expense))) | url=https://api.worldquantbrain.com/simulations/1ac16M4Z757ccy011Ilp4ypm
+2026-03-31 13:33:43,880 - INFO - Submitted: rank(scl12_buzz) | url=https://api.worldquantbrain.com/simulations/3GF6v7eEp4LhbLzRuGUiRkQ
+2026-03-31 13:36:40,540 - INFO - Logged: candidate=4edf5492e507b220 | alpha=LLXk2k3m | sharpe=0.250 | fitness=0.040
+2026-03-31 13:36:40,661 - INFO - Logged: candidate=009f1bc85cc07e2a | alpha=wpzLv1v6 | sharpe=0.840 | fitness=0.720
+2026-03-31 13:36:40,784 - INFO - Logged: candidate=e881e2c445cd179d | alpha=xAzREmMl | sharpe=-0.430 | fitness=-0.050
+2026-03-31 13:36:40,870 - INFO - Submitted: group_backfill(group_rank(ebit, bucket(rank(implied_volatility_call_120), buckets=5)), industry, 20) | url=https://api.worldquantbrain.com/simulations/4hiON491h51OaBS68K2c6Wj
+2026-03-31 13:36:40,941 - INFO - Submitted: winsorize(ts_delay(ebitda, 10)) | url=https://api.worldquantbrain.com/simulations/uEDu2dZ64CF9f37ofpST6V
+2026-03-31 13:36:41,007 - INFO - Submitted: group_mean(winsorize(cashflow_op), implied_volatility_put_270, subindustry) | url=https://api.worldquantbrain.com/simulations/K5tnK6Db4OeaKyujVtQf8K
+2026-03-31 13:38:16,993 - INFO - Logged: candidate=0aaa98401941e7bd | alpha=1YmJ2x7k | sharpe=0.150 | fitness=0.060
+2026-03-31 13:38:17,113 - INFO - Logged: candidate=eff4504b4ecb5c71 | alpha=MP8k2109 | sharpe=0.020 | fitness=0.000
+2026-03-31 13:38:21,079 - INFO - Logged: candidate=fa370d2543402bc1 | alpha=JjXb2xve | sharpe=0.000 | fitness=N/A
+2026-03-31 13:38:21,165 - INFO - Submitted: winsorize(ts_regression(return_equity, implied_volatility_call_120, 200)) | url=https://api.worldquantbrain.com/simulations/3vRhNrgRG5eobKPj7GHT9fV
+2026-03-31 13:38:21,253 - INFO - Submitted: group_backfill(scale(fnd6_acdo), market, 5) | url=https://api.worldquantbrain.com/simulations/3GG8GQ2Ms4wjb1911zFOyWcK
+2026-03-31 13:38:21,553 - INFO - Submitted: group_rank(kth_element(last_diff_value(anl4_netprofit_flag, 20), 20, k=3), industry) | url=https://api.worldquantbrain.com/simulations/7VQtVfp555Jbuj8xa7jy7c
+2026-03-31 13:40:11,239 - INFO - Logged: candidate=5f3e6b70244ddf98 | alpha=RRadvl5a | sharpe=-0.490 | fitness=-0.230
+2026-03-31 13:40:36,535 - INFO - Logged: candidate=d8ae271710543397 | alpha=ZYlr1MEx | sharpe=0.810 | fitness=0.630
+2026-03-31 13:40:36,753 - INFO - Logged: candidate=81d3b2c5c13dc21b | alpha=1YmJ2OdQ | sharpe=0.580 | fitness=0.320
+2026-03-31 13:40:36,831 - INFO - Submitted: group_backfill(zscore(receivable), subindustry, 10) | url=https://api.worldquantbrain.com/simulations/209wItA158O90IuQZkEedO
+2026-03-31 13:40:36,988 - INFO - Submitted: group_backfill(reverse(debt_lt), sector, 5) | url=https://api.worldquantbrain.com/simulations/3Cyd4CbUa4Xv8ZeOeOb0F8i
+2026-03-31 13:40:37,106 - INFO - Submitted: zscore((bookvalue_ps) / (assets)) | url=https://api.worldquantbrain.com/simulations/1YQoGw5XU4AochDswnx8eLl
+2026-03-31 13:42:41,312 - INFO - Logged: candidate=f0217fd79a753a91 | alpha=9q6J3zpx | sharpe=0.440 | fitness=0.230
+2026-03-31 13:42:41,437 - INFO - Logged: candidate=31022f97728a4b58 | alpha=Gr8k7Zb3 | sharpe=-0.300 | fitness=-0.140
+2026-03-31 13:42:51,617 - INFO - Logged: candidate=14a2273bf6aec09c | alpha=akPo8klO | sharpe=-0.460 | fitness=-0.250
+2026-03-31 13:42:51,700 - INFO - Submitted: group_scale(group_rank(scale(if_else(adv20, adv20, adv20)), market), industry) | url=https://api.worldquantbrain.com/simulations/2bEHvCelO51vaUDAhLBSx4m
+2026-03-31 13:42:51,749 - INFO - Submitted: rank(multiply(sales, sales)) | url=https://api.worldquantbrain.com/simulations/2VVyZb5pW58kcCZo6cHjdgw
+2026-03-31 13:42:51,820 - INFO - Submitted: group_zscore(zscore(is_nan(cashflow_op)), subindustry) | url=https://api.worldquantbrain.com/simulations/4EbrpZ2Jm4rmbErzcpA1Mzr
+2026-03-31 13:44:26,020 - INFO - Logged: candidate=39ffa235f8dc2b25 | alpha=A1ak5K8d | sharpe=0.350 | fitness=0.160
+2026-03-31 13:44:26,146 - INFO - Logged: candidate=239c2d6f76215cf2 | alpha=zqoOEpgo | sharpe=0.740 | fitness=0.630
+2026-03-31 13:44:26,265 - INFO - Logged: candidate=0d9a237e2c83fffb | alpha=1YmJREAW | sharpe=-1.450 | fitness=-1.450
+2026-03-31 13:44:26,402 - INFO - Submitted: scale(ts_zscore(sales_growth, 60)) | url=https://api.worldquantbrain.com/simulations/3zAiMU4285hJ8UjjvDSNnL3
+2026-03-31 13:44:26,460 - INFO - Submitted: scale(ts_delay(anl4_ebitda_value, 5)) | url=https://api.worldquantbrain.com/simulations/2hd2L5up4Ck9KtVFG4trZ6
+2026-03-31 13:44:26,541 - INFO - Submitted: group_zscore(group_scale(debt_st, market), subindustry) | url=https://api.worldquantbrain.com/simulations/A48c69395j39dl5IncgBEv
+2026-03-31 13:46:04,493 - INFO - Logged: candidate=81f3a88da2a59969 | alpha=JjXbkXQO | sharpe=-0.360 | fitness=-0.090
+2026-03-31 13:47:47,972 - INFO - Logged: candidate=ac56c0304c01073b | alpha=gJPx5MNg | sharpe=-0.150 | fitness=-0.050
+2026-03-31 13:47:48,330 - INFO - Logged: candidate=96c75daf27c3cdf0 | alpha=vRzdbJZA | sharpe=0.450 | fitness=0.240
+2026-03-31 13:47:48,388 - INFO - Submitted: group_backfill(implied_volatility_call_1080, market, 5) | url=https://api.worldquantbrain.com/simulations/2NdRdU4jf4gI8MgWaAA94Fm
+2026-03-31 13:47:48,458 - INFO - Submitted: winsorize(if_else(implied_volatility_call_270, winsorize(implied_volatility_call_270), implied_volatility_call_270)) | url=https://api.worldquantbrain.com/simulations/2Y79Gd8LK4owaoX1g3MuwkSp
+2026-03-31 13:47:48,531 - INFO - Submitted: winsorize(kth_element(cashflow, 120, k=1)) | url=https://api.worldquantbrain.com/simulations/1j5u8jdx84CFaESgU1Z8Nt7
+2026-03-31 13:49:34,779 - INFO - Logged: candidate=d26c5e592f95b914 | alpha=RRadoEkz | sharpe=0.000 | fitness=0.000
+2026-03-31 13:49:55,051 - INFO - Logged: candidate=34326312b62b9824 | alpha=vRzdbAW3 | sharpe=0.070 | fitness=0.020
+2026-03-31 13:50:10,400 - INFO - Logged: candidate=6f77fed058540313 | alpha=Xgl1xVg8 | sharpe=0.020 | fitness=0.000
+2026-03-31 13:50:10,466 - INFO - Submitted: group_mean(zscore(power(sign(anl4_ptp_flag), sign(anl4_ptp_flag))), open, sector) | url=https://api.worldquantbrain.com/simulations/wOdh7bHL4yC9I4w6L0cZHj
+2026-03-31 13:50:10,529 - INFO - Submitted: group_mean(group_zscore(vwap, industry), capex, sector) | url=https://api.worldquantbrain.com/simulations/4GiYI25Oy4EOcu310rUAjqiH
+2026-03-31 13:50:10,594 - INFO - Submitted: group_mean(ts_delta(kth_element(income, 20, k=1), 5), inventory, industry) | url=https://api.worldquantbrain.com/simulations/vfc8KgLS5k6aiAIbKoAckc
+2026-03-31 13:52:16,678 - INFO - Logged: candidate=9b1dc48a3324352f | alpha=JjXbkAgW | sharpe=0.000 | fitness=N/A
+2026-03-31 13:52:16,849 - INFO - Logged: candidate=1bb32cf2343d5435 | alpha=586M1dgM | sharpe=0.000 | fitness=N/A
+2026-03-31 13:52:47,196 - INFO - Logged: candidate=4b9cd3c3dfb57ea6 | alpha=Xgl1xd18 | sharpe=0.000 | fitness=N/A
+2026-03-31 13:52:47,258 - INFO - Submitted: group_neutralize(group_neutralize(ts_regression(cash_st, unsystematic_risk_last_360_days, 40), industry), market) | url=https://api.worldquantbrain.com/simulations/2SiOmy4Mn4Ff9iBOr6H8t42
+2026-03-31 13:52:47,336 - INFO - Submitted: winsorize(hump(scale(open))) | url=https://api.worldquantbrain.com/simulations/FWm5Y2se52yaRDGLlgzSn6
+2026-03-31 13:52:47,385 - INFO - Submitted: group_zscore(group_scale(is_nan(anl4_adjusted_netincome_ft), industry), sector) | url=https://api.worldquantbrain.com/simulations/BNuLt4lD504aWQk4VBj8Jo
+2026-03-31 13:54:13,274 - INFO - Logged: candidate=058f0f2d24156779 | alpha=E5akPWRP | sharpe=0.040 | fitness=0.000
+2026-03-31 13:54:18,525 - INFO - Logged: candidate=4d4e1d6c2748abc0 | alpha=A1ak8Z2X | sharpe=0.370 | fitness=0.210
+2026-03-31 13:54:18,661 - INFO - Logged: candidate=3327e6db97d37020 | alpha=JjXbJEEe | sharpe=-0.810 | fitness=-0.500
+2026-03-31 13:54:18,748 - INFO - Submitted: scale(last_diff_value(anl4_capex_low, 5)) | url=https://api.worldquantbrain.com/simulations/i98cK15n4NIalZ14mIa0QPk
+2026-03-31 13:54:18,818 - INFO - Submitted: scale(ts_regression(days_from_last_change(anl4_netprofit_flag), zscore(anl4_flag_erbfintax), 60)) | url=https://api.worldquantbrain.com/simulations/2wa3fvbqp58m9EjeRT2Isq9
+2026-03-31 13:54:18,953 - INFO - Submitted: group_scale(ts_zscore(snt_buzz, 200), market) | url=https://api.worldquantbrain.com/simulations/2nUfezg0K4iScsu13wVjPnBE
+2026-03-31 13:56:20,449 - INFO - Logged: candidate=0514663cd35a5d05 | alpha=VklObEx8 | sharpe=0.040 | fitness=0.010
+2026-03-31 13:56:35,758 - INFO - Logged: candidate=7196485c7732cbcc | alpha=akPo9PaO | sharpe=0.770 | fitness=0.340
+2026-03-31 13:57:11,252 - INFO - Logged: candidate=a5eb0474fed69267 | alpha=WjX92N1P | sharpe=0.700 | fitness=0.120
+2026-03-31 13:57:14,152 - INFO - Submitted: group_backfill(group_rank(is_nan(sales_growth), sector), subindustry, 20) | url=https://api.worldquantbrain.com/simulations/2MDUaG7pk4sY9uZ9f4Qc1Ke
+2026-03-31 13:57:14,276 - INFO - Submitted: group_rank(add(cashflow_op, cashflow_op), sector) | url=https://api.worldquantbrain.com/simulations/44pvbgcpw4NYbyIY0Bxvezv
+2026-03-31 13:57:14,352 - INFO - Submitted: group_mean(revenue, anl4_capex_high, market) | url=https://api.worldquantbrain.com/simulations/450NrM9a459T8VAre6ParBt
+2026-03-31 13:58:40,147 - INFO - Logged: candidate=f2a37f9fbdb63482 | alpha=Gr8k5eNo | sharpe=-1.430 | fitness=-1.530
+2026-03-31 13:58:50,519 - INFO - Logged: candidate=efa87c4bbf867d37 | alpha=kqmQ6PN8 | sharpe=0.360 | fitness=0.210
+2026-03-31 13:58:50,633 - INFO - Logged: candidate=a1d7502c734cb3cd | alpha=kqmQ6PkP | sharpe=0.000 | fitness=N/A
+2026-03-31 13:58:50,699 - INFO - Submitted: scale(vwap) | url=https://api.worldquantbrain.com/simulations/2t6AFb57S4P1bKT139hoVlid
+2026-03-31 13:58:50,759 - INFO - Submitted: scale(if_else(rank(anl4_qf_az_eps_number), last_diff_value(anl4_qf_az_eps_number, 5), sqrt(group_scale(anl4_qf_az_eps_number, industry)))) | url=https://api.worldquantbrain.com/simulations/3fn7zw53j4Uq9zzHKWYKB3W
+2026-03-31 13:58:50,954 - INFO - Submitted: group_scale(cash_st, bucket(rank(anl4_netprofit_flag), buckets=10)) | url=https://api.worldquantbrain.com/simulations/3Q1FO68rO4Fmb1Q11vCmRtXx
+2026-03-31 14:00:22,086 - INFO - Logged: candidate=49b8fce57c35eaa9 | alpha=9q6JOxpq | sharpe=0.080 | fitness=0.020
+2026-03-31 14:00:22,197 - INFO - Logged: candidate=509a1141ba5b95d7 | alpha=6XqzLdnp | sharpe=0.980 | fitness=0.530
+2026-03-31 14:00:27,465 - INFO - Logged: candidate=1d1965b075538c84 | alpha=akPo9KGW | sharpe=0.350 | fitness=0.170
+2026-03-31 14:00:27,538 - INFO - Submitted: group_scale(rank(is_nan(debt_st)), bucket(rank(cashflow_fin), buckets=20)) | url=https://api.worldquantbrain.com/simulations/4jPhUg3LY54dasTQvG0hFvx
+2026-03-31 14:00:27,613 - INFO - Submitted: group_rank(winsorize(capex), bucket(rank(anl4_netprofit_flag), buckets=20)) | url=https://api.worldquantbrain.com/simulations/2sNFU37Ej4o1cwTfBnvCn68
+2026-03-31 14:00:27,678 - INFO - Submitted: group_backfill(bookvalue_ps, subindustry, 20) | url=https://api.worldquantbrain.com/simulations/3ZxfNT6hF4hN8Y9KO0ZoFas
+2026-03-31 14:01:53,680 - INFO - Logged: candidate=e235a6cc7f2a6860 | alpha=mLzZW1lp | sharpe=-0.140 | fitness=-0.030
+2026-03-31 14:01:53,789 - INFO - Logged: candidate=99aa50636d0f15f7 | alpha=9q6JOmdq | sharpe=0.600 | fitness=0.410
+2026-03-31 14:02:44,338 - INFO - Logged: candidate=39fd5669e4071949 | alpha=886nxx9W | sharpe=0.140 | fitness=0.040
+2026-03-31 14:02:44,408 - INFO - Submitted: group_zscore(group_scale(fnd6_drc, industry), bucket(rank(cashflow_op), buckets=5)) | url=https://api.worldquantbrain.com/simulations/1iVWJtdu94Wxa19Lm4VKMh8
+2026-03-31 14:02:44,470 - INFO - Submitted: zscore(goodwill) | url=https://api.worldquantbrain.com/simulations/4o3yZgg954Gfa3K105U9jlCx
+2026-03-31 14:02:44,540 - INFO - Submitted: scale(group_backfill(implied_volatility_call_1080, industry, 20)) | url=https://api.worldquantbrain.com/simulations/2MQRr135H4VoaRvzs39K28B
+2026-03-31 14:04:20,416 - INFO - Logged: candidate=65634dfa2eb6c737 | alpha=3q6zmqaO | sharpe=0.290 | fitness=0.120
+2026-03-31 14:04:20,637 - INFO - Logged: candidate=95d8e721d6857539 | alpha=KP8kAPl8 | sharpe=0.070 | fitness=0.020
+2026-03-31 14:04:20,773 - INFO - Logged: candidate=29c30dcaacca8410 | alpha=pwz8bqGq | sharpe=0.100 | fitness=0.030
+2026-03-31 14:04:20,853 - INFO - Submitted: scale(max(receivable, receivable)) | url=https://api.worldquantbrain.com/simulations/1BlcBP1o64SxbI3TXOlhmLD
+2026-03-31 14:04:20,917 - INFO - Submitted: winsorize((retained_earnings) + (retained_earnings)) | url=https://api.worldquantbrain.com/simulations/qRbxV1jo4ELaVPdHWLrals
+2026-03-31 14:04:20,980 - INFO - Submitted: zscore(ts_delta(sqrt(debt_lt), 5)) | url=https://api.worldquantbrain.com/simulations/7VNcJ2q14vSbmZP55VbLMq
+2026-03-31 14:05:46,903 - INFO - Logged: candidate=02f8b60244d4e2be | alpha=qMzg2qXP | sharpe=0.450 | fitness=0.240
+2026-03-31 14:06:12,419 - INFO - Logged: candidate=0854f4eaab7e2ca7 | alpha=mLzZnOkK | sharpe=0.040 | fitness=0.010
+2026-03-31 14:06:12,541 - INFO - Logged: candidate=08f4dc50d7880d8f | alpha=blPv03Mm | sharpe=-0.780 | fitness=-0.250
+2026-03-31 14:06:12,610 - INFO - Submitted: winsorize(anl4_ptp_flag) | url=https://api.worldquantbrain.com/simulations/1O3Ajwd7f4sMaZlDjwosHDc
+2026-03-31 14:06:12,681 - INFO - Submitted: group_neutralize(ts_delay(sales_growth, 10), subindustry) | url=https://api.worldquantbrain.com/simulations/4Gybyb9Uw5iWaMlgxdInKq7
+2026-03-31 14:06:12,750 - INFO - Submitted: group_mean(group_rank(volume, industry), assets_curr, subindustry) | url=https://api.worldquantbrain.com/simulations/4fNDdLgeA5ce8KdrD0pmzQw
+2026-03-31 14:07:30,309 - INFO - Logged: candidate=f58706162c3e8a8c | alpha=N1jAEj6g | sharpe=1.470 | fitness=1.680
+2026-03-31 14:07:30,461 - INFO - Logged: candidate=cdab75f0d2c5898b | alpha=QPlERlrw | sharpe=-0.260 | fitness=-0.130
+2026-03-31 14:08:21,022 - INFO - Logged: candidate=bd80d5aed274450f | alpha=omzVjV1n | sharpe=0.000 | fitness=N/A
+2026-03-31 14:08:21,134 - INFO - Submitted: group_neutralize(ts_quantile(group_rank(fnd6_acdo, market), 40, 0.75), bucket(rank(ebitda), buckets=20)) | url=https://api.worldquantbrain.com/simulations/3ijuOu5Wg53h91o7LVQKs8V
+2026-03-31 14:08:21,205 - INFO - Submitted: group_scale(liabilities_curr, sector) | url=https://api.worldquantbrain.com/simulations/1uEC2Ub3f5jwadF1czJrolkM
+2026-03-31 14:08:21,269 - INFO - Submitted: zscore(group_mean(ts_delta(sign(anl4_totassets_flag), 10), ts_av_diff(anl4_ebitda_value, 40), industry)) | url=https://api.worldquantbrain.com/simulations/2Mp9hM7MR59abud1eNrZE0rt
+2026-03-31 14:08:26,331 - WARNING - No alpha_id: bb864aad7456835f | response={'id': '3ijuOu5Wg53h91o7LVQKs8V', 'type': 'REGULAR', 'status': 'ERROR', 'message': 'Got invalid value "0.75" for attribute "lookback", should be a positive integer', 'location': {'line': 1, 'start': 17, 'end': 69, 'property': 'regular'}}
+2026-03-31 14:08:26,331 - INFO - Logged: candidate=bb864aad7456835f | alpha=None | sharpe=N/A | fitness=N/A
+2026-03-31 14:10:22,384 - INFO - Logged: candidate=3e6d0a2ec6c0b24c | alpha=6Xqz6jqG | sharpe=0.180 | fitness=0.070
+2026-03-31 14:10:22,504 - INFO - Logged: candidate=4eeecb88fa4d206d | alpha=kqmQpPvL | sharpe=0.000 | fitness=N/A
+2026-03-31 14:10:22,570 - INFO - Submitted: group_rank(group_neutralize(zscore(operating_income), bucket(rank(cashflow), buckets=5)), industry) | url=https://api.worldquantbrain.com/simulations/3Qescq9Of59Xa8K51UbuPHH
+2026-03-31 14:10:22,644 - INFO - Submitted: group_backfill(last_diff_value(winsorize((cash_st) + (cash_st)), 10), market, 5) | url=https://api.worldquantbrain.com/simulations/2hjIEtcZr4hjbQI1a9QHHgOX
+2026-03-31 14:10:22,721 - INFO - Submitted: group_rank(group_zscore(ts_regression(cashflow_fin, split, 120), industry), subindustry) | url=https://api.worldquantbrain.com/simulations/3GGN3n7Ji4YO8IWFw2TjeuZ
+2026-03-31 14:12:03,988 - INFO - Logged: candidate=0eaa8ec8aac5c6fc | alpha=kqmQpW2z | sharpe=0.250 | fitness=0.120
+2026-03-31 14:13:04,632 - INFO - Logged: candidate=8b95ecbcb9fc2eec | alpha=pwz8bpmx | sharpe=0.330 | fitness=0.160
+2026-03-31 14:13:04,755 - INFO - Logged: candidate=d1da87e66b7aac21 | alpha=kqmQpOnz | sharpe=-0.090 | fitness=-0.050
+2026-03-31 14:13:04,837 - INFO - Submitted: group_scale(ts_regression(cashflow_op, implied_volatility_call_270, 40), industry) | url=https://api.worldquantbrain.com/simulations/UwTr42me4Oaan3vBxTQAkR
+2026-03-31 14:13:04,896 - INFO - Submitted: group_backfill(group_neutralize(liabilities, sector), industry, 5) | url=https://api.worldquantbrain.com/simulations/GNdkz3UI4uT9epGvt4tpB3
+2026-03-31 14:13:05,022 - INFO - Submitted: rank(last_diff_value(sales, 5)) | url=https://api.worldquantbrain.com/simulations/sdu5RbNr4ku8HNoX5ug9eA
+2026-03-31 14:14:34,163 - INFO - Logged: candidate=a5c8e4a7c8d87814 | alpha=rKzAaZzE | sharpe=0.520 | fitness=0.100
+2026-03-31 14:15:19,678 - INFO - Logged: candidate=b89faea82ba42080 | alpha=MP8kEMma | sharpe=0.350 | fitness=0.160
+2026-03-31 14:15:19,796 - INFO - Logged: candidate=30a280c93c6e4319 | alpha=LLXko07e | sharpe=0.610 | fitness=0.460
+2026-03-31 14:15:19,858 - INFO - Submitted: zscore(group_backfill(anl4_ebitda_value, subindustry, 20)) | url=https://api.worldquantbrain.com/simulations/2WFEa7gWl58C8Q0AekNs015
+2026-03-31 14:15:19,939 - INFO - Submitted: group_backfill(scale(sga_expense), industry, 10) | url=https://api.worldquantbrain.com/simulations/JXXtBbX14opbFcR8y1tCM
+2026-03-31 14:15:20,032 - INFO - Submitted: group_mean(group_backfill(anl4_bvps_flag, sector, 10), return_assets, market) | url=https://api.worldquantbrain.com/simulations/3Oy9yy92k5bYa15rwdJJ3GY
+2026-03-31 14:16:40,954 - INFO - Logged: candidate=5e622ccb9a2e9106 | alpha=KP8koagN | sharpe=-0.130 | fitness=-0.040
+2026-03-31 14:16:46,118 - INFO - Logged: candidate=273b32d570149872 | alpha=gJPxlpdO | sharpe=0.290 | fitness=0.150
+2026-03-31 14:17:41,822 - INFO - Logged: candidate=b62cb56bd5f5ff94 | alpha=0mQzVn1v | sharpe=0.000 | fitness=N/A
+2026-03-31 14:17:41,893 - INFO - Submitted: group_backfill(group_backfill(assets, subindustry, 5), market, 5) | url=https://api.worldquantbrain.com/simulations/m4l042B959M8K2XG3Fr2Jg
+2026-03-31 14:17:41,952 - INFO - Submitted: group_backfill(zscore(scl12_buzz), subindustry, 10) | url=https://api.worldquantbrain.com/simulations/1cppZUfWV5fj92gfyUotzN7
+2026-03-31 14:17:42,012 - INFO - Submitted: group_backfill(group_scale(anl4_bvps_flag, industry), sector, 10) | url=https://api.worldquantbrain.com/simulations/2tKGbbfLV5erbGugdMySvYC
+2026-03-31 14:19:13,055 - INFO - Logged: candidate=281348a4f121f530 | alpha=QPlEx58M | sharpe=0.260 | fitness=0.110
+2026-03-31 14:20:23,845 - INFO - Logged: candidate=75b1363d38b7f29d | alpha=P0lvR1PE | sharpe=-0.770 | fitness=-0.170
+2026-03-31 14:20:29,030 - INFO - Logged: candidate=c4e8a2ec35f5ee40 | alpha=MP8kEpPr | sharpe=1.330 | fitness=1.130
+2026-03-31 14:20:29,093 - INFO - Submitted: group_rank(inventory, subindustry) | url=https://api.worldquantbrain.com/simulations/2ur4sQ7JZ5aH92A4M9Pn8SA
+2026-03-31 14:20:29,170 - INFO - Submitted: scale(group_backfill(hump(anl4_qf_az_eps_number), industry, 5)) | url=https://api.worldquantbrain.com/simulations/4hIRW7UI4X7bmX1dT2Vs01J
+2026-03-31 14:20:29,242 - INFO - Submitted: group_backfill(group_zscore(sales, bucket(rank(operating_income), buckets=5)), industry, 20) | url=https://api.worldquantbrain.com/simulations/erDynM14tS9wpYKN1kSx8
+2026-03-31 14:22:05,160 - INFO - Logged: candidate=6b330832e9109ee9 | alpha=WjX9ZPPj | sharpe=0.570 | fitness=0.330
+2026-03-31 14:22:40,578 - INFO - Logged: candidate=8b4ba21a203e73bb | alpha=Xgl13Jnl | sharpe=1.200 | fitness=0.800
+2026-03-31 14:22:40,699 - INFO - Logged: candidate=37b60f8c461625bc | alpha=mLzZG6Xx | sharpe=0.280 | fitness=0.140
+2026-03-31 14:22:40,763 - INFO - Submitted: group_mean(if_else(scale(ebit), ebit, ebit), sales_growth, industry) | url=https://api.worldquantbrain.com/simulations/a6Ob74035iFa38XEpXJ7xo
+2026-03-31 14:22:40,839 - INFO - Submitted: group_mean(pcr_oi_270, anl4_ebit_value, sector) | url=https://api.worldquantbrain.com/simulations/2JfhvqgKZ5i7ac713N966v0r
+2026-03-31 14:22:40,916 - INFO - Submitted: scale(last_diff_value(anl4_epsr_flag, 20)) | url=https://api.worldquantbrain.com/simulations/2C6s4kehH4w4blJ11tI8ZstH
+2026-03-31 14:24:27,991 - INFO - Logged: candidate=c880d365b1f6e450 | alpha=1YmJ8lPQ | sharpe=0.000 | fitness=N/A
+2026-03-31 14:24:43,248 - INFO - Logged: candidate=70f3a330ef525ec8 | alpha=6XqzW0Q7 | sharpe=0.000 | fitness=N/A
+2026-03-31 14:24:53,469 - INFO - Logged: candidate=06140cf4fdc4dc27 | alpha=1YmJ8Pmm | sharpe=1.320 | fitness=1.290
+2026-03-31 14:24:53,601 - INFO - Submitted: zscore(cap) | url=https://api.worldquantbrain.com/simulations/2i7kD444QZ9Swm0etqXny
+2026-03-31 14:24:53,685 - INFO - Submitted: group_zscore(kth_element(cashflow_fin, 40, k=3), industry) | url=https://api.worldquantbrain.com/simulations/NfYAbddC4SIaAmIzBSKDtS
+2026-03-31 14:24:53,837 - INFO - Submitted: group_zscore(group_scale(kth_element(liabilities_curr, 40, k=1), industry), sector) | url=https://api.worldquantbrain.com/simulations/1bmO9ffWC4jpaBr9pUEa1pH
+2026-03-31 14:26:59,916 - INFO - Logged: candidate=2cdaec9f4ae8d9fc | alpha=P0lvRkpM | sharpe=0.080 | fitness=0.020
+2026-03-31 14:27:00,043 - INFO - Logged: candidate=3949516f6ed66013 | alpha=E5akjPQr | sharpe=-0.080 | fitness=-0.020
+2026-03-31 14:27:00,157 - INFO - Logged: candidate=1d222646ff4d5d7f | alpha=E5akjnO0 | sharpe=0.260 | fitness=0.120
+2026-03-31 14:27:00,223 - INFO - Submitted: group_backfill(ts_delta(sales_growth, 10), sector, 5) | url=https://api.worldquantbrain.com/simulations/4qBs6w5F4PH9KGPm1Pb2LM
+2026-03-31 14:27:00,296 - INFO - Submitted: group_zscore(group_rank(group_zscore(reverse(cashflow_fin), industry), sector), market) | url=https://api.worldquantbrain.com/simulations/3v5Ovub5X4jabvz17FGtxdTr
+2026-03-31 14:27:00,356 - INFO - Submitted: group_zscore(group_neutralize(group_backfill(fnd6_drc, market, 5), industry), bucket(rank(anl4_flag_erbfintax), buckets=20)) | url=https://api.worldquantbrain.com/simulations/eKEtH4ai5faavz8yQARrRJ
+2026-03-31 14:30:57,301 - INFO - Logged: candidate=5fadae8696f8d129 | alpha=A1akAaGl | sharpe=0.880 | fitness=0.470
+2026-03-31 14:30:57,573 - INFO - Logged: candidate=41092a80c19d05b3 | alpha=gJPx2pLg | sharpe=0.040 | fitness=0.010
+2026-03-31 14:30:57,686 - INFO - Logged: candidate=d07ff0d004478bf8 | alpha=rKzAxgRm | sharpe=0.100 | fitness=0.030
+2026-03-31 14:30:57,810 - INFO - Submitted: group_mean(ts_regression(sqrt(inverse(volume)), last_diff_value(goodwill, 5), 200), sales, market) | url=https://api.worldquantbrain.com/simulations/1uQ4Bt18z4s49xP1eT3tAEY4
+2026-03-31 14:30:57,922 - INFO - Submitted: zscore(ts_regression(group_scale(pcr_oi_270, market), retained_earnings, 60)) | url=https://api.worldquantbrain.com/simulations/1OCGP5f0M5gZc8sOQf9k1Gf
+2026-03-31 14:31:00,624 - INFO - Submitted: rank(winsorize(subtract(fnd6_drc, fnd6_drc, log(fnd6_drc)))) | url=https://api.worldquantbrain.com/simulations/3p0jjFflR54l9GML6xbOXyo
+2026-03-31 14:32:24,354 - INFO - Logged: candidate=752d5ccac6f50305 | alpha=JjXb9pLE | sharpe=0.000 | fitness=N/A
+2026-03-31 14:32:24,509 - INFO - Logged: candidate=b08a6e27187aec4f | alpha=1YmJMgPR | sharpe=-0.120 | fitness=-0.010
+2026-03-31 14:32:24,545 - WARNING - No alpha_id: 9344c82c2b8ecc2d | response={'id': '3p0jjFflR54l9GML6xbOXyo', 'type': 'REGULAR', 'status': 'ERROR', 'message': 'Invalid number of inputs : 3, should be exactly 2 input(s)', 'location': {'line': 1, 'start': 15, 'end': 58, 'property': 'regular'}}
+2026-03-31 14:32:24,546 - INFO - Logged: candidate=9344c82c2b8ecc2d | alpha=None | sharpe=N/A | fitness=N/A
+2026-03-31 14:32:24,638 - INFO - Submitted: group_rank(rank(fnd6_ivaco), industry) | url=https://api.worldquantbrain.com/simulations/UUsgd3lP4CGcfMpDeY5uaH
+2026-03-31 14:32:24,700 - INFO - Submitted: group_neutralize(group_neutralize(group_backfill(ts_av_diff(fnd6_drc, 60), sector, 20), market), industry) | url=https://api.worldquantbrain.com/simulations/4or1cn1t35129Nv1h5akkBaN
+2026-03-31 14:32:24,845 - INFO - Submitted: rank(add(anl4_gric_flag, anl4_gric_flag)) | url=https://api.worldquantbrain.com/simulations/3kai9UazE4L6aO64zToo0Ue
+2026-03-31 14:33:45,729 - INFO - Logged: candidate=897bddf7024ef1e1 | alpha=QPlE83YQ | sharpe=1.380 | fitness=0.750
+2026-03-31 14:33:55,976 - INFO - Logged: candidate=45fbc59b6ceb03bc | alpha=YPkQebgA | sharpe=0.060 | fitness=0.010
+2026-03-31 14:33:56,106 - INFO - Logged: candidate=f82663ebca75f25d | alpha=O0mo3Nqd | sharpe=0.830 | fitness=0.430
+2026-03-31 14:33:56,182 - INFO - Submitted: group_rank(kth_element(dividend, 252, k=3), subindustry) | url=https://api.worldquantbrain.com/simulations/1a4TOidOQ5fh8Vc2wPEkBGq
+2026-03-31 14:33:56,256 - INFO - Submitted: group_rank(group_neutralize(if_else(fnd6_ivaco, fnd6_ivaco, fnd6_ivaco), sector), industry) | url=https://api.worldquantbrain.com/simulations/2QaStV35856ZbzgSZ91OSjo
+2026-03-31 14:33:56,331 - INFO - Submitted: group_mean(sign(fnd6_drc), inventory, market) | url=https://api.worldquantbrain.com/simulations/43yFq3czW4Vqb2Z175LyGnNW
+2026-03-31 14:35:18,015 - INFO - Logged: candidate=c0801a2a59885318 | alpha=MP8krgEM | sharpe=-0.790 | fitness=-0.150
+2026-03-31 14:35:18,139 - INFO - Logged: candidate=6900a48874c505a7 | alpha=YPkQellR | sharpe=1.380 | fitness=0.750
+2026-03-31 14:35:27,188 - INFO - Logged: candidate=e5916969a2c4d183 | alpha=VklOWZn8 | sharpe=0.000 | fitness=N/A
+2026-03-31 14:35:27,303 - INFO - Submitted: scale(ts_regression(zscore(eps), sales, 40)) | url=https://api.worldquantbrain.com/simulations/tyB4wcUI4T7bMHciP9kWMS
+2026-03-31 14:35:27,399 - INFO - Submitted: winsorize(last_diff_value(fnd6_ivaco, 10)) | url=https://api.worldquantbrain.com/simulations/2N27nUb6O5fWbdn101pm8ZUQ
+2026-03-31 14:35:27,465 - INFO - Submitted: group_zscore(group_backfill(fnd6_drc, subindustry, 5), sector) | url=https://api.worldquantbrain.com/simulations/1KS6h8bzO547aeC11D4JTRy8
+2026-03-31 14:37:28,577 - INFO - Logged: candidate=ca2e2a58956b912d | alpha=9q6Jn50K | sharpe=0.640 | fitness=0.260
+2026-03-31 14:37:28,697 - INFO - Logged: candidate=cb125d3bfec32e5e | alpha=2rZJYxlP | sharpe=0.430 | fitness=0.150
+2026-03-31 14:37:28,831 - INFO - Logged: candidate=43271a06f3bc5104 | alpha=N1jAZ2r7 | sharpe=0.080 | fitness=0.020
+2026-03-31 14:37:28,929 - INFO - Submitted: winsorize(last_diff_value(anl4_netdebt_flag, 20)) | url=https://api.worldquantbrain.com/simulations/3czcAD5LX4AncmMJIxN9kl4
+2026-03-31 14:37:28,992 - INFO - Submitted: scale(ts_regression(winsorize(implied_volatility_call_270), scale(cashflow_op), 120)) | url=https://api.worldquantbrain.com/simulations/2rVi0K4dM4o4aCfTBcMPmv2
+2026-03-31 14:37:29,093 - INFO - Submitted: group_rank(sign(group_neutralize(ppent, sector)), sector) | url=https://api.worldquantbrain.com/simulations/16gTo77Eg4NrazmgjzEn0vY
+2026-03-31 14:39:49,721 - INFO - Logged: candidate=89421ff2d0cfaa7f | alpha=mLzZERpE | sharpe=0.080 | fitness=0.030
+2026-03-31 14:39:49,872 - INFO - Logged: candidate=30d7f64bef93c130 | alpha=qMzgQMzK | sharpe=0.320 | fitness=0.080
+2026-03-31 14:39:49,995 - INFO - Logged: candidate=48b138a0e4c342da | alpha=d57dNkpg | sharpe=0.360 | fitness=0.180
+2026-03-31 14:39:50,077 - INFO - Submitted: scale(kth_element(group_backfill(fnd6_drlt, industry, 10), 252, k=2)) | url=https://api.worldquantbrain.com/simulations/3jBIUZfEh5ik9ls25EEbIOq
+2026-03-31 14:39:50,175 - INFO - Submitted: rank(group_backfill(fnd6_acdo, subindustry, 10)) | url=https://api.worldquantbrain.com/simulations/YCGqEcHe4WG91ubN0hnB5p
+2026-03-31 14:39:50,365 - INFO - Submitted: zscore(ts_regression(sharesout, anl4_bvps_flag, 60)) | url=https://api.worldquantbrain.com/simulations/1eYLii5CH4qiauEvoblSSGv
+2026-03-31 14:42:03,326 - INFO - Logged: candidate=81d35e721a84e310 | alpha=mLzZEAz6 | sharpe=0.230 | fitness=0.090
+2026-03-31 14:42:03,449 - INFO - Logged: candidate=dad9107008669a47 | alpha=1YmJr68m | sharpe=0.510 | fitness=0.300
+2026-03-31 14:42:03,650 - INFO - Logged: candidate=cd7cac2ea5521eff | alpha=kqmQzeez | sharpe=0.030 | fitness=0.010
+2026-03-31 14:42:03,738 - INFO - Submitted: group_mean(zscore(anl4_tbve_ft), anl4_ptp_flag, industry) | url=https://api.worldquantbrain.com/simulations/RNE6j7mm4EHa32m4xp10Xw
+2026-03-31 14:42:03,808 - INFO - Submitted: group_scale(ts_regression(high, winsorize(ebitda), 200), sector) | url=https://api.worldquantbrain.com/simulations/23ExknfjZ4VTbX11cgc9KJKh
+2026-03-31 14:42:03,868 - INFO - Submitted: group_rank(group_neutralize(group_neutralize(ts_product(sign(eps), 200), sector), subindustry), sector) | url=https://api.worldquantbrain.com/simulations/3ikC3r8q34W89mr9XApsrsr
+2026-03-31 14:43:46,739 - INFO - Logged: candidate=0f43371b037b12b2 | alpha=3q6z87qz | sharpe=0.000 | fitness=N/A
+2026-03-31 14:44:33,521 - INFO - Logged: candidate=872d0f475462403a | alpha=P0lvkOm7 | sharpe=-0.720 | fitness=-0.400
+2026-03-31 14:44:33,680 - INFO - Logged: candidate=1fe4ce70dd72b9f7 | alpha=1YmJrgaK | sharpe=0.810 | fitness=0.140
+2026-03-31 14:44:33,761 - INFO - Submitted: scale(kth_element(return_equity, 200, k=1)) | url=https://api.worldquantbrain.com/simulations/PPR4feN04Ib9p44a0g56eZ
+2026-03-31 14:44:33,822 - INFO - Submitted: rank(zscore(hump(assets_curr))) | url=https://api.worldquantbrain.com/simulations/3bjUn5cU35cE8GjgJU7uV9h
+2026-03-31 14:44:33,934 - INFO - Submitted: group_neutralize(ebitda, market) | url=https://api.worldquantbrain.com/simulations/1MJPnJcNH4QU91aYHMK9WAv
+2026-03-31 14:46:33,950 - INFO - Logged: candidate=fd5e492a77f49ae1 | alpha=omzVxaLJ | sharpe=-0.050 | fitness=-0.010
+2026-03-31 14:46:44,147 - INFO - Logged: candidate=b630cf88b805efda | alpha=mLzZEK3X | sharpe=0.730 | fitness=0.610
+2026-03-31 14:46:44,285 - INFO - Logged: candidate=2aa994b67f198ae4 | alpha=JjXb6P8l | sharpe=0.020 | fitness=0.000
+2026-03-31 14:46:44,372 - INFO - Submitted: group_neutralize(dividend, industry) | url=https://api.worldquantbrain.com/simulations/1p9ypmejs4T990csKeP9HDK
+2026-03-31 14:46:44,442 - INFO - Submitted: group_scale(hump(group_zscore(sales, sector)), bucket(rank(income), buckets=20)) | url=https://api.worldquantbrain.com/simulations/3yM4vHfOr4ofcGMXbXqJrMU
+2026-03-31 14:46:44,515 - INFO - Submitted: group_scale(group_scale(group_backfill(kth_element(debt_st, 20, k=2), market, 5), market), bucket(rank(anl4_ebit_value), buckets=10)) | url=https://api.worldquantbrain.com/simulations/mDNDe9a65gSck31c9HOypbS
+2026-03-31 14:48:50,052 - INFO - Logged: candidate=f11e32a3130048a1 | alpha=omzVxXEv | sharpe=-0.710 | fitness=-0.130
+2026-03-31 14:48:50,156 - INFO - Logged: candidate=231b4b452de977dd | alpha=gJPxn5VJ | sharpe=0.360 | fitness=0.200
+2026-03-31 14:48:50,282 - INFO - Logged: candidate=2ab1b6dbe0a6a9d5 | alpha=gJPxnLwO | sharpe=-0.210 | fitness=-0.080
+2026-03-31 14:48:50,428 - INFO - Submitted: rank(zscore(hump(anl4_ebit_value))) | url=https://api.worldquantbrain.com/simulations/zaTL4gwB5jvbq7KHANNmnb
+2026-03-31 14:48:50,497 - INFO - Submitted: winsorize(kth_element(ebitda, 200, k=2)) | url=https://api.worldquantbrain.com/simulations/4CvpiY8jM55h9Gglckbvfba
+2026-03-31 14:48:50,603 - INFO - Submitted: group_zscore((scale(days_from_last_change(unsystematic_risk_last_360_days))) + (zscore(unsystematic_risk_last_360_days)), bucket(rank(debt_st), buckets=20)) | url=https://api.worldquantbrain.com/simulations/2CY7Av5Fs4NLboy5GUVGHx
+2026-03-31 14:50:51,708 - INFO - Logged: candidate=18431ca7fb021825 | alpha=Gr8oq18Q | sharpe=0.280 | fitness=0.150
+2026-03-31 14:51:32,281 - INFO - Logged: candidate=c2e9c64a2e037df3 | alpha=78XdkAmL | sharpe=-0.000 | fitness=-0.000
+2026-03-31 14:51:32,399 - INFO - Logged: candidate=370cbf0e2b79e7c3 | alpha=N1jAYYJE | sharpe=-0.170 | fitness=-0.060
+2026-03-31 14:51:32,472 - INFO - Submitted: scale(ts_regression(scale(ebitda), hump(ppent), 60)) | url=https://api.worldquantbrain.com/simulations/2JCPDI3955j8aIFevsi3ZsB
+2026-03-31 14:51:32,537 - INFO - Submitted: zscore(group_zscore(reverse(hump(anl4_flag_erbfintax)), market)) | url=https://api.worldquantbrain.com/simulations/1slAbV6tx51Da14lzPJgRt4
+2026-03-31 14:51:32,609 - INFO - Submitted: group_backfill(winsorize(operating_expense), market, 5) | url=https://api.worldquantbrain.com/simulations/3O5znafT4YWbWhx5uNmixy
+2026-03-31 14:53:08,553 - INFO - Logged: candidate=56ae31f6df0cd6c8 | alpha=qMzXKeEO | sharpe=0.540 | fitness=0.190
+2026-03-31 14:53:08,676 - INFO - Logged: candidate=99574ed6c26469fe | alpha=MP8xj9x8 | sharpe=-1.160 | fitness=-1.100
+2026-03-31 14:53:08,922 - INFO - Logged: candidate=1c2a3b0ee356c4ef | alpha=1Ymgq6Qm | sharpe=0.410 | fitness=0.250
+2026-03-31 14:53:09,007 - INFO - Submitted: group_zscore(hump(rank(close)), industry) | url=https://api.worldquantbrain.com/simulations/bT13sCI5239GJ1atrW3W0C
+2026-03-31 14:53:09,088 - INFO - Submitted: group_mean(if_else(ts_zscore(eps, 252), eps, group_neutralize(hump(eps), bucket(rank(anl4_qf_az_eps_number), buckets=5))), anl4_epsr_flag, sector) | url=https://api.worldquantbrain.com/simulations/2Ex0hC12D5f6cndgrytaNst
+2026-03-31 14:53:09,157 - INFO - Submitted: group_backfill(cap, sector, 20) | url=https://api.worldquantbrain.com/simulations/2xcXexdSu4w38MP12ISVFuFf
+2026-03-31 14:55:31,003 - INFO - Logged: candidate=b2a5145654973313 | alpha=zqoWvWo8 | sharpe=0.260 | fitness=0.120
+2026-03-31 14:55:31,254 - INFO - Logged: candidate=152a8afe90782a81 | alpha=vRzmKJAz | sharpe=0.000 | fitness=N/A
+2026-03-31 14:55:31,380 - INFO - Logged: candidate=1c76d7af95f22326 | alpha=xAznKe2m | sharpe=0.080 | fitness=0.020
+2026-03-31 14:55:34,412 - INFO - Submitted: rank(kth_element(implied_volatility_call_120, 20, k=1)) | url=https://api.worldquantbrain.com/simulations/qJCJI3Js4YfbXgWLbGfsIq
+2026-03-31 14:55:34,513 - INFO - Submitted: group_neutralize(group_backfill(unsystematic_risk_last_360_days, industry, 10), subindustry) | url=https://api.worldquantbrain.com/simulations/4pz9VAah94mLbHZzuaGq8Yb
+2026-03-31 14:55:34,590 - INFO - Submitted: scale(ts_count_nans(scl12_buzz, 60)) | url=https://api.worldquantbrain.com/simulations/tZ6ebaY54VkbQ41bYWOQHCE
+2026-03-31 14:57:31,309 - INFO - Logged: candidate=d476073eeff56a2c | alpha=kqmKxg7k | sharpe=0.060 | fitness=0.020
+2026-03-31 14:58:16,814 - INFO - Logged: candidate=8ff97c3af6fd9fb0 | alpha=886LmNmz | sharpe=-0.260 | fitness=-0.120
+2026-03-31 14:58:16,925 - INFO - Logged: candidate=30d58fdc32ab5aa5 | alpha=0mQ8bwlk | sharpe=-0.820 | fitness=-0.450
+2026-03-31 14:58:16,999 - INFO - Submitted: group_backfill(subtract(fnd6_drc, fnd6_drc), sector, 5) | url=https://api.worldquantbrain.com/simulations/3G23Wm6gs4Zj93DZAUzm6i6
+2026-03-31 14:58:17,081 - INFO - Submitted: winsorize(last_diff_value(kth_element(sga_expense, 120, k=2), 5)) | url=https://api.worldquantbrain.com/simulations/4EN0lzbL4w1aMgNL0ZeXSW
+2026-03-31 14:58:17,486 - INFO - Submitted: group_mean(multiply(return_equity, return_equity), returns, subindustry) | url=https://api.worldquantbrain.com/simulations/Djgqc6qp4F4adHaKQexIgQ
+2026-03-31 14:59:36,949 - INFO - Logged: candidate=1d3d70ef5a6e1dbf | alpha=e72rlGjE | sharpe=0.000 | fitness=N/A
+2026-03-31 14:59:37,081 - INFO - Logged: candidate=f936580b26aa0be4 | alpha=QPlQ1gPg | sharpe=0.330 | fitness=0.190
+2026-03-31 14:59:42,233 - INFO - Logged: candidate=6c97b41874722e3f | alpha=YPkAjJvo | sharpe=0.000 | fitness=N/A
+2026-03-31 14:59:42,321 - INFO - Submitted: scale(signed_power(low, low)) | url=https://api.worldquantbrain.com/simulations/2eNC3k24S4tU9vn2MxGNT3b
+2026-03-31 14:59:42,451 - INFO - Submitted: group_backfill(days_from_last_change(anl4_ebit_value), market, 20) | url=https://api.worldquantbrain.com/simulations/2qTQzOgMh5629YI12SOqio4g
+2026-03-31 14:59:42,527 - INFO - Submitted: group_backfill(group_mean((adv20) - (adv20), ts_delay(anl4_flag_erbfintax, 10), sector), market, 5) | url=https://api.worldquantbrain.com/simulations/4BkZBG5Jm4iGaLEK5KEbcU4
+2026-03-31 15:01:06,730 - INFO - Logged: candidate=617242ec01ff5187 | alpha=RRarJxAd | sharpe=-0.320 | fitness=-0.060
+2026-03-31 15:01:11,929 - INFO - Logged: candidate=1d2f31afa04a12cb | alpha=KP8LKA18 | sharpe=-0.970 | fitness=-0.720
+2026-03-31 15:01:12,176 - INFO - Logged: candidate=9e5d5671de2dd1eb | alpha=LLXRPvPL | sharpe=0.000 | fitness=N/A
+2026-03-31 15:01:12,240 - INFO - Submitted: scale(low) | url=https://api.worldquantbrain.com/simulations/4jxMzo1Sr4BfbjDoTySmwId
+2026-03-31 15:01:12,314 - INFO - Submitted: winsorize(last_diff_value(anl4_ebitda_value, 20)) | url=https://api.worldquantbrain.com/simulations/4mrike3lI50IbjneeWuegUs
+2026-03-31 15:01:12,399 - INFO - Submitted: group_mean(group_backfill(anl4_totassets_flag, sector, 10), anl4_ptp_flag, industry) | url=https://api.worldquantbrain.com/simulations/24Ok8cgQq5djau21gLC7MUf5
+2026-03-31 15:02:33,163 - INFO - Logged: candidate=041cdde53aaf8256 | alpha=j2wg22pk | sharpe=0.090 | fitness=0.030
+2026-03-31 15:02:33,351 - INFO - Logged: candidate=f522a387a53ceb45 | alpha=kqmKqEdg | sharpe=0.190 | fitness=0.080
+2026-03-31 15:02:43,538 - INFO - Logged: candidate=4364f772bccf3fa4 | alpha=6XqEXmZL | sharpe=0.000 | fitness=N/A
+2026-03-31 15:02:43,623 - INFO - Submitted: group_neutralize(zscore(high), bucket(rank(anl4_qf_az_eps_number), buckets=10)) | url=https://api.worldquantbrain.com/simulations/2qfwvN23I4nS8Wg12eaoIsLY
+2026-03-31 15:02:43,677 - INFO - Submitted: group_mean(kth_element(adv20, 252, k=3), implied_volatility_put_270, industry) | url=https://api.worldquantbrain.com/simulations/2WlEi3d4Z4NFayweNDPtXbr
+2026-03-31 15:02:43,751 - INFO - Submitted: group_backfill(min(hump(group_zscore(anl4_tbve_ft, market)), min(anl4_tbve_ft, anl4_tbve_ft)), market, 5) | url=https://api.worldquantbrain.com/simulations/Cev1NeV53QbBOD6SXc4r3
+2026-03-31 15:04:19,657 - INFO - Logged: candidate=79cf19af040d38d0 | alpha=e72r7J1d | sharpe=0.050 | fitness=0.010
+2026-03-31 15:04:19,769 - INFO - Logged: candidate=806093ec5f28fdd3 | alpha=qMzXMqQ2 | sharpe=0.000 | fitness=N/A
+2026-03-31 15:04:24,987 - INFO - Logged: candidate=615719d4a0419d0b | alpha=WjXgjknd | sharpe=1.100 | fitness=0.710
+2026-03-31 15:04:25,111 - INFO - Submitted: group_zscore(multiply(close, close), industry) | url=https://api.worldquantbrain.com/simulations/1zkTtnfsj4ijbaQ17KaHy4GK
+2026-03-31 15:04:25,212 - INFO - Submitted: rank(ts_regression(high, close, 20)) | url=https://api.worldquantbrain.com/simulations/1X6STt1Nz4V9al4jbre2s04
+2026-03-31 15:04:25,282 - INFO - Submitted: winsorize(if_else(anl4_adjusted_netincome_ft, anl4_adjusted_netincome_ft, anl4_adjusted_netincome_ft)) | url=https://api.worldquantbrain.com/simulations/39FoIk7Yr4t0az9zriFBkPi
+2026-03-31 15:06:16,628 - INFO - Logged: candidate=179621d9388d30ed | alpha=omzYm31v | sharpe=0.080 | fitness=0.020
+2026-03-31 15:06:21,402 - INFO - Logged: candidate=613d5d46407c74f4 | alpha=omzYm9J2 | sharpe=0.880 | fitness=0.160
+2026-03-31 15:06:21,436 - WARNING - No alpha_id: 73f8ae19eb8daa66 | response={'id': '39FoIk7Yr4t0az9zriFBkPi', 'type': 'REGULAR', 'status': 'ERROR', 'message': 'There was an error while running the simulation. Please try again or contact BRAIN support if this problem persists.'}
+2026-03-31 15:06:21,437 - INFO - Logged: candidate=73f8ae19eb8daa66 | alpha=None | sharpe=N/A | fitness=N/A
+2026-03-31 15:06:21,544 - INFO - Submitted: scale(anl4_ebitda_value) | url=https://api.worldquantbrain.com/simulations/yqG5688V4tNbClzdGD6Vsu
+2026-03-31 15:06:21,617 - INFO - Submitted: scale(scale(hump(scl12_buzz))) | url=https://api.worldquantbrain.com/simulations/3IRJs55Wg5i3aCzIRf7V2R7
+2026-03-31 15:06:21,687 - INFO - Submitted: group_backfill(zscore(cap), market, 5) | url=https://api.worldquantbrain.com/simulations/4v6y9JbMv5d0awAdtHwMc9
+2026-03-31 15:07:57,519 - INFO - Logged: candidate=d24c78113178b627 | alpha=N1jO1r7g | sharpe=-0.140 | fitness=-0.050
+2026-03-31 15:07:57,621 - INFO - Logged: candidate=8adbbe61f81cb4d1 | alpha=O0m90pjY | sharpe=-0.850 | fitness=-0.350
+2026-03-31 15:07:57,724 - INFO - Logged: candidate=871a94c100b773bc | alpha=pwz7wlj6 | sharpe=0.080 | fitness=0.020
+2026-03-31 15:07:57,784 - INFO - Submitted: scale(group_rank(kth_element(sign(anl4_bvps_flag), 120, k=2), industry)) | url=https://api.worldquantbrain.com/simulations/hqIkWdBY4IBail9PAXPf3Z
+2026-03-31 15:07:58,051 - INFO - Submitted: group_mean(ts_delta(anl4_ebitda_value, 10), income_tax, industry) | url=https://api.worldquantbrain.com/simulations/4n4D5P3vl4smaxtP8LPidDa
+2026-03-31 15:07:58,110 - INFO - Submitted: group_zscore(returns, sector) | url=https://api.worldquantbrain.com/simulations/p9GxycHW4IHawV11pvOwKf
+2026-03-31 15:09:29,007 - INFO - Logged: candidate=fea7b53874eafb54 | alpha=npzWpP2l | sharpe=0.000 | fitness=N/A
+2026-03-31 15:10:04,405 - INFO - Logged: candidate=bb92afd3ee232ed1 | alpha=P0l10ooJ | sharpe=0.000 | fitness=N/A
+2026-03-31 15:10:04,537 - INFO - Logged: candidate=bc119d84d74b543f | alpha=E5aK5V7K | sharpe=-1.200 | fitness=-0.380
+2026-03-31 15:10:04,593 - INFO - Submitted: zscore(group_neutralize(ts_decay_linear(vwap, 120), bucket(rank(anl4_capex_low), buckets=5))) | url=https://api.worldquantbrain.com/simulations/2kUHVB8Ow4K9cE11dRMm97XG
+2026-03-31 15:10:04,684 - INFO - Submitted: rank(snt_buzz) | url=https://api.worldquantbrain.com/simulations/332ENydDw4CNb9iQC5x9423
+2026-03-31 15:10:04,763 - INFO - Submitted: group_neutralize(group_zscore(ts_covariance(cashflow_fin, scale(anl4_gric_flag), 252), sector), subindustry) | url=https://api.worldquantbrain.com/simulations/IN1rb79S5fAcMkioJet2vV
+2026-03-31 15:11:35,957 - INFO - Logged: candidate=0c1097affde43822 | alpha=LLXRLr6n | sharpe=0.170 | fitness=0.070
+2026-03-31 15:11:36,068 - INFO - Logged: candidate=0aaec69f51dc8dc4 | alpha=npzWpQ9E | sharpe=0.270 | fitness=0.030
+2026-03-31 15:11:36,195 - INFO - Logged: candidate=8b0ba4f237a2699c | alpha=1YmgYKAm | sharpe=0.030 | fitness=0.000
+2026-03-31 15:11:36,277 - INFO - Submitted: rank(volume) | url=https://api.worldquantbrain.com/simulations/2oXZEj2SM4Ymc7dgYvM6kGY
+2026-03-31 15:11:36,356 - INFO - Submitted: group_neutralize(group_scale(group_backfill(anl4_capex_low, subindustry, 10), market), industry) | url=https://api.worldquantbrain.com/simulations/22gSCm7qP4yp8Yx1ehcpZXsU
+2026-03-31 15:11:36,414 - INFO - Submitted: group_mean(group_scale(high, subindustry), cap, subindustry) | url=https://api.worldquantbrain.com/simulations/Pb2943wI4oMbOwK8joTeqY
+2026-03-31 15:13:07,541 - INFO - Logged: candidate=57eacf5d8b5d6793 | alpha=1YmgY32M | sharpe=0.470 | fitness=0.150
+2026-03-31 15:13:32,875 - INFO - Logged: candidate=397bb242bda61f1b | alpha=3q6AqNGO | sharpe=-0.160 | fitness=-0.060
+2026-03-31 15:13:43,189 - INFO - Logged: candidate=ec073a087d9c9002 | alpha=A1a31obl | sharpe=0.000 | fitness=N/A
+2026-03-31 15:13:43,260 - INFO - Submitted: group_backfill(group_scale(volume, subindustry), sector, 5) | url=https://api.worldquantbrain.com/simulations/U95yobDy4DacbO15DJUQpCm
+2026-03-31 15:13:43,342 - INFO - Submitted: zscore(kth_element(anl4_ebitda_value, 200, k=2)) | url=https://api.worldquantbrain.com/simulations/27Z7WU3Gh4m5bIUfG0bhlid
+2026-03-31 15:13:43,396 - INFO - Submitted: group_zscore(ts_regression(anl4_bvps_flag, implied_volatility_put_270, 252), market) | url=https://api.worldquantbrain.com/simulations/cT1jjb0t4QncENEJASiXn2
+2026-03-31 15:15:49,593 - INFO - Logged: candidate=947c5f5bc18c514f | alpha=d57QkL0Y | sharpe=0.540 | fitness=0.170
+2026-03-31 15:15:49,717 - INFO - Logged: candidate=0249cb900af57d53 | alpha=RRarjQ1d | sharpe=-0.140 | fitness=-0.050
+2026-03-31 15:15:49,846 - INFO - Logged: candidate=af7ef55144d33423 | alpha=1YmgkbKR | sharpe=0.560 | fitness=0.200
+2026-03-31 15:15:49,915 - INFO - Submitted: rank(scale(ts_covariance((volume) - (volume), close, 200))) | url=https://api.worldquantbrain.com/simulations/2rJtuA82H4q18Zjxsm6I3KQ
+2026-03-31 15:15:49,992 - INFO - Submitted: group_zscore(kth_element(group_backfill(implied_volatility_call_120, sector, 5), 252, k=2), subindustry) | url=https://api.worldquantbrain.com/simulations/3uEpjHgu4iNboj18vX5XSds
+2026-03-31 15:15:50,118 - INFO - Submitted: rank(ts_delta(sign(anl4_totassets_flag), 10)) | url=https://api.worldquantbrain.com/simulations/3ildfYdpB5jPcByVsPVH0n2
+2026-03-31 15:17:20,917 - INFO - Logged: candidate=accfdd2b934dea0a | alpha=2rZK8RzP | sharpe=0.000 | fitness=N/A
+2026-03-31 15:18:11,414 - INFO - Logged: candidate=53e412f064a38b00 | alpha=0mQ8Oenp | sharpe=0.070 | fitness=0.020
+2026-03-31 15:18:11,537 - INFO - Logged: candidate=49419ed82cd884db | alpha=78Xd7KZx | sharpe=0.000 | fitness=N/A
+2026-03-31 15:18:11,609 - INFO - Submitted: zscore(ts_covariance(is_nan(anl4_totassets_flag), zscore(fnd6_ivaco), 200)) | url=https://api.worldquantbrain.com/simulations/3DtIIo9X54y8bbtbvFTAOjv
+2026-03-31 15:18:11,672 - INFO - Submitted: scale(kth_element(snt_buzz, 252, k=2)) | url=https://api.worldquantbrain.com/simulations/1y3Wi8gwQ5798Ju180h4fbQn
+2026-03-31 15:18:11,745 - INFO - Submitted: group_mean(ts_regression(adv20, capex, 252), fnd6_ivaco, subindustry) | url=https://api.worldquantbrain.com/simulations/2IvND084W4GCbGawpYTDicM
+2026-03-31 15:20:57,741 - INFO - Logged: candidate=32acb02b730433c0 | alpha=akPOjb1v | sharpe=0.390 | fitness=0.140
+2026-03-31 15:20:57,866 - INFO - Logged: candidate=134bd792cb261de1 | alpha=npzWxNp8 | sharpe=0.590 | fitness=0.110
+2026-03-31 15:20:57,984 - INFO - Logged: candidate=0367f7c5bd25eda2 | alpha=78Xd71XL | sharpe=0.000 | fitness=N/A
+2026-03-31 15:20:58,073 - INFO - Submitted: group_neutralize(ts_regression(group_backfill(sign(anl4_epsr_flag), subindustry, 20), if_else(anl4_netdebt_flag, anl4_netdebt_flag, anl4_netdebt_flag), 252), sector) | url=https://api.worldquantbrain.com/simulations/3VT0tF4yb54daoV1gzO2ZkkX
+2026-03-31 15:20:58,130 - INFO - Submitted: group_backfill(reverse(winsorize(vwap)), industry, 10) | url=https://api.worldquantbrain.com/simulations/1SWIkid9t5gs9o51dSUan6DQ
+2026-03-31 15:20:58,391 - INFO - Submitted: group_neutralize(group_zscore(max(anl4_ebitda_value, log(anl4_ebitda_value)), bucket(rank(liabilities_curr), buckets=10)), subindustry) | url=https://api.worldquantbrain.com/simulations/SH3227Tm4VjaPa11GmGO2PY
+2026-03-31 15:26:31,880 - INFO - Logged: candidate=17d4612bc311e920 | alpha=A1a3917g | sharpe=0.330 | fitness=0.240
+2026-03-31 15:26:32,010 - INFO - Logged: candidate=4d78e7dd741f11d9 | alpha=d57QkJqK | sharpe=-0.130 | fitness=-0.050
+2026-03-31 15:26:32,233 - INFO - Logged: candidate=e0c4f81b23ef908a | alpha=omzY8PK2 | sharpe=-0.150 | fitness=-0.050
+2026-03-31 15:26:32,306 - INFO - Submitted: group_scale(group_scale(ts_arg_min(anl4_gric_flag, 60), subindustry), market) | url=https://api.worldquantbrain.com/simulations/48yXcz1nV4Ttc5OAPDwIPqw
+2026-03-31 15:26:32,380 - INFO - Submitted: group_backfill(kth_element(open, 120, k=1), market, 10) | url=https://api.worldquantbrain.com/simulations/BL1oub2l4vaahQ8YENxrBc
+2026-03-31 15:26:32,455 - INFO - Submitted: group_neutralize(group_rank(group_backfill(anl4_ebit_value, subindustry, 5), industry), sector) | url=https://api.worldquantbrain.com/simulations/3ffKe9g7u4rTa1l12aFpR0Vb
+2026-03-31 15:28:40,211 - INFO - Logged: candidate=daf32b679fe4eb77 | alpha=YPkA6dpJ | sharpe=0.750 | fitness=0.470
+2026-03-31 15:28:40,364 - INFO - Logged: candidate=97811e3fa79f2cd9 | alpha=MP8xOo28 | sharpe=0.170 | fitness=0.070
+2026-03-31 15:29:00,673 - INFO - Logged: candidate=fcf0a58bcb0e2bf5 | alpha=QPlQMm5G | sharpe=0.210 | fitness=0.090
+2026-03-31 15:29:00,731 - INFO - Submitted: group_scale(group_neutralize(hump(inverse(returns)), sector), market) | url=https://api.worldquantbrain.com/simulations/1JBUCPg2K4uHbB1tusD18Kv
+2026-03-31 15:29:00,796 - INFO - Submitted: winsorize(last_diff_value(ts_regression(implied_volatility_call_120, goodwill, 200), 5)) | url=https://api.worldquantbrain.com/simulations/28tKA8Mn5dlbiq1fdoEJGIi
+2026-03-31 15:29:00,874 - INFO - Submitted: zscore(group_neutralize(is_nan(anl4_netprofit_flag), bucket(rank(split), buckets=5))) | url=https://api.worldquantbrain.com/simulations/1LAzr0rE4VwbQjLhBRVca8
+2026-03-31 15:31:22,249 - INFO - Logged: candidate=1f2da8146d7e8100 | alpha=gJP363kM | sharpe=-0.050 | fitness=-0.000
+2026-03-31 15:31:22,369 - INFO - Logged: candidate=ba7c56bdd4232637 | alpha=j2wgvdNo | sharpe=0.560 | fitness=0.220
+2026-03-31 15:31:22,494 - INFO - Logged: candidate=129b999f0ed21411 | alpha=0mQ8qK32 | sharpe=-0.690 | fitness=-0.600
+2026-03-31 15:31:22,563 - INFO - Submitted: group_mean(min(group_scale(anl4_ptp_flag, subindustry), power(anl4_ptp_flag, anl4_ptp_flag)), return_equity, subindustry) | url=https://api.worldquantbrain.com/simulations/4pd84fd6I4K9bLh1aHD7SQAd
+2026-03-31 15:31:22,638 - INFO - Submitted: rank(rank(if_else(reverse(anl4_totassets_flag), anl4_totassets_flag, sign(anl4_totassets_flag)))) | url=https://api.worldquantbrain.com/simulations/4ofnXaJJ4Dpbg4HqQtnSzg
+2026-03-31 15:31:22,709 - INFO - Submitted: winsorize(anl4_netprofit_flag) | url=https://api.worldquantbrain.com/simulations/3atwta8jQ4JHbi8196yeJMIu
+2026-03-31 15:33:08,742 - INFO - Logged: candidate=3f539f63a9289e48 | alpha=pwz7mP56 | sharpe=0.000 | fitness=N/A
+2026-03-31 15:33:08,876 - INFO - Logged: candidate=42c48dd2c66e5deb | alpha=npzW971x | sharpe=1.270 | fitness=1.250
+2026-03-31 15:33:09,272 - INFO - Logged: candidate=1d0f588db88c71b7 | alpha=j2wgvj2E | sharpe=1.210 | fitness=1.160
+2026-03-31 15:33:09,345 - INFO - Submitted: zscore(rank(returns)) | url=https://api.worldquantbrain.com/simulations/48hrqN1nH5bubFy1bG2j3pM8
+2026-03-31 15:33:09,417 - INFO - Submitted: zscore(scale(anl4_adjusted_netincome_ft)) | url=https://api.worldquantbrain.com/simulations/2E0c8hr64PIbJQ1cluWxi1y
+2026-03-31 15:33:09,486 - INFO - Submitted: group_rank(rank(hump(open)), industry) | url=https://api.worldquantbrain.com/simulations/e5pFX7VQ54saAIqMc2CPBZ
+2026-03-31 15:34:30,570 - INFO - Logged: candidate=14e47eb91adf4231 | alpha=ZYlo6aJj | sharpe=-1.450 | fitness=-0.460
+2026-03-31 15:35:26,118 - INFO - Logged: candidate=698e410b2cd2d5fa | alpha=qMzX8GZ2 | sharpe=1.940 | fitness=2.230
+2026-03-31 15:35:26,252 - INFO - Logged: candidate=bc78fa1901623fd3 | alpha=WjXgMogO | sharpe=0.220 | fitness=0.090
+2026-03-31 15:35:26,328 - INFO - Submitted: rank(power(dividend, dividend)) | url=https://api.worldquantbrain.com/simulations/VfL9j2ef5aQcuN1eXtOVJXw
+2026-03-31 15:35:29,634 - INFO - Submitted: group_rank(last_diff_value(pcr_oi_270, 20), market) | url=https://api.worldquantbrain.com/simulations/1mIL3Dfem4Rw8N8q645JoHl
+2026-03-31 15:35:29,728 - INFO - Submitted: rank(group_scale(abs(close), sector)) | url=https://api.worldquantbrain.com/simulations/3aOGMr2C257Ucz8qVMF19c7
+2026-03-31 15:36:45,606 - INFO - Logged: candidate=99c916d1ca3cd647 | alpha=QPlQMp1p | sharpe=0.350 | fitness=0.040
+2026-03-31 15:37:00,858 - INFO - Logged: candidate=0ed54a49d034720f | alpha=Vkl8Vbrb | sharpe=0.190 | fitness=0.050
+2026-03-31 15:37:01,041 - INFO - Logged: candidate=faaf5d9473419946 | alpha=9q6RYO9d | sharpe=0.030 | fitness=0.010
+2026-03-31 15:37:01,128 - INFO - Submitted: winsorize(group_rank(returns, industry)) | url=https://api.worldquantbrain.com/simulations/wa2rgf244uPbeF443LGWLN
+2026-03-31 15:37:01,196 - INFO - Submitted: rank(group_zscore(sign(anl4_gric_flag), subindustry)) | url=https://api.worldquantbrain.com/simulations/9hmfN4Nq5cXarePLtxPgd8
+2026-03-31 15:37:01,316 - INFO - Submitted: group_mean(ts_regression(anl4_bvps_flag, group_scale(sga_expense, market), 120), cashflow_op, sector) | url=https://api.worldquantbrain.com/simulations/1lxrSo61n4EWcmPmxaxmm9h
+2026-03-31 15:39:14,863 - INFO - Logged: candidate=e7c21ecb4fb07e8a | alpha=vRzmqqna | sharpe=-1.460 | fitness=-0.450
+2026-03-31 15:39:14,999 - INFO - Logged: candidate=b13b7c43b74fbeef | alpha=Gr8oarlx | sharpe=0.000 | fitness=N/A
+2026-03-31 15:39:15,208 - INFO - Logged: candidate=d0f6fd33ea3826ae | alpha=ZYlo5RQQ | sharpe=0.000 | fitness=N/A
+2026-03-31 15:39:15,282 - INFO - Submitted: winsorize(ts_av_diff(returns, 200)) | url=https://api.worldquantbrain.com/simulations/2jKwAl7A84K3cz1pWmo15kd
+2026-03-31 15:39:15,360 - INFO - Submitted: group_mean(ts_regression(anl4_ebitda_value, revenue, 252), scl12_buzz, sector) | url=https://api.worldquantbrain.com/simulations/1BeQoodWX4hGbeoV6jaAeds
+2026-03-31 15:39:15,487 - INFO - Submitted: rank(kth_element(volume, 200, k=3)) | url=https://api.worldquantbrain.com/simulations/2LEJxx1o950daQ8u8Uhv9Vs
+2026-03-31 15:40:41,218 - INFO - Logged: candidate=83514894e709d9b0 | alpha=mLzX3kE2 | sharpe=-1.070 | fitness=-0.320
+2026-03-31 15:41:57,982 - INFO - Logged: candidate=b091085d21f4c075 | alpha=MP8xWXlL | sharpe=0.000 | fitness=N/A
+2026-03-31 15:41:58,083 - INFO - Logged: candidate=9b434894acfac782 | alpha=WjXgqnQN | sharpe=0.490 | fitness=0.160
+2026-03-31 15:41:58,144 - INFO - Submitted: zscore(group_neutralize(sqrt(snt_buzz), bucket(rank(fnd6_drc), buckets=5))) | url=https://api.worldquantbrain.com/simulations/1cdfQkaPX53ob3YgKULoknX
+2026-03-31 15:41:58,213 - INFO - Submitted: group_mean(last_diff_value(group_backfill(days_from_last_change(anl4_tbve_ft), industry, 10), 10), anl4_qf_az_eps_number, sector) | url=https://api.worldquantbrain.com/simulations/1MyeV3ceu5iIbIvPMRgCU2B
+2026-03-31 15:41:58,275 - INFO - Submitted: group_rank(group_scale(last_diff_value(reverse(ts_delta(returns, 5)), 5), market), industry) | url=https://api.worldquantbrain.com/simulations/1g6uRrbIA4TPcg4bzb3Me9t
+2026-03-31 15:44:34,801 - INFO - Logged: candidate=5bf691b25c28036b | alpha=j2wgErE9 | sharpe=0.000 | fitness=N/A
+2026-03-31 15:44:34,918 - INFO - Logged: candidate=3aa56a2d83a9efe5 | alpha=JjXdwb8E | sharpe=0.000 | fitness=N/A
+2026-03-31 15:44:35,024 - INFO - Logged: candidate=596a0406050fdf67 | alpha=9q6RvJmK | sharpe=1.140 | fitness=0.290
+2026-03-31 15:44:35,098 - INFO - Submitted: group_rank(sharesout, industry) | url=https://api.worldquantbrain.com/simulations/3hQOvI4T54jUayw1gv087BlH
+2026-03-31 15:44:35,169 - INFO - Submitted: group_scale(rank(inverse(sqrt(split))), sector) | url=https://api.worldquantbrain.com/simulations/2buRyDgth4T6bK3rqGXevsH
+2026-03-31 15:44:35,241 - INFO - Submitted: zscore(ts_corr(anl4_ebitda_value, implied_volatility_call_1080, 200)) | url=https://api.worldquantbrain.com/simulations/3IwCqd4hI4UA9kSdzNW3nDt
+2026-03-31 15:46:20,658 - INFO - Logged: candidate=e051aeeb2013c66b | alpha=omzYpWrk | sharpe=0.070 | fitness=0.010
+2026-03-31 15:46:20,775 - INFO - Logged: candidate=364007f7a298e81f | alpha=LLXRjNEe | sharpe=0.020 | fitness=0.000
+2026-03-31 15:46:23,346 - INFO - Logged: candidate=431725129621e110 | alpha=d57QX1pv | sharpe=-0.520 | fitness=-0.220
+2026-03-31 15:46:23,512 - INFO - Submitted: group_neutralize(group_zscore(group_rank(kth_element(snt_buzz, 252, k=2), industry), market), industry) | url=https://api.worldquantbrain.com/simulations/2GEkOe6Gg4wUbApKxsqJPLX
+2026-03-31 15:46:23,657 - INFO - Submitted: group_backfill(group_scale(anl4_bvps_flag, sector), sector, 5) | url=https://api.worldquantbrain.com/simulations/4EjMuEf2x4zOarv15I05q2Xn
+2026-03-31 15:46:23,718 - INFO - Submitted: group_mean(ts_delta(zscore(sharesout), 10), fnd6_ivaco, sector) | url=https://api.worldquantbrain.com/simulations/2AyIQ6bkN4jX8Ij12i2kIGva
+2026-03-31 15:48:14,843 - INFO - Logged: candidate=0544f1da298879f7 | alpha=QPlQJzkM | sharpe=0.370 | fitness=0.040
+2026-03-31 15:48:15,070 - INFO - Logged: candidate=01e207728e87d05a | alpha=mLzX3dN2 | sharpe=1.340 | fitness=1.130
+2026-03-31 15:48:15,175 - INFO - Logged: candidate=7a2c93e09829439c | alpha=mLzX3d0K | sharpe=0.000 | fitness=N/A
+2026-03-31 15:48:15,244 - INFO - Submitted: group_backfill(if_else(volume, volume, volume), market, 10) | url=https://api.worldquantbrain.com/simulations/p18GlfnC4FhawXClN0BfVA
+2026-03-31 15:48:15,310 - INFO - Submitted: zscore(kth_element(add(volume, volume), 40, k=3)) | url=https://api.worldquantbrain.com/simulations/1aEmB28l5d5ahwwknDyfAT
+2026-03-31 15:48:15,373 - INFO - Submitted: group_neutralize(signed_power(anl4_ptp_flag, anl4_ptp_flag), bucket(rank(implied_volatility_call_1080), buckets=10)) | url=https://api.worldquantbrain.com/simulations/2JXWwbIF4nI9VmRmEdaFG4
+2026-03-31 15:49:36,161 - INFO - Logged: candidate=e77d7e46f8a9244f | alpha=pwz7XkxX | sharpe=0.330 | fitness=0.110
+2026-03-31 15:50:06,480 - INFO - Logged: candidate=5cb86f54a512e92f | alpha=kqmK7pV6 | sharpe=0.400 | fitness=0.140
+2026-03-31 15:50:06,591 - INFO - Logged: candidate=a0cf0ecb59297b4d | alpha=O0m9Yj5b | sharpe=0.000 | fitness=N/A
+2026-03-31 15:50:06,704 - INFO - Submitted: group_neutralize(group_rank(last_diff_value(zscore(anl4_ptp_flag), 5), industry), sector) | url=https://api.worldquantbrain.com/simulations/u34qj5dP4Rv9iKgIW1cgPq
+2026-03-31 15:50:06,764 - INFO - Submitted: trade_when(group_backfill(anl4_tbve_ft, market, 10), anl4_tbve_ft, 0) | url=https://api.worldquantbrain.com/simulations/2RWOCq9Tw4rhaxznakVGh14
+2026-03-31 15:50:06,841 - INFO - Submitted: group_backfill(group_rank(anl4_netdebt_flag, bucket(rank(anl4_capex_high), buckets=5)), sector, 20) | url=https://api.worldquantbrain.com/simulations/2gTIFV9qZ4IEcg6G7vJiLW9
+2026-03-31 15:51:52,714 - INFO - Logged: candidate=5b1bbe94a8ea02af | alpha=3q6ArQeO | sharpe=1.630 | fitness=1.320
+2026-03-31 15:51:52,830 - INFO - Logged: candidate=2c5e876c46bf5972 | alpha=O0m9PQkb | sharpe=1.270 | fitness=1.060
+2026-03-31 15:51:52,952 - INFO - Logged: candidate=8303289a2d0281a6 | alpha=lez0OeJ7 | sharpe=1.090 | fitness=0.750
+2026-03-31 15:51:53,014 - INFO - Submitted: rank(ts_rank(implied_volatility_call_120, 200)) | url=https://api.worldquantbrain.com/simulations/3aWhkw3OY4VpbKw1dW2QnNsg
+2026-03-31 15:51:53,131 - INFO - Submitted: winsorize(group_zscore(sqrt(anl4_netdebt_flag), sector)) | url=https://api.worldquantbrain.com/simulations/aV26ycju4Xs9yq8WxDVnCb
+2026-03-31 15:51:53,210 - INFO - Submitted: group_neutralize(group_neutralize(signed_power(anl4_qf_az_eps_number, inverse(anl4_qf_az_eps_number)), subindustry), industry) | url=https://api.worldquantbrain.com/simulations/1q8xcR3fG4H0cf8wANGTbii
+2026-03-31 15:53:59,564 - INFO - Logged: candidate=8f7ed674ac47883e | alpha=E5aKW3KJ | sharpe=0.930 | fitness=0.270
+2026-03-31 15:53:59,690 - INFO - Logged: candidate=a7139f33679bcd81 | alpha=lez0OZ9x | sharpe=1.270 | fitness=1.090
+2026-03-31 15:53:59,815 - INFO - Logged: candidate=c29e05632ac070e8 | alpha=2rZKzbwY | sharpe=0.970 | fitness=0.390
+2026-03-31 15:53:59,904 - INFO - Submitted: group_backfill(rank(sharesout), industry, 5) | url=https://api.worldquantbrain.com/simulations/g3PhI9qj58Yb2k11HVd6pNV
+2026-03-31 15:53:59,970 - INFO - Submitted: winsorize(group_scale(snt_buzz, market)) | url=https://api.worldquantbrain.com/simulations/3gdgrt1gW4oT90Nywsq7OlH
+2026-03-31 15:54:00,022 - INFO - Submitted: scale(hump(rank(open))) | url=https://api.worldquantbrain.com/simulations/4s2iRq6Rt4I7ay38Loh44fD
+2026-03-31 15:55:33,897 - INFO - Logged: candidate=2658be44a383a32f | alpha=pwz7rzP3 | sharpe=0.030 | fitness=0.000
+2026-03-31 15:56:29,451 - INFO - Logged: candidate=37d10b2620d60fca | alpha=blP9ZNzK | sharpe=0.610 | fitness=0.120
+2026-03-31 15:56:29,573 - INFO - Logged: candidate=15283a1473e35b77 | alpha=1Ymgbn3J | sharpe=0.250 | fitness=0.110
+2026-03-31 15:56:29,772 - INFO - Submitted: group_rank(kth_element(ts_zscore(adv20, 20), 252, k=1), sector) | url=https://api.worldquantbrain.com/simulations/2l2xlrgKB4ls8JTCTgvi61K
+2026-03-31 15:56:29,848 - INFO - Submitted: group_rank(ts_backfill(rank(volume), 120), industry) | url=https://api.worldquantbrain.com/simulations/2Al6eCevD5b0a4vmHIQxxP2
+2026-03-31 15:56:29,912 - INFO - Submitted: zscore(group_backfill(kth_element(low, 40, k=1), subindustry, 10)) | url=https://api.worldquantbrain.com/simulations/3UNHZkctM53r8MfS2QGTUYD
+2026-03-31 15:58:00,691 - INFO - Logged: candidate=ee30c943edcb6a43 | alpha=omzY5gq5 | sharpe=-0.050 | fitness=-0.000
+2026-03-31 15:58:11,337 - INFO - Logged: candidate=ad3fa190a9148e56 | alpha=akPOZ1Xw | sharpe=0.450 | fitness=0.140
+2026-03-31 15:58:41,703 - INFO - Logged: candidate=d43bb0456b9e4f8b | alpha=886L9lMl | sharpe=0.170 | fitness=0.070
+2026-03-31 15:58:41,784 - INFO - Submitted: group_mean(high, cashflow_op, industry) | url=https://api.worldquantbrain.com/simulations/227lLc8Yp4Fi9fXdpWWwL7x
+2026-03-31 15:58:41,853 - INFO - Submitted: zscore(ts_std_dev(pcr_oi_270, 252)) | url=https://api.worldquantbrain.com/simulations/2KW1VX8ww4W28V5vfVH1VPH
+2026-03-31 15:58:41,927 - INFO - Submitted: group_neutralize(group_scale(sqrt(snt_buzz), market), sector) | url=https://api.worldquantbrain.com/simulations/9m0ci9wd4Fu9bSTZNkqA6W
+2026-03-31 16:00:47,637 - INFO - Logged: candidate=728860b839a1a2a7 | alpha=KP8LdVZN | sharpe=0.000 | fitness=N/A
+2026-03-31 16:00:47,763 - INFO - Logged: candidate=28d4e6f2ff94b055 | alpha=N1jOmNZX | sharpe=1.180 | fitness=0.790
+2026-03-31 16:00:47,942 - INFO - Logged: candidate=65afff807334534f | alpha=A1a3ZV3Q | sharpe=0.000 | fitness=N/A
+2026-03-31 16:00:48,011 - INFO - Submitted: group_rank(ts_std_dev(implied_volatility_put_270, 20), industry) | url=https://api.worldquantbrain.com/simulations/1LEJ9A6TN4t78A74nuJIM3S
+2026-03-31 16:00:48,245 - INFO - Submitted: group_backfill(ts_regression(anl4_qf_az_eps_number, capex, 120), subindustry, 5) | url=https://api.worldquantbrain.com/simulations/21kUwkpo5dMa7VhmPYiFwT
+2026-03-31 16:00:48,363 - INFO - Submitted: scale(group_backfill(anl4_ebitda_value, subindustry, 10)) | url=https://api.worldquantbrain.com/simulations/28Fb8B9I45bI9bQhVt3TUMs
+2026-03-31 16:02:09,625 - INFO - Logged: candidate=677f64c655e57832 | alpha=akPOZGJ2 | sharpe=-0.140 | fitness=-0.040
+2026-03-31 16:02:09,794 - INFO - Logged: candidate=a7844fb457472f33 | alpha=pwz7r31b | sharpe=0.300 | fitness=0.080
+2026-03-31 16:02:14,991 - INFO - Logged: candidate=107940d1484a0411 | alpha=E5aKWxl1 | sharpe=-0.140 | fitness=-0.050
+2026-03-31 16:02:15,065 - INFO - Submitted: group_mean(anl4_capex_high, cashflow, industry) | url=https://api.worldquantbrain.com/simulations/2DYHwG4tU4Cs9yT2pU8b7eo
+2026-03-31 16:02:15,125 - INFO - Submitted: group_scale(last_diff_value(scl12_buzz, 20), sector) | url=https://api.worldquantbrain.com/simulations/bxvd6fYV4ViaVg1g8ldaBxb
+2026-03-31 16:02:15,185 - INFO - Submitted: group_neutralize(ts_sum(adv20, 40), industry) | url=https://api.worldquantbrain.com/simulations/2H8X8KarW52O9WsRb6fe0NQ
+2026-03-31 16:03:49,358 - INFO - Logged: candidate=1842c6b1b76ff856 | alpha=0mQ83VNq | sharpe=0.000 | fitness=N/A
+2026-03-31 16:04:04,551 - INFO - Logged: candidate=7f5a427d3e390ce5 | alpha=3q6ArNXe | sharpe=-0.190 | fitness=-0.020
+2026-03-31 16:04:04,664 - INFO - Logged: candidate=a5fb695a7720d7eb | alpha=E5aKWj3P | sharpe=0.350 | fitness=0.190
+2026-03-31 16:04:04,752 - INFO - Submitted: group_zscore(last_diff_value(ts_quantile(anl4_tbve_ft, 120, 0.75), 5), subindustry) | url=https://api.worldquantbrain.com/simulations/29laiFiq51Ecdt1241MqDA2
+2026-03-31 16:04:07,310 - INFO - Submitted: rank(rank(snt_buzz)) | url=https://api.worldquantbrain.com/simulations/2TQFjp2M35fy93D1ceeZ4FLy
+2026-03-31 16:04:07,378 - INFO - Submitted: group_backfill(ts_arg_max(days_from_last_change(anl4_totassets_flag), 120), market, 5) | url=https://api.worldquantbrain.com/simulations/3y0BcH6du4Bi9MIzNv0blRW
+2026-03-31 16:04:07,407 - WARNING - No alpha_id: d19bf26a7ab30398 | response={'id': '29laiFiq51Ecdt1241MqDA2', 'type': 'REGULAR', 'status': 'ERROR', 'message': 'Got invalid value "0.75" for attribute "lookback", should be a positive integer', 'location': {'line': 1, 'start': 29, 'end': 65, 'property': 'regular'}}
+2026-03-31 16:04:07,409 - INFO - Logged: candidate=d19bf26a7ab30398 | alpha=None | sharpe=N/A | fitness=N/A
+2026-03-31 16:05:33,298 - INFO - Logged: candidate=055f04b38394d3c8 | alpha=0mQ80qe6 | sharpe=0.270 | fitness=0.030
+2026-03-31 16:05:33,432 - INFO - Logged: candidate=74a08443454a9dec | alpha=WjXg61GQ | sharpe=-0.500 | fitness=-0.170
+2026-03-31 16:05:33,507 - INFO - Submitted: scale(zscore(anl4_epsr_flag)) | url=https://api.worldquantbrain.com/simulations/LfPDm2NG55jare3DzCUiAw
+2026-03-31 16:05:33,655 - INFO - Submitted: trade_when(group_backfill(ts_quantile(sharesout, 200, 0.75), industry, 10), ts_count_nans(sharesout, 40), 0) | url=https://api.worldquantbrain.com/simulations/3sGMmqc0S4y7cCC2R7vRb0T
+2026-03-31 16:05:33,741 - INFO - Submitted: winsorize(kth_element(anl4_gric_flag, 120, k=1)) | url=https://api.worldquantbrain.com/simulations/jW6Dl8iT52X8wWH40VgyE6
+2026-03-31 16:07:03,496 - INFO - Logged: candidate=352b48e263198546 | alpha=WjXg6mNk | sharpe=1.390 | fitness=1.430
+2026-03-31 16:07:03,554 - WARNING - No alpha_id: d97850c4a5112ce7 | response={'id': '3sGMmqc0S4y7cCC2R7vRb0T', 'type': 'REGULAR', 'status': 'ERROR', 'message': 'Got invalid value "0.75" for attribute "lookback", should be a positive integer', 'location': {'line': 1, 'start': 26, 'end': 59, 'property': 'regular'}}
+2026-03-31 16:07:03,556 - INFO - Logged: candidate=d97850c4a5112ce7 | alpha=None | sharpe=N/A | fitness=N/A
+2026-03-31 16:07:03,689 - INFO - Logged: candidate=31442f4718db5f9e | alpha=JjXdZK2x | sharpe=0.920 | fitness=0.600
+2026-03-31 16:07:03,893 - INFO - Submitted: group_rank(group_neutralize(anl4_ptp_flag, sector), industry) | url=https://api.worldquantbrain.com/simulations/4lZdyH3Gi4Cu8Xbx4ILk3i3
+2026-03-31 16:07:03,960 - INFO - Submitted: group_zscore(group_neutralize(ts_delta(anl4_ebitda_value, 10), market), subindustry) | url=https://api.worldquantbrain.com/simulations/1k0ERVMa4yL9uYOzZZqwur
