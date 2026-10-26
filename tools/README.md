@@ -1,8 +1,8 @@
 # Tools
 
 This directory contains maintained command wrappers and research harnesses.
-Keep command names stable; move reusable implementation into `wq_alpha/`,
-`alpha_discovery/grammar_method/`, or `alpha_discovery/probe_method/`.
+Keep command names stable. Reusable implementation belongs in a library layer -- `core/`,
+`alpha_discovery/` or `alpha_enhancement/` -- not here; these are thin entry points over it.
 
 ## Active Pipeline
 
