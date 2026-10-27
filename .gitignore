@@ -54,3 +54,6 @@ alpha_discovery/grammar_method/artifacts/*
 *.bak
 *.bak.*
 *~
+
+# ---- Demo output (bash demo/run_demo.sh) ----
+/demo_out/

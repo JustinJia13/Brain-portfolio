@@ -175,6 +175,7 @@ alpha_discovery/       alpha generation, one subpackage per method   -> README p
 alpha_enhancement/     the AI enhancement engine                    -> README
 tools/                 operational CLIs over all three layers
 samples/               truncated real output from each lane
+demo/                  offline walkthrough of both engines: bash demo/run_demo.sh
 ```
 
 Layering is enforced and verified: `core` imports nothing from either pillar, and
@@ -182,12 +183,63 @@ Layering is enforced and verified: `core` imports nothing from either pillar, an
 in place — `core/brain/submit.py`'s opt-in `--auto-workshop` CLI path lazily imports the
 workshop.
 
-## Running it
+## How to run
 
-See [`SETUP.md`](SETUP.md). Credentials are read from plaintext files at the repository root;
-copy the `.example` files and fill them in. An end-to-end run needs a live account and
-simulation budget, but the grammar derivation, the gate's calibrated parameters, the PnL-only
-scoring path and the unit tests all run offline.
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+bash demo/run_demo.sh
+```
+
+The demo needs no account, no API key and no network, and finishes in seconds. It walks through
+both engines on committed data and writes everything to `demo_out/`:
+
+| Step | Engine | What it shows |
+|---|---|---|
+| 1 | Discovery · grammar | candidates sampled from the bounded grammar at two budgets ([`demo/sample_grammar.py`](demo/sample_grammar.py)) |
+| 2 | Discovery · probe | a probe plan: simple templates × field clusters |
+| 3 | Discovery · probe | 300 real simulation results from [`samples/`](samples/) bucketed by signal strength, with follow-up seeds |
+| 4 | Discovery · template sweep | one template expanded over its parameter grid |
+| 5 | Discovery · robustness | one alpha re-planned with one simulation setting changed at a time |
+| 6 | Sim-slot gate | unit tests for the pre-simulation filter |
+| 7 | Enhancement | hand-picked alphas routed to negate / repair / enhance (dry run) |
+| 8 | Enhancement · semantic workshop | one full seed → template → candidates → simulation → A/B loop |
+
+Steps 7 and 8 read [`demo/enhancement_seeds.synthetic.jsonl`](demo/enhancement_seeds.synthetic.jsonl):
+six hand-made records, not real results, built so that every route fires. In step 8 the LLM agents
+and the simulator are replaced by deterministic stand-ins, so it shows the plumbing, not alpha
+quality.
+
+**Live runs** need a WorldQuant BRAIN account (the credential files are described in
+[`SETUP.md`](SETUP.md)); the LLM lanes also need an Anthropic key. Each run spends simulation budget.
+
+```bash
+# Discovery
+python -m alpha_discovery.grammar_method.run_pipeline --fields-csv all_fields.csv --rounds 4
+python -m alpha_discovery.probe_method.build_plan --clusters alpha_discovery/grammar_method/artifacts/all_clusters.json \
+    --fields-csv all_fields.csv --out artifacts/probe/plan.jsonl
+python -m core.brain.submit --plan artifacts/probe/plan.jsonl --sim-log artifacts/probe/sim.jsonl
+python tools/theory_lane.py --n-theories 5        # LLM; --dry-run stops before simulating
+python -m alpha_discovery.template_sweep_method.pipeline run --sim-log artifacts/sweep/alpha_sim.jsonl
+
+# Enhancement: the input is hand-picked
+python -m alpha_enhancement.workshop.alpha --expr "<expression>" --submit               # negate / repair / enhance
+python -m alpha_enhancement.workshop.semantic --source all --seed-expr "<expression>"   # semantic workshop
+python tools/promote_to_brain.py              # re-simulate brain2 winners on the competition account
+python tools/build_wiki.py --export-priors    # refresh the wiki and the grammar's sampling prior
+```
+
+Every command takes `--help`.
+
+**Where to tune**
+
+| What | Where |
+|---|---|
+| Grammar hyperparameters (budget, samples per batch, …) | `GrammarConfig` in [`alpha_discovery/grammar_method/grammar.py`](alpha_discovery/grammar_method/grammar.py); `run_pipeline`'s flags take their defaults from it |
+| Pass and submittable thresholds | [`core/quality.py`](core/quality.py) |
+| Negate / repair / enhance routing thresholds | top of [`alpha_enhancement/workshop/core.py`](alpha_enhancement/workshop/core.py) |
+| Simulation settings (region, universe, delay, …) | `DEFAULT_SETTINGS` in [`core/brain/submit.py`](core/brain/submit.py) |
+| Sim-slot gate | `GateParams` in [`alpha_discovery/sim_slot_gate/gate.py`](alpha_discovery/sim_slot_gate/gate.py) |
 
 ## Reference docs (For AI)
 
