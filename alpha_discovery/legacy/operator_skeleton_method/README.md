@@ -2,60 +2,54 @@
 
 ## The problem
 
-Invert grammar search.
+Turn the grammar method around. The grammar derives formula *shapes* and fills in whatever fields
+it lands on. This method fixes the shape first — a small registry of operator "skeletons", each
+encoding one economic hypothesis — and then searches for the fields to put in them.
 
-Grammar search derives expression *shapes* and binds fields into whatever it derives. This
-method does the opposite: fix the operator **skeleton** first, drawn from a registry of
-hypotheses with role-constrained and dataset-constrained slots, then search which fields belong
-in those slots.
-
-The appeal is control. If you believe the useful shapes are a small known set, then constraining
-slots by *role* — this slot wants a size proxy, that one wants a sentiment series — should
-concentrate the search on economically coherent combinations instead of arbitrary ones.
+The appeal is control. Each blank in a skeleton is labelled with the *role* it needs — a
+fundamental quantity here, a size measure there — so the search should only ever try economically
+coherent combinations instead of arbitrary ones.
 
 ## How it discovers alpha
 
-`templates.py` holds the skeleton registry with declared slot roles. `field_sampler.py` selects
-candidate fields, `screener.py` filters, `promoter.py` advances survivors, and `pipeline.py`
-drives the loop.
+1. **Start from a registry of skeletons** — fixed formula shapes, each blank labelled with the
+   role of field it should take (`templates.py`).
+2. **Fill the blanks with pairs of field clusters** (`field_sampler.py`).
+3. **Screen cheaply first:** run a few skeletons over many cluster pairs and rank the pairs by how
+   well they did (`screener.py`).
+4. **Promote the best pairs to the full suite** of skeletons (`promoter.py`).
 
-The design is clear. What it actually did at runtime was not the same thing — see below.
+What actually happened at step 2 is the interesting part. The role labels were declared on every
+skeleton, but **no code ever read them** — the sampler drew cluster pairs uniformly at random. So
+the feature that made the idea attractive was never switched on.
 
 ```mermaid
-flowchart TD
-  CL[("all_clusters.json cache - 5451 clusters")]
-  TR[("templates.py registry - 11 screening plus 5 promotion plus 6 role-constrained skeletons")]
-  QT[("all_qtable.json - level-2 pruned field-op pairs")]
-  UCB["TOMBSTONE ucb_legacy.py - UCB arm keyed on cluster_id alone"]
-  FL["Keep MATRIX champion fields from 14 numeric datasets"]
-  SMP["Uniform random unordered cluster-pair sampling - 200 pairs per template"]
-  ROLE{"slot role constraints enforced"}
-  DEAD[("DEAD CODE - ClusterRecord carries no role so the 6 role-constrained skeletons never sample")]
-  REND["Render FASTEXPR - 4 windowless plus 7 windowed over windows 20 60 120"]
-  SIM["Brain screening sims - batch 3 - TOP3000 delay 1 SUBINDUSTRY truncation 0.01"]
-  GATE{"IS Sharpe at or above 1.25 and concentrated-weight check PASS"}
-  DROP[("screening_results.jsonl - rejected rows retained for audit")]
-  SCORE["Rank by IS Sharpe times mean yearly Sharpe over 1 plus std yearly Sharpe"]
-  PROMO["Top-K 20 pairs times 3 arity-2 promotion skeletons"]
-  OPT["TOMBSTONE optimizer.py and regen_proposals.py - combine and tune DISABLED"]
-  WS["tools.batch_workshop - repair and portfolio admission"]
+flowchart TB
+    SPACE[("search space<br/>7642 fields times 70 operators")]
 
-  CL -->|"cluster_id plus label plus champion_field_id"| FL
-  FL -->|"3188 eligible clusters"| SMP
-  TR -->|"operator skeleton with slot a slot b and window"| SMP
-  QT -->|"read-only pruned set for divide ts_corr ts_covariance ts_regression"| SMP
-  UCB -.->|"superseded - one-way pruning replaces regret minimisation"| QT
-  SMP -->|"cluster pair plus chosen skeleton"| ROLE
-  ROLE -->|"never - slot role fields are declared but read by nothing"| DEAD
-  ROLE -->|"dataset constraints only"| REND
-  REND -->|"5000 screening expressions at default n-pairs 200"| SIM
-  SIM -->|"IS stats plus yearly Sharpes plus IS checks"| GATE
-  GATE -->|"fail - the large majority of the 5000"| DROP
-  GATE -->|"pass"| SCORE
-  SCORE -->|"20 surviving field pairs"| PROMO
-  PROMO -->|"100 promotion sims as workshop-format candidate dicts"| WS
-  PROMO -.->|"pair and triple combining plus weight and constant tuning - every stage function returns empty"| OPT
+    subgraph OPS["OPERATOR SKELETON METHOD, retired — fix the shape, then search for fields"]
+        direction TB
+        SKEL[("registry of skeletons<br/>fixed shapes with role-labelled blanks")]
+        FILL["fill the blanks with pairs of field clusters<br/>role matching intended, never wired up"]
+    end
+
+    SIMBUS["BRAIN simulation<br/>the metered shared resource"]
+    LEDGER[("simulation ledger<br/>every alpha with its metrics and its failed checks")]
+    RANK{"a top pair<br/>in screening?"}
+    FULL["run every skeleton<br/>on the promoted pairs"]
+    DROP[("discarded")]
+
+    SPACE -->|"field clusters"| FILL
+    SKEL -->|"formula shapes"| FILL
+    FILL -->|"screening formulas"| SIMBUS
+    SIMBUS -->|"metrics and named failing checks"| LEDGER
+    LEDGER -->|"screening results"| RANK
+    RANK -->|"yes"| FULL
+    RANK -->|"no"| DROP
+    FULL -->|"full suite of formulas"| SIMBUS
 ```
+
+**How to read this graph:** the labelled box is what this retired method put inside the *alpha discovery module* of the [overall pipeline](../../../README.md#alpha-discovery-vs-alpha-enhancement). The search space, the simulation and the ledger are shared by every method and drawn the same way in each graph.
 
 ## The code
 
@@ -106,7 +100,7 @@ The more interesting failure is that **its distinguishing mechanism was never ac
 The slot *roles* are declared on every skeleton, but nothing in the execution path reads them —
 the cluster records carry no role field to match against. So what ran was uniform random pairing
 of clusters into a handful of fixed skeletons: all the constraint machinery that made the idea
-attractive was inert, and the lane was quietly a worse version of template sweep.
+attractive was inert, and the lane was quietly just random search over a handful of fixed shapes.
 
 It is kept partly as a reminder that a declared constraint which no code reads is not a
 constraint, and that the way to find out is to check the execution path rather than the design

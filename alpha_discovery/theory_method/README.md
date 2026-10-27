@@ -2,80 +2,74 @@
 
 ## The problem
 
-If the space is too large to enumerate, perhaps an economic hypothesis can point at the right
-subspace. That is the premise here, and the reason this lane exists is to test it properly
-rather than assert it.
+If the space is too large to search blindly, perhaps economic reasoning can point at the right
+part of it. This method exists to test that idea properly rather than assume it.
 
-The obvious version — ask an LLM for alpha expressions — is the one that had already failed
-twice in this repository (see [`../legacy/`](../legacy/README.md): 0.06% and 0.62% clean rates).
-The diagnosis was that LLM-authored expressions are fluent but empirically dead, and that
-free-form generation makes the result unfalsifiable: when one of fifty expressions works, you
-have learned nothing about the mechanism.
+The obvious version — just ask an LLM for alpha formulas — had already failed twice in this
+repository (see [`../legacy/`](../legacy/README.md)): the formulas were fluent and plausible and
+almost never worked. Worse, free-form generation teaches you nothing. If one formula in fifty
+works, you cannot tell whether the economic idea behind it was right or you got lucky.
 
-So this lane imposes **pre-registration**. The LLM states a falsifiable mechanism *card* up
-front. A deterministic enumerator — not the LLM — renders a bounded family of expressions from
-that card. The verdict is then issued at the level of the **family**, not the individual alpha,
-which is what makes a negative result mean something.
+So this method works like a scientist rather than a brainstormer: **state the hypothesis first,
+run an experiment designed to test it, then accept the verdict.** The LLM supplies the
+hypothesis. It never writes a formula.
 
 ## How it discovers alpha
 
-The LLM never writes FASTEXPR. It produces a structured hypothesis card: a mechanism, the
-fields it should act on, a direction, and a horizon. `enumerate_.py` renders that card into a
-designed family using the shared grammar vocabulary, so every member is valid by construction
-and the family spans the card's stated degrees of freedom rather than an LLM's stylistic
-preferences.
+1. **The LLM writes a hypothesis card, not an alpha** — an economic mechanism, the fields it
+   should show up in, the expected direction and the time horizon (`economist.py`).
+2. **Check it hasn't already been settled.** Ideas that were already tested, or that point into
+   regions the history shows are dead, are dropped before they cost anything (`dedup.py`,
+   `coverage.py`).
+3. **A fixed program turns the card into a family of formulas.** Because the LLM never writes
+   them, the family is a fair, systematic test of the idea rather than whatever the model happened
+   to produce (`enumerate_.py`).
+4. **Judge the idea, not the individual alphas.** After the family is simulated, the hypothesis
+   as a whole is marked validated, falsified or inconclusive. One lucky member does not validate
+   an idea (`family.py`).
+5. **Remember the verdict.** A registry of every mechanism tried, and what happened to it, stops
+   the LLM from proposing a disproven idea again.
 
-After simulation, `family.py` updates a Beta posterior per family and issues `VALIDATED`,
-`FALSIFIED` or `INCONCLUSIVE`. `dedup.py` guards against re-proposing a mechanism already
-settled, using embedding similarity with an LLM adjudicator invoked only on genuine overlaps.
-`coverage.py` reads the Q-table to avoid proposing into regions already known dead.
-
-The prompts are the clearest statement of the method and are kept as data in
-[`../../core/prompts/`](../../core/prompts/): `theory_propose.md`, `theory_decompose.md`,
-`theory_adjudicate.md`, `theory_refine.md`.
+The loop is driven by `tools/theory_lane.py`. The prompts behind each LLM step are kept as plain
+text in [`../../core/prompts/`](../../core/prompts/); `theory_propose.md` is the best single file
+to read for the method's intent.
 
 ```mermaid
-flowchart TD
-    CTX[("Context assembly: cluster catalog with crowding stats, wiki posterior pages, mechanism index, falsified graveyard, Q-table saturation map")]
-    PROP["economist.py plus theory_propose.md<br/>10 pre-registered mechanism cards per round<br/>the LLM writes NO expressions"]
-    DEDUP{"dedup.py: embed card, cosine vs 872 registered mechanisms<br/>below 0.60 is NEW with no LLM call, otherwise the adjudicator rules SAME or VARIANT or NEW"}
-    THOMP["Thompson sample each card Beta posterior<br/>only the top 3 cards get sim budget this round"]
-    ENUM["enumerate_.py deterministic slot expansion<br/>slots field, field2 to field4, w, d, group<br/>cap 400 variants per skeleton, distinct-field constraint, VECTOR fields auto-wrapped in vec_avg"]
-    COV{"coverage.py dead-region prune<br/>has the grammar already proved this field and operator pair dead?<br/>8 or more tries with mean reward under 0.10"}
-    FAM["Designed family of 5 to 20 members<br/>stratified so every skeleton and every declared field appears at least once"]
-    CACHE[("artifacts/sim/master.jsonl, 91969 sims<br/>75.8k distinct skeleton and field-set cells, 92.3 pct of them weak<br/>also the source of the 517 dead Q-table regions")]
-    SIM["BRAIN simulation on the brain2 discovery pool<br/>first wave of 5 then the rest, 3 concurrent sims max per account"]
-    VERD{"family.py family-level verdict<br/>a member supports when oriented sharpe exceeds 0.5, minimum 5 members<br/>thresholds pre-registered, never tuned after seeing results"}
-    GRAVE[("mechanisms.jsonl registry: 872 cards, Beta posteriors, 197 FALSIFIED<br/>plus first-class wiki what-failed sections")]
-    REFINE["theory_refine.md, exactly ONE refine round<br/>narrow, shift the horizon or swap operators; widening to chase the best member is banned"]
-    PROMO["Promote 3 MEDIAN-robustness submittable supporters<br/>never the max-sharpe spike, which is treated as a multiple-testing artifact"]
-    DROP["Discarded with zero sim slots spent"]
-    BRAIN["tools/promote_to_brain.py: re-sim 88 queued winners on the competition account with self-correlation and score-addition gates active"]
-    OUTCOME["EMPIRICAL VERDICT, lane retired<br/>49 of 327 families validated, a flat 15 pct that never improved as the registry grew<br/>winners redundant: theory_0268 self-corr 0.67 and brain score delta -161<br/>decompose-expand sibling scored 0 of 100 submittable vs grammar 5 pct"]
+flowchart TB
+    SPACE[("search space<br/>7642 fields times 70 operators")]
 
-    CTX -->|"candidate clusters, prior evidence, dead operator families"| PROP
-    PROP -->|"card: hypothesis, why_it_exists, cluster_ids, direction, horizon band, motif skeletons with typed slots"| DEDUP
-    DEDUP -->|"SAME as an already FALSIFIED card: rejected, a dead theory cannot re-enter under new wording"| DROP
-    DEDUP -->|"NEW, or VARIANT with a named untested dimension inheriting 50 pct of the parent Beta pseudo-counts"| THOMP
-    THOMP -->|"3 cards; the rest wait for a later round"| ENUM
-    ENUM -->|"rendered FASTEXPR variants, degenerate forms like subtract of x with x already dropped"| COV
-    CACHE -->|"Q-table learned over 76k sims"| COV
-    COV -->|"variant sits in a region the history proved dead, roughly 90 pct of historical budget bled here"| DROP
-    COV -->|"surviving variants, ordered by novelty and strength"| FAM
-    CACHE -->|"exact expression match: the logged result is reused as zero-cost family evidence"| FAM
-    FAM -->|"uncached members only"| SIM
-    SIM -->|"0 supporters in the first 5: early stop, remaining members never simulated"| DROP
-    SIM -->|"per-member sharpe, fitness, turnover, yearly stats"| VERD
-    VERD -->|"support rate 0.30 or below: FALSIFIED, 223 of 327 families"| GRAVE
-    VERD -->|"support rate between 0.30 and 0.60: INCONCLUSIVE, 55 of 327"| REFINE
-    VERD -->|"support rate 0.60 or above: VALIDATED, 49 of 327"| PROMO
-    VERD -->|"posterior update: alpha plus supporters, beta plus non-supporters; retro cards capped at 3 pseudo-counts"| GRAVE
-    REFINE -->|"one revised card, same mechanism, narrower scope"| ENUM
-    REFINE -->|"abandonment plus a one-sentence falsification lesson"| GRAVE
-    GRAVE -->|"mechanism index and graveyard fed back into the next round prompt"| CTX
-    PROMO -->|"88 submittable robust winners queued"| BRAIN
-    BRAIN -->|"self-correlation and score-addition results"| OUTCOME
+    subgraph THEORY["THEORY METHOD — test an economic hypothesis like an experiment"]
+        direction TB
+        CARD["LLM writes a hypothesis card<br/>mechanism, fields, direction, horizon"]
+        SEEN{"already tested<br/>or known to be dead?"}
+        FAMILY["a fixed program, not the LLM,<br/>turns the card into a family of formulas"]
+    end
+
+    SIMBUS["BRAIN simulation<br/>the metered shared resource"]
+    LEDGER[("simulation ledger<br/>every alpha with its metrics and its failed checks")]
+    VERDICT{"verdict on the whole idea<br/>validated, falsified or inconclusive"}
+
+    subgraph MEMORY["MEMORY — every verdict is kept"]
+        direction TB
+        REG[("registry of mechanisms<br/>proven and disproven")]
+    end
+
+    WIN[("validated winners<br/>queued for portfolio admission")]
+    DROP[("discarded")]
+
+    SPACE -->|"fields and past findings as context"| CARD
+    CARD -->|"hypothesis"| SEEN
+    SEEN -->|"yes"| DROP
+    SEEN -->|"no"| FAMILY
+    FAMILY -->|"designed family of formulas"| SIMBUS
+    SIMBUS -->|"metrics and named failing checks"| LEDGER
+    LEDGER -->|"results for every member"| VERDICT
+    VERDICT -->|"validated"| WIN
+    VERDICT -->|"every verdict"| REG
+    REG -.->|"do not propose this again"| SEEN
 ```
+
+**How to read this graph:** the labelled box is what this method puts inside the *alpha discovery module* of the [overall pipeline](../../README.md#alpha-discovery-vs-alpha-enhancement). The search space, the simulation and the ledger are shared by every method and drawn the same way in each graph.
 
 ## The code
 

@@ -1,34 +1,73 @@
-# Template Sweep Method — fix the forms, search the bindings
+# Template Sweep Method — vary the settings of a proven alpha
 
 ## The problem
 
-The oldest approach in this repository, and the opposite bet from
-[`../grammar_method/`](../grammar_method/README.md).
+The cheapest place to look for a new alpha is right next to one that already works: the same
+formula with a different window, or the same formula simulated under different platform settings.
+That is this method's bet, and it is the oldest approach in the repository.
 
-Grammar search *derives* expression shapes and treats the functional form as unknown. This
-method assumes the opposite: that the useful functional forms are already known from the
-literature and from practice — a cross-sectional rank of a time-series z-score, a group-neutral
-reversal, a ratio against a size proxy — and that the only thing left to search is which fields
-and windows to bind into them.
+It is the opposite of the grammar method in a precise way. The grammar searches over *formula
+shapes*; this method never changes the formula at all. It takes a small library of concrete,
+already-verified alphas and varies only their numeric parameters and the simulation settings — no
+fields or groups are ever substituted (`sweep.py`: *"No field or group sweeping."*).
 
-That makes the search space small enough to sweep exhaustively, which is its real attraction:
-you get coverage guarantees instead of sampling noise. Its weakness is equally clear — it can
-only ever find what the template author already imagined.
+That makes the search tiny and exhaustive. It also makes it dangerous, and the reason it was
+demoted is the main lesson it left behind: **trying many settings and keeping the best one is
+overfitting.** You are fitting the noise of one backtest, and the winning setting rarely holds up
+out of sample.
 
 ## How it discovers alpha
 
-A fixed registry of parameterised templates is crossed with field bindings and window
-parameters, and the resulting grid is swept and logged.
+1. **Start from a proven alpha.** Each template is a concrete formula that has already simulated
+   well, with placeholders only for windows and constants (`templates.py`).
+2. **Expand the grid.** Every allowed window, constant and simulation setting is combined into a
+   plan (`sweep.py`).
+3. **Simulate the plan** and log everything to the shared ledger (`pipeline.py`).
 
-The part worth a closer look is `regime_check.py`. It evaluates the **same expression** under a
-settings grid **declared in advance** — neutralization, decay, truncation, universe — rather
-than searching settings for the best result. That distinction is the whole anti-overfit point:
-a pre-declared grid measures robustness, while an adaptive search over the same grid
-manufactures it. The project's standing rule is that template variants must never be run as an
-adaptive parameter search loop, and that rule is why this lane is retained in a narrow role.
+The part that survives is a reframing of the same idea, the **regime check**
+(`regime_check.py`):
 
-`consolidate_logs.py` was a one-time migration that folded scattered per-lane sim logs into the
-single `artifacts/sim/master.jsonl` ledger. It has already run.
+4. **Re-run one passing alpha under a settings grid fixed in advance** — universe,
+   neutralization, truncation and decay — either one setting at a time or the full grid.
+5. **Ask whether it holds up across the grid,** not which setting scored best. By default it has
+   to pass in at least half of the settings; an alpha that only works under one is fragile, not
+   good.
+
+The difference between steps 2–3 and steps 4–5 is the difference between *searching* for
+robustness and *measuring* it. The code says so directly: the regime check *"is a
+robustness/regime diagnostic, not a greedy parameter optimizer"*.
+
+```mermaid
+flowchart TB
+    LIB[("library of proven alphas<br/>formulas that already simulated well")]
+
+    subgraph SWEEP["TEMPLATE SWEEP METHOD — vary the settings of a proven alpha"]
+        direction TB
+        GRID["expand every allowed window,<br/>constant and simulation setting"]
+    end
+
+    SIMBUS["BRAIN simulation<br/>the metered shared resource"]
+    LEDGER[("simulation ledger<br/>every alpha with its metrics and its failed checks")]
+
+    subgraph REGIME["REGIME CHECK — measure robustness, do not search for it"]
+        direction TB
+        FIXED["re-run one passing alpha under<br/>a settings grid fixed in advance"]
+        HOLDS{"does it hold up<br/>across the grid?"}
+    end
+
+    ROBUST[("robust alpha")]
+    DROP[("discarded<br/>works under one setting only")]
+
+    LIB -->|"concrete formulas, no field changes"| GRID
+    GRID -->|"the whole grid"| SIMBUS
+    SIMBUS -->|"metrics and named failing checks"| LEDGER
+    LEDGER -->|"a passing alpha"| FIXED
+    FIXED -->|"results across the grid"| HOLDS
+    HOLDS -->|"yes"| ROBUST
+    HOLDS -->|"no"| DROP
+```
+
+**How to read this graph:** the labelled box is what this method puts inside the *alpha discovery module* of the [overall pipeline](../../README.md#alpha-discovery-vs-alpha-enhancement). The search space, the simulation and the ledger are shared by every method and drawn the same way in each graph. Unlike the other methods, this one does not start from the search space at all — it starts from alphas that are already known to work.
 
 ## The code
 
@@ -46,25 +85,43 @@ single `artifacts/sim/master.jsonl` ledger. It has already run.
 ## Running it
 
 ```bash
-# the sweep itself
-python -m alpha_discovery.template_sweep_method.pipeline --dry-run
-python -m alpha_discovery.template_sweep_method.sweep --help
+# build a sweep plan from the template library (no simulation yet)
+python -m alpha_discovery.template_sweep_method.pipeline build \
+    --output artifacts/sweep/plan.jsonl
 
-# the device actually worth using: a pre-declared settings grid for one expression
-python tools/regime_check.py --help
+# simulate it
+python -m alpha_discovery.template_sweep_method.pipeline submit \
+    --plan artifacts/sweep/plan.jsonl --sim-log artifacts/sweep/sim.jsonl \
+    --credentials brain2.txt
 ```
 
-`pipeline.py` is kept for deliberate compatibility experiments only, not as a live generator.
+The regime check, which is the part worth using:
+
+```bash
+# one setting at a time, starting from each promoted workshop alpha
+python -m tools.regime_check build \
+    --input artifacts/workshop/workshop_submittable.jsonl --promote-only \
+    --mode one-axis --output artifacts/regime_check/plan.jsonl
+
+# simulate with the same submitter, then summarise
+python -m alpha_discovery.template_sweep_method.pipeline submit \
+    --plan artifacts/regime_check/plan.jsonl --sim-log artifacts/regime_check/sim.jsonl \
+    --credentials brain2.txt
+python -m tools.regime_check summary --sim-log artifacts/regime_check/sim.jsonl
+```
+
+Use `--mode grid` for the full cross-product instead of one setting at a time.
 
 ## Results
 
-No standalone sweep output survives in this repository: the lane's historical results were
-folded into `artifacts/sim/master.jsonl` by its own `consolidate_logs.py` migration, and the
-`sweep` lane tag accounts for 8,444 of the 91,969 records there — the second-largest lane after
-grammar.
+The sweep's historical runs were folded into the shared simulation ledger by its own one-time
+`consolidate_logs.py` migration, where they form the second-largest lane after grammar. The
+template library itself is tiny — two proven alphas and one placeholder example — which says
+something about how quickly the approach was outgrown.
 
-Its durable contribution is not a set of alphas but the **regime-check device**, which is still
-used as a robustness probe on finalists, and the negative lesson it taught:
-template variants must not be run as an adaptive parameter search, because sweeping settings and
-then reporting the best one is overfitting with extra steps.
-
+Its durable contribution is the **regime check** and the lesson behind it. The check remains
+available as a standalone tool you run on promoted alphas (`tools/regime_check.py` reads the
+enhancement engine's submittable list), and its simulations are tagged and deliberately kept out
+of both the Q-table and the workshop's candidate pool — so a robustness diagnostic is never fed
+back into search as if it were evidence. The lesson is the one in the problem statement: sweeping
+settings and reporting the best is overfitting with extra steps.

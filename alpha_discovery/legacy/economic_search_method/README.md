@@ -2,75 +2,61 @@
 
 ## The problem
 
-The most direct possible attack on the search space, and the first one tried.
+The most direct attack on the search space, and the first one tried: **let the LLM do the whole
+job.**
 
-If the space is too vast to enumerate, use a model that has read the finance literature. Ask an
-LLM to propose a falsifiable economic mechanism *and* to write the FASTEXPR expression that
-captures it. Then, because simulation is the scarce resource, ration slots with a novelty index
-so you never pay twice to learn the same thing.
+A model that has read the finance literature should be able to propose an economic idea *and*
+write the formula that captures it. Since simulation is the scarce resource, every candidate is
+checked against an index of everything simulated before, so nothing is ever paid for twice.
 
 The reasoning was sound and the implementation was thorough — this is the largest of the retired
-lanes. It was also decisively wrong, and understanding why shaped everything built afterwards.
+methods. It was also decisively wrong, and understanding why shaped everything built afterwards.
 
 ## How it discovers alpha
 
-A full CLI pipeline: index the existing history, load the portfolio, select fields, propose
-mechanisms, critique them, generate expressions, sprint through simulations, ingest results.
+1. **The LLM proposes an economic idea and writes the formulas for it** (`cli.py`, subcommands
+   `propose` and `generate`).
+2. **Each formula is checked for being well-formed,** and each batch for variety, so the model
+   cannot submit fifty versions of one idea (`expression_validation.py`).
+3. **Each is checked against an index of every past simulation.** Anything too close to what has
+   already been tried is dropped. To save cost, an LLM critic is consulted only for borderline
+   cases; clear-cut ones are scored without a model call (`history_index.py`, `semantic_gate.py`).
+4. **Survivors are simulated.**
 
-Three pieces are worth attention as engineering, independent of the outcome:
-
-`history_index.py` builds a read-only SQLite index over everything previously simulated, so a
-proposed candidate can be checked for novelty without re-reading the full ledger.
-
-`expression_validation.py` applies deterministic validation plus diversity gates to
-**LLM-written** expressions. Note the contrast with the successor lane
-[`../../theory_method/`](../../theory_method/README.md), where the LLM is not allowed to write
-expressions at all — that change was the direct response to this lane's failure.
-
-`semantic_gate.py` invokes an expensive LLM critic **only** on candidates that overlap something
-known, scoring the cheap cases without a model call. A nice cost-control pattern worth keeping
-in mind even though the lane around it did not work.
+The failure shows up at the very end: almost nothing passed the platform's checks. The formulas
+were valid and genuinely new — the novelty check worked exactly as designed — and novelty turned
+out to have almost nothing to do with whether an alpha makes money.
 
 ```mermaid
-flowchart TD
-    LOGS[("Brain sim history<br/>master.jsonl + workshop_sim + llm_sim + ranked")]
-    IDX["history_index.py<br/>read-only scanner"]
-    SQL[("history_index.sqlite 22MB<br/>23891 records - 1542 standalone passers")]
-    CTX["portfolio_context.py + field_catalogs.py<br/>submitted alphas + delay-aware field catalog"]
-    PROP["TheoryProposerAgent<br/>claude-opus-4-7 max_tokens 12000"]
-    CRIT{"NoveltyCriticAgent + deterministic jaccard critic"}
-    STORE[("artifacts/theories<br/>217 theory dirs + memory_delay.md")]
-    GEN["LLMExpressionGenerator<br/>the LLM WRITES the FASTEXPR"]
-    VAL{"ExpressionValidator<br/>banned ops - dup vs history - skeleton quota"}
-    SEM["semantic_gate.py<br/>top-12 kNN from SQLite then ONE batched LLM scorecard call per theory"]
-    ROUTE{"deterministic routing on similarity 0-100"}
-    PLAN[("candidate_plans<br/>38 plan jsonl files")]
-    SIM["brain_submit.py<br/>2531 Brain simulations"]
-    CHK{"Brain checks<br/>sharpe 1.25 - fitness 1.0 - turnover - sub-universe - weight"}
-    ADJ{"DeterministicResultInterpreter<br/>best sharpe under 0.8 means KILL"}
-    DEAD[("dead ends<br/>76 KILLED branches - 18 quarantined - 0 PROMOTED")]
+flowchart TB
+    SPACE[("search space<br/>7642 fields times 70 operators")]
 
-    LOGS -->|"raw sim rows from 4 lanes"| IDX
-    IDX -->|"fields - skeletons - failed checks per row"| SQL
-    SQL -->|"history_summary + hot fingerprints"| PROP
-    CTX -->|"owned operators and datasets to avoid"| PROP
-    PROP -->|"217 hypothesis cards - mechanism - expected sign - kill criteria"| CRIT
-    CRIT -->|"REJECT 36 and REVISE 39 - re-propose"| PROP
-    CRIT -->|"ACCEPTED 132"| STORE
-    STORE -->|"theory card + prior results + branch decision"| GEN
-    GEN -->|"up to 60 raw FASTEXPR strings per theory"| VAL
-    VAL -->|"53 of 2994 rejected - 28 missing required dataset - 22 unknown field<br/>one repair re-prompt with the validation report"| GEN
-    VAL -->|"2941 accepted - minimum 4 distinct operator skeletons"| SEM
-    SEM -->|"similarity scorecards - median 38 of 100"| ROUTE
-    ROUTE -->|"score under 65 - 2832 accepted outright"| PLAN
-    ROUTE -->|"score 65 to 85 - 15 percent soft quota - 14 kept"| PLAN
-    ROUTE -->|"score over 85 or quota exhausted - 18 quarantined"| DEAD
-    PLAN -->|"expression + settings_override.delay"| SIM
-    SIM -->|"1611 completed sims matched back by expression and delay<br/>1 passed ALL checks - median sharpe 0.08 - 60 percent under 0.5"| CHK
-    CHK -->|"per-theory metrics and standalone passers"| ADJ
-    ADJ -->|"ITERATE 26 or EXPAND 5 - next generation round"| GEN
-    ADJ -->|"KILL 76 - PROMOTE 0"| DEAD
+    subgraph ECON["ECONOMIC SEARCH METHOD, retired — the LLM writes the alpha itself"]
+        direction TB
+        IDEA["LLM proposes an economic idea<br/>and writes the formulas for it"]
+        VALID{"well-formed<br/>and varied?"}
+        NEW{"never tried before?<br/>checked against every past simulation"}
+    end
+
+    SIMBUS["BRAIN simulation<br/>the metered shared resource"]
+    LEDGER[("simulation ledger<br/>every alpha with its metrics and its failed checks")]
+    PASS{"passes every<br/>platform check?"}
+    KEPT[("kept")]
+    DROP[("discarded")]
+
+    SPACE -->|"field catalog as context"| IDEA
+    IDEA -->|"LLM-written formulas"| VALID
+    VALID -->|"no"| DROP
+    VALID -->|"yes"| NEW
+    NEW -->|"no, already tried"| DROP
+    NEW -->|"yes"| SIMBUS
+    SIMBUS -->|"metrics and named failing checks"| LEDGER
+    LEDGER --> PASS
+    PASS -->|"yes, almost never"| KEPT
+    PASS -->|"no, nearly every time"| DROP
 ```
+
+**How to read this graph:** the labelled box is what this retired method put inside the *alpha discovery module* of the [overall pipeline](../../../README.md#alpha-discovery-vs-alpha-enhancement). The search space, the simulation and the ledger are shared by every method and drawn the same way in each graph.
 
 ## The code
 

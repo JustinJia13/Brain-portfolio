@@ -2,88 +2,72 @@
 
 ## The problem
 
-The other methods here generate candidates. This one generates nothing — it sits in front of the
-simulator and answers a narrower question: **is this particular candidate worth a slot?**
+The other methods generate candidates. This one generates nothing: it sits in front of the
+simulator and answers a narrower question — **is this particular candidate worth a simulation?**
 
-That question only exists because of a platform constraint. BRAIN allows 3 concurrent
-simulations per account, and there is no cheap partial-sim probe, so a candidate yields no
-information at all until it has had a full backtest. The constraint is arbitrary rather than
-fundamental — a different platform would move the number — but while it holds, candidates are
-cheap and measurements are not, and it is worth spending some effort on refusal.
+That question only exists because of a platform constraint. BRAIN allows three concurrent
+simulations per account and has no cheap partial test, so a candidate tells you nothing until it
+has had a full backtest. The constraint is arbitrary rather than fundamental, but while it holds,
+candidates are cheap and measurements are not.
 
-[`../../dedup.md`](../../dedup.md) measured how bad the waste was: across an 84,717-record slice,
-**90.5% of simulation budget went into regions the existing history had already proved dead**,
-and only 7.9% of (skeleton, field-set) cells ever recur. That second number is the important
-one — it means identity-based dedup was solving the wrong problem. The waste was not
-*duplication*, it was *predictable failure*.
-
-So the gate is a predictor, and because a predictor that is confidently wrong is worse than no
-predictor, it is built to know where it is ignorant.
+[`../../dedup.md`](../../dedup.md) found where the budget was actually going. Not to literal
+duplicates — those were rare — but to candidates in regions the history had already shown to be
+dead. The waste was *predictable failure*, not repetition. That makes this a forecasting problem,
+and since a forecaster that is confidently wrong is worse than none, the gate is built to know
+where it is guessing.
 
 ## How it screens candidates
 
-Two objects answer two different questions, and a third decides whether to trust them.
+Think of it as a bouncer in front of the simulator. It cannot know for sure who will turn out to
+be good, but it can turn away the obvious cases and wave through anyone it does not recognise.
 
-**Object A — redundancy.** Is this candidate too close to something already simulated, or to the
-portfolio? A generalised cosine over additive primitives, mapped through an isotonic `psi`
-calibration, yields `c_max`.
+1. **Forecast from the formula alone.** Without simulating, estimate from the expression's
+   structure how similar it is to alphas already simulated or submitted, how much it will trade,
+   and roughly how good it is likely to be. The forecaster learns from the simulation ledger
+   (`metric.py`, `surrogate.py`, `redundancy.py`).
+2. **Turn away the sure failures.** Clearly redundant with existing work, or certain to trade too
+   much — dropped. This is the part that runs live today.
+3. **Know when the forecast is a guess.** If a candidate looks unlike anything in the history, the
+   gate steps aside and lets it through rather than reject it on an extrapolation
+   (`redundancy.py`, coverage index).
+4. **Turn away the clearly weak.** In familiar territory, a candidate forecast to be confidently
+   weak is dropped. This step still runs in **shadow mode**: it records what it would have done
+   but does not act yet (`gate.py`, `shadow.py`).
 
-**Object B — a quantile surrogate.** What outcome distribution should we expect? Twelve gradient-
-boosted quantile heads predict q16/q50/q84 across four targets, from a pruned feature vector.
-
-**Coverage — abstention.** A Gaussian density in feature space estimates `n_eff`. Where the
-candidate is off-support, Object B's prediction is not trusted and the gate *abstains*, letting
-the candidate through rather than killing it on an extrapolation.
-
-The branches are ordered cheapest-and-surest first: reliable hard kills, a 5% epsilon trickle
-that deliberately spends slots in Object B's blind spots to keep it from calcifying, coverage
-abstention, then the quality conjunction.
+A small random share of candidates is waved through regardless, so the forecaster keeps being
+tested in its own blind spots.
 
 ```mermaid
-flowchart TD
-  CAND["candidate FASTEXPR from the alpha_discovery/grammar_method generator"]
-  PARSE["parse.py + signature.py<br/>recursive-descent parse then split on top-level plus-minus<br/>99.6 pct corpus coverage"]
-  A["Object A redundancy<br/>aggregate.corr_model generalised cosine then psi isotonic, 29 knots"]
-  PHI["features.py phi vector<br/>196 dims pruned to 36 after dropping hashed path n-grams"]
-  B["Object B surrogate.pkl 11.8MB<br/>12 quantile GBM heads at q16 q50 q84 on 4 targets"]
-  COV["CoverageIndex Gaussian density in phi-space<br/>coverage_index.npz over 8000 sampled sims"]
-  G1{"1 reliable kills, beta_kill 1.0<br/>turnover LCB above 0.70 or c_max minus 0.19 above 0.40"}
-  EPS{"2 eps trickle 5 pct"}
-  G3{"3 coverage abstention, n_eff under 200"}
-  G4{"4 quality conjunction, beta 2.5<br/>sub UCB at or above 0.30 AND fitness upper at or above 1.00"}
-  SKIP[("slot saved, candidate never simulated")]
-  SIM["BRAIN simulation slot, the hard scarce budget"]
-  HIST[("artifacts/sim/master.jsonl<br/>91969 sims, 90.5 pct of budget landed in already-dead cells")]
-  SHADOW[("artifacts/gate_shadow.jsonl<br/>13580 shadow decisions, 375 joined to outcomes")]
-  CUT{"cutover.py three live conditions<br/>recall at or above 0.88, cov err at or below 0.05, novel under 10 pct"}
-  MODE[("cutover_state.json, mode reliable, beta 3.0")]
+flowchart TB
+    CAND["candidate expression<br/>from a discovery method"]
 
-  CAND -->|"expr string"| PARSE
-  PARSE -->|"unparseable or no features: fail-safe"| SIM
-  PARSE -->|"additive primitives with field, filter, CS-warp and sign channels"| A
-  PARSE -->|"same signature"| PHI
-  A -->|"c_max vs the 31 submitted alphas"| G1
-  PHI -->|"phi"| B
-  PHI -->|"phi"| COV
-  B -->|"turnover q50 and sigma"| G1
-  B -->|"sub-sharpe UCB and reconstructed fitness upper"| G4
-  COV -->|"n_eff"| G3
-  G1 -->|"139 turnover plus 167 redundant kills per 6000, no eps rescue"| SKIP
-  G1 -->|"survivor"| EPS
-  EPS -->|"eps_explore to un-calcify B blind spots"| SIM
-  EPS -->|"not sampled"| G3
-  G3 -->|"B is off-support so do not trust it"| SIM
-  G3 -->|"on-support"| G4
-  G4 -->|"kill_quality: 45 pct of all slots saved at 85 pct in-zone recall"| SKIP
-  G4 -->|"anything plausibly clears"| SIM
-  SIM -->|"realised sharpe ret turnover sub-sharpe"| HIST
-  SIM -->|"raw per-head quantiles logged per candidate"| SHADOW
-  HIST -->|"TIME split, train older and test newer"| B
-  HIST -->|"3662 self-corr triples anchored by 465 pool PnL-corr pairs"| A
-  SHADOW --> CUT
-  CUT -->|"cond2 0.037 PASS and cond3 1.1 pct PASS but cond1 underpowered, 1 of 197"| MODE
-  MODE -->|"only branch 1 is authoritative, quality stays in shadow"| G1
+    subgraph GATE["PRE-SCREEN — decide whether a candidate is worth a simulation"]
+        direction TB
+        FORECAST["forecast from the formula alone<br/>similarity, trading, likely quality"]
+        SURE{"sure to fail?<br/>redundant or trades too much"}
+        KNOWN{"familiar territory,<br/>or unlike anything seen before?"}
+        WEAK{"confidently weak?<br/>shadow mode for now"}
+    end
+
+    SIMBUS["BRAIN simulation<br/>the metered shared resource"]
+    LEDGER[("simulation ledger<br/>every alpha with its metrics and its failed checks")]
+    DROP[("discarded<br/>no simulation spent")]
+
+    CAND --> FORECAST
+    FORECAST --> SURE
+    SURE -->|"yes"| DROP
+    SURE -->|"no"| KNOWN
+    KNOWN -->|"unfamiliar, let it through"| SIMBUS
+    KNOWN -->|"familiar"| WEAK
+    WEAK -->|"yes"| DROP
+    WEAK -->|"no, or not sure"| SIMBUS
+    SIMBUS -->|"metrics and named failing checks"| LEDGER
+    LEDGER -.->|"retrains the forecast"| FORECAST
 ```
+
+**How to read this graph:** the labelled box opens up the *cheap pre-screen* diamond of the
+[overall pipeline](../../README.md#alpha-discovery-vs-alpha-enhancement). It is wired into the
+grammar method, which calls it on each candidate before spending a simulation (`--gate-mode`).
 
 ## The code
 

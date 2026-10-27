@@ -2,69 +2,66 @@
 
 ## The problem
 
-The most elegant idea among the retired lanes, and a genuinely good response to the previous
+The most elegant idea among the retired methods, and a genuinely good response to the previous
 failure.
 
-The diagnosis of [`../economic_search_method/`](../economic_search_method/README.md) was that
-LLM-authored expressions were often malformed or semantically incoherent, and that validating
-them after the fact was fighting the symptom. So don't let the LLM write expressions at all.
+[`../economic_search_method/`](../economic_search_method/README.md) let the LLM write formulas,
+and too many were malformed or incoherent; checking them afterwards was fighting the symptom. So
+this method **never lets the LLM write a formula at all.** Instead it adjusts the grammar's
+settings — which kinds of fields and operators to favour — and the grammar does the writing, so
+everything produced is valid by construction.
 
-Instead, have it emit a **`GrammarConfig` patch** — a modification to the sampling
-distribution of the grammar. The grammar then guarantees every expression is well-formed by
-construction, and the LLM's only job is to say *where in the space to look*. A clean separation
-of concerns: the model supplies judgement about regions, the grammar supplies correctness.
+A clean division of labour: the LLM supplies judgement about *where to look*, the grammar
+supplies *correctness*.
 
 ## How it discovers alpha
 
-A closed loop in `runner.py`: propose a config patch, sample the grammar under it, filter,
-simulate, distill what was learned, repeat.
+Think of the LLM as the navigator and the grammar as the driver.
 
-`proposer.py` is the heart of it — the LLM returns a structured patch to the grammar's sampling
-weights rather than any expression text. `memory.py` is the other interesting piece: an
-LLM-distilled store of persistent facts carried across simulation batches, so each round is
-conditioned on a compressed summary of everything already observed rather than a raw log dump.
-`semantic_novelty.py` and `similarity.py` guard against the loop converging on a single region.
+1. **The LLM adjusts the grammar's settings** — which fields and operators to favour this round —
+   based on what has worked so far. It never writes a formula (`proposer.py`).
+2. **The grammar samples formulas under those settings,** all valid by construction.
+3. **Near-duplicates of past work are filtered out,** and the rest are simulated (`runner.py`).
+4. **The LLM writes short notes on what it learned,** which carry into the next round's steering
+   (`memory.py`).
 
 ```mermaid
-flowchart TD
-    HIST[("all sim logs - llm_sim.jsonl 3368 recs plus master")]
-    STARTUP["3 one-shot startup LLM analysts - exhaustion, LLM-failure, pool-hurt"]
-    MEM[("memory.json - 23 distilled facts, cap 50")]
-    QT[("in-memory Q-table plus SkeletonCounter")]
-    PROP["AlphaProposerAgent - exactly 1 Claude call per round"]
-    PATCH{"_apply_patch - key must exist on GrammarConfig and op not in BANNED_GENERATION_OPS"}
-    GRAM["GrammarPlanner.build_plan - forced n_samples = 3x batch = 120"]
-    SIMF{"SimilarityFilter 3 layers - exact expr, skeleton count at or above 20, Jaccard at or above 0.85 vs 5000 hot fingerprints"}
-    SEM{"semantic novelty critic - LLM review if neighbor score at or above 55, quarantine at or above 85"}
-    DEAD[("discarded candidates")]
-    BRAIN["run_batch_submission - 40 alphas per round in batches of 3"]
-    LOG[("llm_sim.jsonl - 3066 completed sims")]
-    CHECKS{"all Brain checks pass"}
-    ADM["portfolio admission - PnL cache 45.1 MB plus brain_score_delta"]
-    DIST["MemoryDistiller - LLM rewrites the whole fact list"]
+flowchart TB
+    SPACE[("search space<br/>7642 fields times 70 operators")]
 
-    HIST -->|"all-time op counts, grade distribution, pool-hurt examples"| STARTUP
-    STARTUP -->|"14 exhausted ops, 15 LLM failure patterns, frontier regions"| PROP
-    MEM -->|"top 20 facts as prose"| PROP
-    QT -->|"exploration summary, low n_obs clusters"| PROP
-    PROP -->|"config-tagged JSON GrammarConfig patch, no raw expressions"| PATCH
-    PATCH -->|"validated patch, unknown keys and banned ops stripped"| GRAM
-    PATCH -.->|"parse or validation failure - fall back to default GrammarConfig"| GRAM
-    GRAM -->|"120 syntactically valid FASTEXPR by construction"| SIMF
-    SIMF -->|"near-duplicates of submitted history"| DEAD
-    SIMF -->|"survivors with neighbor evidence"| SEM
-    SEM -->|"quarantined on soft quota, plus surplus oversample dropped once the batch of 40 fills"| DEAD
-    SEM -->|"up to 40 accepted, registered in the durable filter"| BRAIN
-    BRAIN -->|"sim records with checks and grades"| LOG
-    LOG --> CHECKS
-    CHECKS -->|"3047 of 3066 have at least one FAIL - mostly CONCENTRATED_WEIGHT and LOW_SHARPE"| DEAD
-    CHECKS -->|"19 of 3066 clean = 0.62 pct"| ADM
-    ADM -->|"879 of 1003 scored had delta at or below 0 so Q-reward is zeroed"| QT
-    ADM -->|"124 pool-positive alphas keep full reward"| QT
-    LOG -->|"top 10 records annotated with admission result"| DIST
-    DIST -->|"replacement fact set, trimmed to 50 by confidence"| MEM
-    QT -->|"updated q-values steer next round"| PROP
+    subgraph CTRL["LLM GRAMMAR CONTROL METHOD, retired — the LLM steers, the grammar writes"]
+        direction TB
+        STEER["LLM adjusts the grammar's settings<br/>which fields and operators to favour"]
+        GRAM["grammar samples formulas<br/>valid by construction"]
+        DUP{"near-duplicate<br/>of past work?"}
+    end
+
+    SIMBUS["BRAIN simulation<br/>the metered shared resource"]
+    LEDGER[("simulation ledger<br/>every alpha with its metrics and its failed checks")]
+
+    subgraph MEMORY["MEMORY — lessons carried between rounds"]
+        direction TB
+        NOTES[("LLM-written notes<br/>on what has worked so far")]
+    end
+
+    PASS{"passes every<br/>platform check?"}
+    KEPT[("kept")]
+    DROP[("discarded")]
+
+    SPACE -->|"fields and operators"| GRAM
+    STEER -->|"settings change"| GRAM
+    GRAM -->|"candidate formulas"| DUP
+    DUP -->|"yes"| DROP
+    DUP -->|"no"| SIMBUS
+    SIMBUS -->|"metrics and named failing checks"| LEDGER
+    LEDGER -->|"this round's results"| NOTES
+    NOTES -.->|"next round's steering"| STEER
+    LEDGER --> PASS
+    PASS -->|"yes, less often than random sampling"| KEPT
+    PASS -->|"no"| DROP
 ```
+
+**How to read this graph:** the labelled box is what this retired method put inside the *alpha discovery module* of the [overall pipeline](../../../README.md#alpha-discovery-vs-alpha-enhancement). The search space, the simulation and the ledger are shared by every method and drawn the same way in each graph.
 
 ## The code
 
