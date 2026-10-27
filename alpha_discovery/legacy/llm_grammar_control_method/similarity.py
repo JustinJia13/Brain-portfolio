@@ -246,7 +246,7 @@ class SimilarityFilter:
     ) -> None:
         """Populate filter state from existing sim log records.
 
-        count_skeletons should be True for the active alpha_discovery/legacy.llm_grammar_control_method log and False
+        count_skeletons should be True for the active alpha_discovery.legacy.llm_grammar_control_method log and False
         for broad external logs. External history should block duplicates and
         provide semantic neighbors without making common skeletons impossible.
 

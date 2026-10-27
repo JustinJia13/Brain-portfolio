@@ -6,10 +6,10 @@ all trace back to root A, and the LLM always sees the full gradient of what
 has been tried on that signal regardless of which lane generated it.
 
 Used by:
-  - alpha_search/workshop.py   generate_candidates()
+  - alpha_enhancement/workshop/core.py   generate_candidates()
   - tools/batch_workshop.py    _run_batch(), _workshop_one()
   - tools/alpha_workshop.py    main loop
-  - alpha_enhancement/workshop.targeted targeted explicit-alpha runs
+  - alpha_enhancement.workshop.targeted targeted explicit-alpha runs
 """
 
 from __future__ import annotations

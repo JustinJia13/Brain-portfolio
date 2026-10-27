@@ -47,7 +47,7 @@ flowchart TD
     GATE{"prob above zero and champion field known"}
     PRIOR[("grammar_prior_from_wiki.json<br/>332 cluster_priors rows")]
     DROP[("down-weighted clusters<br/>255 of 587 get no prior weight at all")]
-    GRAM["alpha_discovery/grammar_method.run_pipeline --grammar-sampler probe_prior"]
+    GRAM["alpha_discovery.grammar_method.run_pipeline --grammar-sampler probe_prior"]
 
     MASTER -->|"status done rows that carry is_sharpe"| AGG
     CLUS -->|"field membership per record"| AGG

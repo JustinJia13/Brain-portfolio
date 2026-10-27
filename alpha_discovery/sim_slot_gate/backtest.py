@@ -30,7 +30,6 @@ from .metric import AlphaMetric
 class _Components:
     # truth
     passes: np.ndarray         # bool: submission_passes
-    grade_good: np.ndarray     # bool: grade in GOOD/EXCELLENT/SPECTACULAR
     # head medians/sigmas
     sub_q50: np.ndarray; sub_sig: np.ndarray
     sh_q50: np.ndarray;  sh_sig: np.ndarray
@@ -39,9 +38,6 @@ class _Components:
     # object A / coverage
     c_max: np.ndarray
     n_eff: np.ndarray
-
-
-_GOOD_GRADES = {"GOOD", "EXCELLENT", "SPECTACULAR"}
 
 
 def precompute(am: AlphaMetric, n_eval: int = 6000, seed: int = 0,
@@ -58,7 +54,7 @@ def precompute(am: AlphaMetric, n_eval: int = 6000, seed: int = 0,
         hold = hold[rng2.permutation(len(hold))[:n_eval]]
 
     # featurize + truth + per-candidate Object-A terms (single pass)
-    phis, passes, grade_good, c_max, n_eff = [], [], [], [], []
+    phis, passes, c_max, n_eff = [], [], [], []
     for i in hold:
         r = sims[i]
         p = db_adapter.submission_passes(r)
@@ -70,7 +66,6 @@ def precompute(am: AlphaMetric, n_eval: int = 6000, seed: int = 0,
         sig = build_signature(r.expr)
         phis.append(phi)
         passes.append(bool(p))
-        grade_good.append(r.grade in _GOOD_GRADES)
         c_max.append(am.redundancy.c_max(sig))
         n_eff.append(am.coverage.n_eff(phi) if am.coverage else 1e9)
     X = np.array(phis)
@@ -95,7 +90,7 @@ def precompute(am: AlphaMetric, n_eval: int = 6000, seed: int = 0,
     to_q50, to_sig = head_pair("turnover")
 
     return _Components(
-        passes=np.array(passes, dtype=bool), grade_good=np.array(grade_good, dtype=bool),
+        passes=np.array(passes, dtype=bool),
         sub_q50=sub_q50, sub_sig=sub_sig, sh_q50=sh_q50, sh_sig=sh_sig,
         rt_q50=rt_q50, rt_sig=rt_sig, to_q50=to_q50, to_sig=to_sig,
         c_max=np.array(c_max), n_eff=np.array(n_eff),

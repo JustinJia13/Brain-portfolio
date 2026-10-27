@@ -174,7 +174,7 @@ def field_token(field_id: str, field_types: dict[str, str]) -> str:
 
     VECTOR fields are multi-valued per stock per day and MUST be collapsed to a
     scalar with a vector aggregator before any TS/CS operator, or Brain errors
-    the simulation (no alpha returned). Mirrors alpha_discovery/grammar_method._field_node.
+    the simulation (no alpha returned). Mirrors alpha_discovery.grammar_method._field_node.
     """
     if field_types.get(field_id) == "VECTOR":
         return f"vec_avg({field_id})"

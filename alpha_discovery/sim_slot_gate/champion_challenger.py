@@ -28,11 +28,14 @@ from . import db_adapter as db
 from .features import default_featurizer
 from .gate import GateParams
 from core.qtable import (
-    compute_q_reward, extract_primary_op,
-    MIN_OBS_L1, MIN_OBS_L2, DEAD_THRESHOLD, MIN_PRUNE_SKELETONS,
+    compute_q_reward,
+    extract_primary_op,
+    MIN_OBS_L1,
+    MIN_OBS_L2,
+    MIN_PRUNE_SKELETONS,
 )
 
-_HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_HERE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 RESULTS = os.path.join(_HERE, "test_results")
 
 
@@ -102,17 +105,6 @@ class _Champion:
         if l1 and self._prune(l1, MIN_OBS_L1, theta):
             return True
         return False
-
-    def bucket_stats(self, rec):
-        """(mean, n) of the candidate's L2 bucket from training — for 2e hypotheses."""
-        fields = rec.get("fields") or []
-        if not fields:
-            return None
-        field = str(fields[0]); op = extract_primary_op(rec.get("expression", ""), field)
-        e = self.l2.get((field, op))
-        if not e or e[1] == 0:
-            return None
-        return e[0] / e[1], e[1]
 
 
 # --------------------------------------------------------------------------- #

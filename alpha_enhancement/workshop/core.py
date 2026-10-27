@@ -2,17 +2,18 @@
 
 Core logic shared by:
   - tools/alpha_workshop.py  (manual, per-expression)
-  - alpha_search/submit.py   (auto, post-submission)
+  - core/brain/submit.py   (auto, post-submission)
   - tools/batch_workshop.py  (history/audit-driven workshop)
 """
 
 from __future__ import annotations
-from core.quality import failing_checks, is_passing, resolve_checks
+from core.quality import (  # re-exported: workshop callers import these from here
+    CONCENTRATION_LIMIT, SELF_CORR_LIMIT, SELF_CORR_SHARPE_MULTIPLIER,
+    failing_checks, is_passing, resolve_checks,
+)
 
 import hashlib
-import os
 import re
-from pathlib import Path
 from typing import Any
 
 from core.robustness import record_robustness_score
@@ -25,9 +26,9 @@ REPAIR_CONTRIBUTION_DELTA_MIN = 0.0
 REPAIR_SECONDARY_MIN_FITNESS = 0.9
 ENHANCE_SECONDARY_MIN_FITNESS = 1.0
 ENHANCE_ROBUSTNESS_MIN = 0.30
-WORKSHOP_CONCENTRATION_LIMIT = 0.40
-WORKSHOP_SELF_CORR_LIMIT = 0.70
-WORKSHOP_SELF_CORR_SHARPE_MULTIPLIER = 1.10
+WORKSHOP_CONCENTRATION_LIMIT = CONCENTRATION_LIMIT
+WORKSHOP_SELF_CORR_LIMIT = SELF_CORR_LIMIT
+WORKSHOP_SELF_CORR_SHARPE_MULTIPLIER = SELF_CORR_SHARPE_MULTIPLIER
 DEFAULT_WORKSHOP_SETTINGS: dict[str, Any] = {
     "delay": 1,
     "decay": 0,
@@ -111,16 +112,6 @@ def source_settings_override(record: dict) -> dict[str, Any]:
 
 def _candidate_id(expr: str, regime: str = "") -> str:
     return hashlib.sha1(f"{regime}\n{expr}".encode()).hexdigest()[:16]
-
-
-
-
-# Checks that are warnings only and never block submission or workshop routing.
-IGNORED_CHECKS: frozenset[str] = frozenset({"SELF_CORRELATION", "UNITS"})
-
-
-
-
 
 
 def _admission_contribution_delta(record: dict) -> float | None:
@@ -381,7 +372,7 @@ def generate_candidates(
                         override workflows only.
 
     Returns:
-        List of candidate dicts ready for submission via alpha_search.submit.
+        List of candidate dicts ready for submission via core.brain.submit.
     """
     from alpha_enhancement.workshop.repair import _sign_flip
 

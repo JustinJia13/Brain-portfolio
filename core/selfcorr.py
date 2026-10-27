@@ -10,10 +10,7 @@ import logging
 import time
 from datetime import datetime, timezone
 from typing import Any
-from core.brain.api import (
-    get_datafields, sign_in, fetch_yearly_stats_with_retry,
-    fetch_pnl_series, fetch_pnl_series_with_retry, fetch_competition_alpha_ids,
-)
+from core.brain.api import fetch_pnl_series, fetch_competition_alpha_ids
 from core.robustness import attach_robustness, normalize_yearly_stats
 
 

@@ -8,7 +8,7 @@ How it works:
   1. Scan grammar sim log(s) for alphas with Sharpe <= threshold (default -1.0)
   2. For each, generate the negated expression using the same sign-flip logic
      as repair.py (pushes negation as deep as possible into the expression tree)
-  3. Write a candidate JSONL plan ready for submission via alpha_search submit
+  3. Write a candidate JSONL plan ready for submission via core.brain.submit
 
 Usage:
     python tools/try_negations.py
@@ -156,7 +156,7 @@ def main() -> None:
         for c in candidates:
             f.write(json.dumps(c) + "\n")
     print(f"Written: {out_path}")
-    print(f"\nTo submit: python -m alpha_search.submit --plan {out_path} --sim-log artifacts/negations_sim.jsonl")
+    print(f"\nTo submit: python -m core.brain.submit --plan {out_path} --sim-log artifacts/negations_sim.jsonl")
 
 
 if __name__ == "__main__":

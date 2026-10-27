@@ -27,7 +27,7 @@ from . import db_adapter
 from .aggregate import CorrModel
 from .signature import build_signature
 
-_HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_HERE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PARAMS_PATH = os.path.join(_HERE, "alpha_discovery/sim_slot_gate", "metric_params.json")
 
 

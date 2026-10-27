@@ -25,14 +25,13 @@ import json
 import math
 import os
 import time
-from collections import defaultdict
 
 import numpy as np
 
 from . import db_adapter as db
 from .gate import GateParams
 
-_HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_HERE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 STATE_PATH = os.path.join(_HERE, "alpha_discovery/sim_slot_gate", "cutover_state.json")
 SHADOW_LOG = os.path.join(_HERE, "artifacts", "gate_shadow.jsonl")
 RESULTS = os.path.join(_HERE, "test_results")

@@ -47,9 +47,6 @@ from alpha_enhancement.workshop.batch import (
 from alpha_enhancement.workshop.core import (
     _looks_like_fastexpr,
     _make_candidate,
-    failing_checks,
-    find_passing_examples,
-    is_passing,
     record_workshop_key,
     route_record,
 )
@@ -70,6 +67,7 @@ from alpha_enhancement.workshop.semantic_context import (
 )
 from alpha_enhancement.workshop.scoring import score_seed_records, with_portfolio_prompt_feedback
 from alpha_enhancement.workshop.simulation import submit_candidate_batch
+from core.quality import standalone_passes as _standalone_passes
 
 
 SEMANTIC_DIR = ROOT / "artifacts" / "semantic_workshop"
@@ -973,7 +971,7 @@ def _is_grammar(record: dict[str, Any]) -> bool:
         or family.startswith("grammar|")
         or intention.startswith("grammar")
         or "grammar_" in Path(source).name
-        or "alpha_discovery/grammar_method" in Path(source).parts
+        or "grammar_method" in Path(source).parts
     )
 
 
@@ -1131,15 +1129,6 @@ def _summary_rank_key(record: dict[str, Any]) -> tuple[float, float, float, floa
         _float(record.get("is_sharpe")) or -1e9,
         -(corr if corr is not None else 9.0),
         -(turnover if turnover is not None else 9.0),
-    )
-
-
-def _standalone_passes(record: dict[str, Any]) -> bool:
-    return (
-        record.get("status") == "done"
-        and (_float(record.get("is_sharpe")) or -999.0) >= 1.25
-        and (_float(record.get("is_fitness")) or -999.0) >= 1.0
-        and is_passing(record)
     )
 
 

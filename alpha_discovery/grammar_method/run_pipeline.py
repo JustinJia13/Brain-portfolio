@@ -15,7 +15,7 @@ All outputs land inside alpha_discovery/grammar_method/artifacts/ by default.
 
 Typical invocation (run from world_quant/):
 
-    python -m alpha_discovery/grammar_method.run_pipeline \\
+    python -m alpha_discovery.grammar_method.run_pipeline \\
         --fields-csv all_fields.csv \\
         --exclude-dataset analyst4 \\
         --n-samples 500 \\
@@ -24,11 +24,11 @@ Typical invocation (run from world_quant/):
 
 Run exactly 3 rounds then stop:
 
-    python -m alpha_discovery/grammar_method.run_pipeline ... --rounds 3
+    python -m alpha_discovery.grammar_method.run_pipeline ... --rounds 3
 
 Force re-fetch of the field catalog:
 
-    python -m alpha_discovery/grammar_method.run_pipeline ... --refetch-clusters
+    python -m alpha_discovery.grammar_method.run_pipeline ... --refetch-clusters
 """
 
 from __future__ import annotations
@@ -38,21 +38,22 @@ import json
 import logging
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 from core.fields import build_data_profiles, cluster_profiles, filter_profiles
 from core.expr.models import DataProfile, FieldCluster
 from core.brain.api import (
-    get_datafields, sign_in, fetch_yearly_stats_with_retry,
-    fetch_pnl_series, fetch_pnl_series_with_retry, fetch_competition_alpha_ids,
+    get_datafields,
+    sign_in,
+    fetch_yearly_stats_with_retry,
+    fetch_pnl_series_with_retry,
 )
 from core.field_catalogs import default_fields_csv
-from core.robustness import attach_robustness, normalize_yearly_stats
 
 from alpha_discovery.grammar_method import GrammarConfig, GrammarPlanner
-from core.feedback import SimResult, compute_quality_weight
+from core.brain.submit import DEFAULT_SETTINGS as _BRAIN_DEFAULT_SETTINGS
+from core.feedback import SimResult
 from core.qtable import (
     QTable, SkeletonCounter, bootstrap_qtable,
     compute_q_reward, extract_primary_op, is_degenerate_sim_record,
@@ -65,15 +66,9 @@ from core.logs import MASTER, run_log_path, session_log_path, merge_session_to_m
 # portfolio gate do not have to import from a discovery method.
 from core.selfcorr import (
     get_alpha_detail,
-    _fetch_pnl_with_backoff,
     _portfolio_self_corr_info_template,
-    _extract_is_perf,
     load_portfolio_alpha_data,
-    _pnl_to_daily_returns,
-    compute_max_self_corr,
     compute_max_self_corr_info,
-    _parse_is_checks,
-    _parse_check_values,
     build_sim_record,
 )
 from core.clusters import (
@@ -87,24 +82,14 @@ from core.clusters import (
 # Default simulation settings
 # ---------------------------------------------------------------------------
 
-DEFAULT_SIMULATION_SETTINGS = {
-    "instrumentType": "EQUITY",
-    "region": "USA",
-    "universe": "TOP3000",
-    "delay": 1,
-    "decay": 0,
-    "neutralization": "SUBINDUSTRY",
-    "truncation": 0.01,
-    "pasteurization": "ON",
-    "unitHandling": "VERIFY",
-    "nanHandling": "OFF",
-    "language": "FASTEXPR",
-    "visualization": False,
-}
+# One definition of the BRAIN simulation settings, owned by the submitter.
+DEFAULT_SIMULATION_SETTINGS = dict(_BRAIN_DEFAULT_SETTINGS)
+# GrammarConfig is the single source of the grammar's hyperparameter defaults.
+_GRAMMAR_DEFAULTS = GrammarConfig()
 
 _PIPELINE_DIR = Path(__file__).parent
 _ARTIFACTS_DIR = _PIPELINE_DIR / "artifacts"
-DEFAULT_PROBE_PRIOR = _PIPELINE_DIR.parent / "artifacts" / "probe" / "grammar_prior_from_probe.json"
+DEFAULT_PROBE_PRIOR = _PIPELINE_DIR.parents[1] / "artifacts" / "probe" / "grammar_prior_from_probe.json"
 SEARCH_SCOPE = {
     "region": "USA",
     "delay": 1,
@@ -123,8 +108,8 @@ def parse_args() -> argparse.Namespace:
     )
     p.add_argument(
         "--credentials",
-        default=str(Path(__file__).parent.parent / "brain.txt"),
-        help="Path to Brain credentials JSON (default: ../brain.txt relative to this script)",
+        default=str(Path(__file__).parents[2] / "brain.txt"),
+        help="Path to Brain credentials JSON (default: brain.txt at the repo root)",
     )
     p.add_argument("--dataset-id", default="", help="Brain dataset id, e.g. fundamental6 (unused when --fields-csv set)")
     p.add_argument(
@@ -150,8 +135,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument(
         "--alpha-binary-prob",
         type=float,
-        default=0.7,
-        help="Probability of alpha_binary composite pattern at K>=9 (default 0.7).",
+        default=_GRAMMAR_DEFAULTS.alpha_binary_prob,
+        help="Probability of alpha_binary composite pattern at K>=9 (default %(default)s, from GrammarConfig).",
     )
     p.add_argument(
         "--grammar-sampler",
@@ -182,24 +167,18 @@ def parse_args() -> argparse.Namespace:
         help="Probability of using probe-family operator/window bias for compatible grammar choices.",
     )
     p.add_argument("--rounds", type=int, required=True, help="Required. Number of generate→submit→update rounds to run (0 = run until Ctrl+C).")
-    p.add_argument("--budget", type=int, required=True, help="Required. Max Δk complexity budget K (paper optimal=10; use 6 for simpler expressions).")
+    p.add_argument("--budget", type=int, default=_GRAMMAR_DEFAULTS.budget, help="Max Δk complexity budget K (default %(default)s, from GrammarConfig; paper optimal=10, use 6 for simpler expressions).")
     p.add_argument("--allow-vector", action=argparse.BooleanOptionalAction, default=True, help="Include VECTOR-type fields (default: on). They are automatically wrapped in vec_avg/vec_sum at the leaf level. Pass --no-allow-vector to restrict to MATRIX.")
     p.add_argument("--fields", nargs="+", default=[], metavar="FIELD_ID",
                    help="Explicit field_ids to include (space-separated). Bypasses type/coverage filters for these fields.")
     p.add_argument("--fields-file", default="", metavar="PATH",
                    help="Path to a text file with one field_id per line. Combined with --fields.")
-    p.add_argument("--n-samples", type=int, required=True, help="Required. Candidates generated per round.")
-    p.add_argument(
-        "--exploration-fraction",
-        type=float,
-        default=0.30,
-        help="Explore fraction per batch (default 0.30)",
-    )
+    p.add_argument("--n-samples", type=int, default=_GRAMMAR_DEFAULTS.n_samples, help="Candidates generated per round (default %(default)s, from GrammarConfig).")
     p.add_argument(
         "--min-coverage",
         type=float,
-        default=0.0,
-        help="Min coverage to include a field profile (default 0.0, no filter).",
+        default=_GRAMMAR_DEFAULTS.min_coverage,
+        help="Min coverage to include a field profile (default %(default)s, from GrammarConfig).",
     )
     p.add_argument(
         "--exclude-dataset",
@@ -341,8 +320,6 @@ def _cluster_cache_path(dataset_id: str) -> Path:
     return _ARTIFACTS_DIR / f"{dataset_id}_clusters.json"
 
 
-
-
 def _filter_clusters_by_field_types(
     clusters: list[FieldCluster],
     allowed_types: tuple[str, ...],
@@ -408,8 +385,6 @@ def fetch_and_cache_clusters(args: argparse.Namespace, session) -> list[FieldClu
     return clusters
 
 
-
-
 def _load_clusters(path: Path) -> list[FieldCluster]:
     with path.open() as f:
         records = json.load(f)
@@ -457,50 +432,6 @@ def _load_clusters(path: Path) -> list[FieldCluster]:
 # ---------------------------------------------------------------------------
 # Simulation log helpers
 # ---------------------------------------------------------------------------
-
-def seed_feedback_from_log(store: "Any", sim_log_path: Path) -> int:
-    """Archived — superseded by bootstrap_qtable().  Kept for compatibility."""
-    if not sim_log_path.exists():
-        return 0
-    count = 0
-    with sim_log_path.open() as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                rec = json.loads(line)
-            except json.JSONDecodeError:
-                continue
-            if rec.get("search_lane") != "grammar":
-                continue
-            if rec.get("status") != "done":
-                continue
-            if is_degenerate_sim_record(rec):
-                continue
-            is_sharpe = float(rec.get("is_sharpe") or 0.0)
-            is_fitness = float(rec.get("is_fitness") or 0.0)
-            raw_turnover = rec.get("is_turnover")
-            is_turnover = float(raw_turnover) if raw_turnover is not None else None
-            concentrated_weight_ok = bool(rec.get("is_concentrated_weight_ok", True))
-            sub_universe_sharpe_ok = bool(rec.get("is_sub_universe_sharpe_ok", True))
-            grade = rec.get("grade") or ""
-            passed = grade.upper() == "PASS" or is_sharpe >= 1.25
-            result = SimResult(
-                candidate_id=rec.get("candidate_id", ""),
-                expression=rec.get("expression", ""),
-                cluster_ids=tuple(str(c) for c in (rec.get("cluster_ids") or [])),
-                is_sharpe=is_sharpe,
-                is_fitness=is_fitness,
-                passed=passed,
-                is_turnover=is_turnover,
-                concentrated_weight_ok=concentrated_weight_ok,
-                sub_universe_sharpe_ok=sub_universe_sharpe_ok,
-            )
-            store.update(result)
-            count += 1
-    store.end_of_batch()
-    return count
 
 
 def load_completed_keys(sim_log: str) -> tuple[set[str], set[str]]:
@@ -623,51 +554,9 @@ def wait_for_completion(
             time.sleep(sleep_seconds)
 
 
-
-
 # ---------------------------------------------------------------------------
 # PnL-based self-correlation helpers
 # ---------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-def load_portfolio_pnls(
-    session,
-    competition_id: str = "IQC2026S1",
-    *,
-    max_pnl_attempts: int | None = 10,
-) -> dict[str, dict[str, float]]:
-    """Compatibility wrapper returning only competition PnL series."""
-    alpha_data = load_portfolio_alpha_data(
-        session,
-        competition_id=competition_id,
-        max_pnl_attempts=max_pnl_attempts,
-    )
-    return {
-        aid: data["pnl"]
-        for aid, data in alpha_data.items()
-        if isinstance(data.get("pnl"), dict) and data.get("pnl")
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # ---------------------------------------------------------------------------
@@ -799,7 +688,6 @@ def run_batch_submission(
 # ---------------------------------------------------------------------------
 # CSV-based cluster loading (multi-dataset mode)
 # ---------------------------------------------------------------------------
-
 
 
 def load_group_profiles_from_csv(
@@ -1006,7 +894,6 @@ def main() -> None:
     config = GrammarConfig(
         budget=args.budget,
         n_samples=args.n_samples,
-        exploration_fraction=args.exploration_fraction,
         min_coverage=args.min_coverage,
         alpha_binary_prob=args.alpha_binary_prob,
     )

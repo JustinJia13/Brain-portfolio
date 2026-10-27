@@ -22,7 +22,7 @@ import numpy as np
 from core.expr.models import ExpressionNode
 
 from . import filters
-from .fields import default_embedder, _load_metadata
+from .fields import _load_metadata
 from .signature import Signature, build_signature, _node_window
 
 # layout
@@ -52,7 +52,6 @@ DIM_FULL = N_SCALAR + N_OP_HASH + N_PATH_HASH + N_CAT
 # transfer — they overfit specific structures. Pruning them lifts held-out IC
 # 0.29 -> 0.35. So the default phi = scalars + field-category fractions only.
 DIM_PRUNED = N_SCALAR + N_CAT
-DIM = DIM_PRUNED
 
 
 def _bucket(token: str, d: int) -> int:

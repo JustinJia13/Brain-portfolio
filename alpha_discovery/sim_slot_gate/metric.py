@@ -27,7 +27,7 @@ from .surrogate import Surrogate, MODEL_PATH
 
 corr_model = _corr_model_default
 
-_HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_HERE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 _COVERAGE_CACHE = os.path.join(_HERE, "alpha_discovery/sim_slot_gate", "coverage_index.npz")
 
 

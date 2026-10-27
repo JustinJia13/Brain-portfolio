@@ -20,6 +20,7 @@ from typing import Any, Callable
 
 from core.brain.api import fetch_pnl_series_with_retry
 from core.robustness import record_robustness_score
+from core.quality import SELF_CORR_LIMIT, SELF_CORR_SHARPE_MULTIPLIER
 from core.selfcorr import compute_max_self_corr_info, get_alpha_detail
 
 
@@ -34,8 +35,8 @@ REJECT = "REJECT"
 class AdmissionConfig:
     min_brain_score_delta: float = 0.0
     min_fallback_delta_sharpe: float = 0.0
-    corr_limit: float = 0.70
-    corr_sharpe_multiplier: float = 1.10
+    corr_limit: float = SELF_CORR_LIMIT
+    corr_sharpe_multiplier: float = SELF_CORR_SHARPE_MULTIPLIER
     min_shared_days: int = 20
 
 

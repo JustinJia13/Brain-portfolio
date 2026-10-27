@@ -28,7 +28,7 @@ These need no credentials and no network. They are standalone modules, not
 `unittest`-discoverable, so run each directly:
 
 ```bash
-for t in parse channels corr_model surrogate; do python -m alpha_discovery/sim_slot_gate.tests.test_$t; done
+for t in parse channels corr_model surrogate; do python -m alpha_discovery.sim_slot_gate.tests.test_$t; done
 ```
 
 Expected: `13/13 parse tests passed`, `9/9 channel tests passed`,

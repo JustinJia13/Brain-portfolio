@@ -8,7 +8,7 @@ LLMExplorationLoop orchestrates:
   5. MemoryDistiller: LLM distills results into persistent memory facts
 
 Usage (from world_quant/ root):
-    python -m alpha_discovery/legacy.llm_grammar_control_method.runner [--rounds N] [--batch-size 40] [--dry-run]
+    python -m alpha_discovery.legacy.llm_grammar_control_method.runner [--rounds N] [--batch-size 40] [--dry-run]
 """
 
 from __future__ import annotations
@@ -197,7 +197,7 @@ class LLMExplorationLoop:
         session:        authenticated requests.Session (Brain API)
         sim_log:        path to write simulation records (JSONL)
         api_key:        OpenAI API key (default: OPENAI_API_KEY env var)
-        memory_path:    path to memory.json (default: alpha_discovery/legacy.llm_grammar_control_method/artifacts/memory.json)
+        memory_path:    path to memory.json (default: alpha_discovery/legacy/llm_grammar_control_method/artifacts/memory.json)
         batch_size:     target number of alphas to submit per round (default 40)
         credentials:    path to brain.txt credentials file
         settings:       Brain simulation settings dict (default: standard EQUITY USA settings)
@@ -205,7 +205,7 @@ class LLMExplorationLoop:
         skeleton_counter: pre-loaded SkeletonCounter (optional)
         dry_run:        if True, generate and filter candidates but do not submit
         similarity_bootstrap_logs: extra history logs for novelty filtering
-        semantic_novelty: if True, run the alpha_discovery/legacy.llm_grammar_control_method semantic novelty gate
+        semantic_novelty: if True, run the alpha_discovery.legacy.llm_grammar_control_method semantic novelty gate
     """
 
     def __init__(
@@ -1164,12 +1164,12 @@ def _parse_args() -> argparse.Namespace:
         "--similarity-bootstrap-log",
         action="append",
         default=[],
-        help="Additional sim log path to bootstrap alpha_discovery/legacy.llm_grammar_control_method novelty filtering from; can repeat",
+        help="Additional sim log path to bootstrap alpha_discovery.legacy.llm_grammar_control_method novelty filtering from; can repeat",
     )
     p.add_argument(
         "--no-semantic-novelty",
         action="store_true",
-        help="Disable alpha_discovery/legacy.llm_grammar_control_method semantic novelty critic",
+        help="Disable alpha_discovery.legacy.llm_grammar_control_method semantic novelty critic",
     )
     p.add_argument(
         "--semantic-review-threshold",
@@ -1312,7 +1312,7 @@ def main() -> None:
 
 def compare(
     grammar_log: str = "alpha_discovery/grammar_method/artifacts/all_sim.jsonl",
-    llm_log: str = "alpha_discovery/legacy.llm_grammar_control_method/artifacts/llm_sim.jsonl",
+    llm_log: str = "alpha_discovery/legacy/llm_grammar_control_method/artifacts/llm_sim.jsonl",
 ) -> None:
     """Print a side-by-side comparison of grammar vs LLM sim logs."""
     from collections import Counter
@@ -1373,7 +1373,7 @@ if __name__ == "__main__":
     import sys as _sys
     if len(_sys.argv) > 1 and _sys.argv[1] == "compare":
         g = _sys.argv[2] if len(_sys.argv) > 2 else "alpha_discovery/grammar_method/artifacts/all_sim.jsonl"
-        l = _sys.argv[3] if len(_sys.argv) > 3 else "alpha_discovery/legacy.llm_grammar_control_method/artifacts/llm_sim.jsonl"
+        l = _sys.argv[3] if len(_sys.argv) > 3 else "alpha_discovery/legacy/llm_grammar_control_method/artifacts/llm_sim.jsonl"
         compare(g, l)
     else:
         main()

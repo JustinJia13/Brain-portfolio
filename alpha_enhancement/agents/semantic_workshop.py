@@ -10,7 +10,6 @@ runner submits only the ``expression`` field.
 from __future__ import annotations
 
 import json
-import os
 import re
 from dataclasses import dataclass, field
 from typing import Any
@@ -512,11 +511,6 @@ def _compact_robustness_card(card: dict[str, Any]) -> dict[str, Any]:
             "notes": source.get("notes"),
         })
     return compact
-
-
-def _parse_json_object(raw_text: str) -> dict[str, Any]:
-    payload = parse_json_object(raw_text)
-    return _normalize_diagnosis(payload or {})
 
 
 def _parse_variants(raw_text: str) -> list[GeneratedVariant]:

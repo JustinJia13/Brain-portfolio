@@ -10,15 +10,15 @@ Flow:
 
 Typical invocation (from world_quant/):
 
-    python -m alpha_discovery/legacy.operator_skeleton_method.pipeline --n-pairs 200 --seed 42
+    python -m alpha_discovery.legacy.operator_skeleton_method.pipeline --n-pairs 200 --seed 42
 
 Dry run (print expressions with cluster labels, no Brain submission):
 
-    python -m alpha_discovery/legacy.operator_skeleton_method.pipeline --dry-run --n-pairs 20
+    python -m alpha_discovery.legacy.operator_skeleton_method.pipeline --dry-run --n-pairs 20
 
 Show cluster pool summary:
 
-    python -m alpha_discovery/legacy.operator_skeleton_method.pipeline --show-clusters
+    python -m alpha_discovery.legacy.operator_skeleton_method.pipeline --show-clusters
 """
 
 from __future__ import annotations

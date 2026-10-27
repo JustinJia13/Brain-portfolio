@@ -1,6 +1,6 @@
 """Core data types for the alpha_discovery/grammar_method pipeline.
 
-Copied from alpha_search/models.py — alpha_discovery/grammar_method has no dependency on alpha_search.
+Originally copied from the retired alpha_search package; the grammar method has no dependency on it.
 Only the types actually used by this pipeline are included.
 """
 

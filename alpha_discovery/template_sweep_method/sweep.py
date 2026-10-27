@@ -1,7 +1,7 @@
 """Generate a JSONL candidate plan from the proven alpha template library.
 
 Usage:
-    python -m alpha_search.sweep --output alpha_search/artifacts/alpha_batch.jsonl
+    python -m alpha_discovery.template_sweep_method.sweep --output artifacts/sweep/alpha_batch.jsonl
 """
 
 from __future__ import annotations
@@ -60,13 +60,13 @@ def build_alpha_candidates(templates: list[AlphaTemplate]) -> list[dict]:
     return candidates
 
 
-def build_alpha_plan(output_path: str = "alpha_search/artifacts/alpha_batch.jsonl") -> list[dict]:
+def build_alpha_plan(output_path: str = "artifacts/sweep/alpha_batch.jsonl") -> list[dict]:
     """Build a JSONL candidate plan from ALPHA_TEMPLATES and write to output_path."""
     import json
 
     templates = get_alpha_templates()
     if not templates:
-        print("No alpha templates registered. Add entries to ALPHA_TEMPLATES in alpha_search/templates.py.")
+        print("No alpha templates registered. Add entries to ALPHA_TEMPLATES in alpha_discovery/template_sweep_method/templates.py.")
         return []
 
     candidates = build_alpha_candidates(templates)
@@ -95,7 +95,7 @@ def main() -> None:
     import argparse
 
     parser = argparse.ArgumentParser(description="Generate JSONL candidate plan from proven alpha templates.")
-    parser.add_argument("--output", default="alpha_search/artifacts/alpha_batch.jsonl", help="Output JSONL path.")
+    parser.add_argument("--output", default="artifacts/sweep/alpha_batch.jsonl", help="Output JSONL path.")
     args = parser.parse_args()
 
     build_alpha_plan(output_path=args.output)

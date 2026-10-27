@@ -23,7 +23,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
@@ -33,7 +33,7 @@ from alpha_enhancement.agents.semantic_workshop import (  # noqa: E402
     SemanticGeneratorAgent,
 )
 from alpha_enhancement.agents.testing import StubDiagnosticAgent, StubGeneratorAgent  # noqa: E402
-from core.brain.submit import DEFAULT_SETTINGS, _regime_key  # noqa: E402
+from core.brain.submit import _regime_key
 from alpha_enhancement.workshop import semantic as semantic_workshop  # noqa: E402
 from alpha_enhancement.workshop.core import (  # noqa: E402
     _looks_like_fastexpr,
@@ -47,6 +47,7 @@ from alpha_enhancement.workshop.records import load_records  # noqa: E402
 from alpha_enhancement.workshop.robustness_card import record_score_addition  # noqa: E402
 from alpha_enhancement.workshop.scoring import score_seed_records, with_portfolio_prompt_feedback  # noqa: E402
 from alpha_enhancement.workshop.simulation import submit_candidate_batch  # noqa: E402
+from alpha_enhancement.workshop.semantic import _fmt, _write_jsonl
 
 
 DEFAULT_OUT_ROOT = ROOT / "artifacts" / "probe_semantic_ab"
@@ -1143,25 +1144,9 @@ def _float(value: Any, default: float | None = None) -> float | None:
         return default
 
 
-def _fmt(value: Any, digits: int = 3) -> str:
-    if value is None:
-        return "N/A"
-    try:
-        return f"{float(value):.{digits}f}"
-    except (TypeError, ValueError):
-        return str(value)
-
-
 def _write_json(row: dict[str, Any], path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(row, indent=2, sort_keys=True) + "\n")
-
-
-def _write_jsonl(rows: list[dict[str, Any]], path: Path) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w") as handle:
-        for row in rows:
-            handle.write(json.dumps(row, sort_keys=True) + "\n")
 
 
 def _append_jsonl(path: Path, row: dict[str, Any]) -> None:

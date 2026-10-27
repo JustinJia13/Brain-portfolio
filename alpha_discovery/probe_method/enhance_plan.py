@@ -8,7 +8,7 @@ Examples
 --------
 Build structural A-derived variants from probe seeds:
 
-    python -m alpha_discovery/probe_method.enhance_plan build \
+    python -m alpha_discovery.probe_method.enhance_plan build \
         --input artifacts/probe/probe_seeds.jsonl \
         --out artifacts/enhance/self_enhance_plan.jsonl \
         --pack all \
@@ -16,14 +16,14 @@ Build structural A-derived variants from probe seeds:
 
 Submit with:
 
-    python -m core/brain.submit \
+    python -m core.brain.submit \
         --plan artifacts/enhance/self_enhance_plan.jsonl \
         --sim-log artifacts/enhance/self_enhance_sim.jsonl \
         --batch-size 3
 
 Summarize completed variants:
 
-    python -m alpha_discovery/probe_method.enhance_plan summary \
+    python -m alpha_discovery.probe_method.enhance_plan summary \
         --sim-log artifacts/enhance/self_enhance_sim.jsonl \
         --out-txt artifacts/enhance/self_enhance_summary.txt
 """

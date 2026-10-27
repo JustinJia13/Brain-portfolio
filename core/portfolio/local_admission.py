@@ -23,7 +23,6 @@ from typing import Any
 
 from core.portfolio.admission import (
     _aligned_values,
-    _portfolio_delay,
     _same_delay_pnls,
     annualized_sharpe,
     equal_weight_returns,

@@ -3,7 +3,7 @@
 Loads the persisted surrogate and asserts held-out coverage is near nominal.
 Requires a trained alpha_discovery/sim_slot_gate/surrogate.pkl (run surrogate.Surrogate().fit()).
 
-    ${PYTHON:-python3} -m alpha_discovery/sim_slot_gate.tests.test_surrogate
+    ${PYTHON:-python3} -m alpha_discovery.sim_slot_gate.tests.test_surrogate
 """
 
 from __future__ import annotations

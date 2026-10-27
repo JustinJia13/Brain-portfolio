@@ -5,7 +5,7 @@ or LOW_SUB_UNIVERSE_SHARPE), the agent suggests FASTEXPR repair expressions
 by wrapping the original expression with appropriate operators.
 
 Usage:
-    from alpha_enhancement/agents.repair import AlphaRepairAgent
+    from alpha_enhancement.agents.repair import AlphaRepairAgent
 
     agent = AlphaRepairAgent(api_key="sk-...")
     result = agent.repair(sim_record)
@@ -16,7 +16,6 @@ Usage:
 
 from __future__ import annotations
 
-import os
 import re
 from dataclasses import dataclass, field
 

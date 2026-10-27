@@ -14,9 +14,8 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from core.brain.submit import DEFAULT_SETTINGS, _regime_key
-from alpha_enhancement.workshop.core import is_passing
+from core.quality import standalone_passes as _standalone_passes
 
-REGIME_AXES = ("universe", "neutralization", "truncation", "decay")
 CORE_SETTING_KEYS = ("delay", "universe", "neutralization", "truncation", "decay")
 
 DEFAULT_DELAYS = (1,)
@@ -312,15 +311,6 @@ def _same(left: Any, right: Any) -> bool:
         return abs(float(left) - float(right)) <= 1e-12
     except (TypeError, ValueError):
         return str(left).upper() == str(right).upper()
-
-
-def _standalone_passes(record: dict) -> bool:
-    return (
-        record.get("status") == "done"
-        and (record.get("is_sharpe") or 0.0) >= 1.25
-        and (record.get("is_fitness") or 0.0) >= 1.0
-        and is_passing(record)
-    )
 
 
 def _record_rank(record: dict) -> tuple[float, float, float]:

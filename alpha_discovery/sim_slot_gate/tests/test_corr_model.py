@@ -1,6 +1,6 @@
 """corr_model unit tests (§9, Object A channel-level + aggregation).
 
-    ${PYTHON:-python3} -m alpha_discovery/sim_slot_gate.tests.test_corr_model
+    ${PYTHON:-python3} -m alpha_discovery.sim_slot_gate.tests.test_corr_model
 """
 
 from __future__ import annotations

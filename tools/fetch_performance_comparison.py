@@ -150,10 +150,6 @@ def _fmt_change(v: float | None) -> str:
     return f"{sign}{v:,.0f}"
 
 
-def _check_symbol(result: str | None) -> str:
-    return "PASS" if result == "PASS" else "FAIL"
-
-
 # ---------------------------------------------------------------------------
 # Core display
 # ---------------------------------------------------------------------------

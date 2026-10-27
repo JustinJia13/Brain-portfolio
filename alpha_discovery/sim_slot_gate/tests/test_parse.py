@@ -1,7 +1,7 @@
 """Parser + canonicalisation tests (§9 — the parse/canonicalize portion).
 
 Run with the worldquant interpreter:
-    ${PYTHON:-python3} -m alpha_discovery/sim_slot_gate.tests.test_parse
+    ${PYTHON:-python3} -m alpha_discovery.sim_slot_gate.tests.test_parse
 """
 
 from __future__ import annotations
@@ -119,7 +119,6 @@ def test_parse_error_on_garbage():
 
 
 def _run():
-    import sys
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     passed = 0
     for fn in fns:

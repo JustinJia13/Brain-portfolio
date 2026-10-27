@@ -8,7 +8,7 @@ The legacy OverseerAgent API is retained as a disabled compatibility shim. It
 does not call an LLM and never emits parametric sweeps.
 
 Usage:
-    from alpha_enhancement/agents.enhance import AlphaEnhanceAgent, OverseerAgent
+    from alpha_enhancement.agents.enhance import AlphaEnhanceAgent, OverseerAgent
 
     enhance_agent = AlphaEnhanceAgent()
     result = enhance_agent.enhance(passing_records, history=[])
@@ -17,7 +17,6 @@ Usage:
 from __future__ import annotations
 
 import json
-import os
 from dataclasses import dataclass
 from itertools import product
 from typing import Any

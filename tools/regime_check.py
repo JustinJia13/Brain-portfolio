@@ -10,7 +10,7 @@ Build a one-axis regime check plan from promoted workshop alphas:
 
 Submit the plan with the normal Brain submitter:
 
-    python -m alpha_search.pipeline submit \
+    python -m alpha_discovery.template_sweep_method.pipeline submit \
         --plan artifacts/regime_check/plan.jsonl \
         --sim-log artifacts/regime_check/sim.jsonl
 
@@ -92,7 +92,7 @@ def _build(args: argparse.Namespace) -> None:
     print(f"Wrote {len(candidates)} regime-check candidates to {args.output}")
     print(f"Mode: {args.mode} ({axes}); no adaptive/greedy selection.")
     print("Submit with:")
-    print(f"  python -m alpha_search.pipeline submit --plan {args.output} --sim-log {args.sim_log}")
+    print(f"  python -m alpha_discovery.template_sweep_method.pipeline submit --plan {args.output} --sim-log {args.sim_log}")
 
 
 def _summary(args: argparse.Namespace) -> None:

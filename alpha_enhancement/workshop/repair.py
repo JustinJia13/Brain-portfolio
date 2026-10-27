@@ -13,7 +13,7 @@ Special case: sign-flip (sharpe <= FLIP_THRESHOLD) is handled structurally
 before the LLM call — it's a deterministic negation, not a heuristic.
 
 Usage:
-    python -m alpha_search.repair
+    python -m alpha_enhancement.workshop.repair
         --sim-log artifacts/model16_sim.jsonl
         --output artifacts/repair_batch.jsonl
         --min-sharpe 1.0

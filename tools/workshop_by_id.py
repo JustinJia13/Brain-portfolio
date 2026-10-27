@@ -266,7 +266,7 @@ def main() -> None:
     agent = AlphaRepairAgent(api_key=api_key)
 
     # Load all existing sim records for passing-examples context
-    from alpha_enhancement.workshop.batch import _load_records, _resolve_input_paths
+    from alpha_enhancement.workshop.batch import _load_records
     try:
         ctx_paths = list((ROOT / "artifacts" / "sim").glob("*.jsonl"))
         all_records = _load_records(ctx_paths) if ctx_paths else []

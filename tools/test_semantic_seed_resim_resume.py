@@ -187,7 +187,7 @@ class SemanticSeedResimResumeTests(unittest.TestCase):
             with (
                 patch.object(semantic, "submit_candidate_batch") as submit_batch,
                 patch(
-                    "core/brain.api.fetch_yearly_stats_with_retry",
+                    "core.brain.api.fetch_yearly_stats_with_retry",
                     return_value={2023: {"sharpe": 1.3, "fitness": 1.1}},
                 ) as fetch_yearly,
             ):
@@ -245,11 +245,11 @@ class SemanticSeedResimResumeTests(unittest.TestCase):
                 {"candidate_id": "new", "expression": "rank(open)"},
             ]
             with (
-                patch("core/brain.submit.submit_one", return_value="progress-url") as submit_one,
-                patch("core/brain.submit.poll_one", return_value={"alpha": "new-alpha"}),
-                patch("core/brain.submit.fetch_detail", return_value={}),
-                patch("core/brain.submit.build_record", side_effect=fake_build_record),
-                patch("core/brain.api.fetch_yearly_stats_with_retry", return_value={}),
+                patch("core.brain.submit.submit_one", return_value="progress-url") as submit_one,
+                patch("core.brain.submit.poll_one", return_value={"alpha": "new-alpha"}),
+                patch("core.brain.submit.fetch_detail", return_value={}),
+                patch("core.brain.submit.build_record", side_effect=fake_build_record),
+                patch("core.brain.api.fetch_yearly_stats_with_retry", return_value={}),
             ):
                 records = submit_candidate_batch(
                     candidates,
@@ -283,9 +283,9 @@ class SemanticSeedResimResumeTests(unittest.TestCase):
             )
 
             with (
-                patch("core/brain.submit.submit_one") as submit_one,
+                patch("core.brain.submit.submit_one") as submit_one,
                 patch(
-                    "core/brain.api.fetch_yearly_stats_with_retry",
+                    "core.brain.api.fetch_yearly_stats_with_retry",
                     return_value={2023: {"sharpe": 1.3, "fitness": 1.1}},
                 ) as fetch_yearly,
             ):
@@ -327,12 +327,12 @@ class SemanticSeedResimResumeTests(unittest.TestCase):
                 }
 
             with (
-                patch("core/brain.submit.submit_one", return_value="progress-url") as submit_one,
-                patch("core/brain.submit.poll_one", return_value={"alpha": "new-alpha"}),
-                patch("core/brain.submit.fetch_detail", return_value={}),
-                patch("core/brain.submit.build_record", side_effect=fake_build_record),
+                patch("core.brain.submit.submit_one", return_value="progress-url") as submit_one,
+                patch("core.brain.submit.poll_one", return_value={"alpha": "new-alpha"}),
+                patch("core.brain.submit.fetch_detail", return_value={}),
+                patch("core.brain.submit.build_record", side_effect=fake_build_record),
                 patch(
-                    "core/brain.api.fetch_yearly_stats_with_retry",
+                    "core.brain.api.fetch_yearly_stats_with_retry",
                     return_value={2023: {"fitness": 1.1}},
                 ),
             ):

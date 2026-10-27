@@ -14,7 +14,7 @@ Pipeline:
   5. All simulation results update the grammar Q-table.
 
 Routing rules:
-  - Fitness <= -1.5                           →  negate (sign-flip, no LLM)
+  - Fitness <= -1.2 (NEGATE_FITNESS_THRESHOLD) →  negate (sign-flip, no LLM)
   - Repairable near-miss + concentration <40%
     + positive/unknown Brain score delta      →  repair (LLM)
   - Passing + corr-eligible
@@ -570,7 +570,7 @@ def main() -> None:
                 for c in items:
                     f.write(json.dumps(c) + "\n")
             print(f"\nWritten {len(items)} {lane} candidates → {p}")
-            print(f"  Submit: python -m alpha_search.submit --plan {p} --sim-log {sim_log}")
+            print(f"  Submit: python -m core.brain.submit --plan {p} --sim-log {sim_log}")
         print(f"\nDone. {sum(len(v) for v in lane_buckets.values())} total candidates.")
         _write_leaderboard(all_records, sim_log, out_dir)
         return

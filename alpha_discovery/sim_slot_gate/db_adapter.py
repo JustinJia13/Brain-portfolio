@@ -23,7 +23,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-_HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_HERE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 MASTER = os.path.join(_HERE, "artifacts/sim/master.jsonl")
 ALPHAS_PARTS = sorted(glob.glob(os.path.join(_HERE, "records/*/alphas_part*.jsonl")))
 OS_PARTS = sorted(glob.glob(os.path.join(_HERE, "records/*/os_part*.jsonl")))
@@ -46,11 +46,9 @@ class SimRecord:
     fitness: float | None
     sub_sharpe: float | None
     self_corr: float | None
-    self_corr_id: str | None
     grade: str | None
     fields: tuple[str, ...]
     logged_at: str | None
-    meets_submission: bool | None
 
 
 def _f(x):
@@ -113,11 +111,9 @@ def load_sims(path: str = MASTER) -> list[SimRecord]:
                 fitness=_f(d.get("is_fitness")),
                 sub_sharpe=_f(sub),
                 self_corr=_f(d.get("max_self_correlation")),
-                self_corr_id=d.get("max_self_correlation_alpha_id"),
                 grade=d.get("grade"),
                 fields=tuple(d.get("fields") or []),
                 logged_at=d.get("logged_at"),
-                meets_submission=d.get("meets_submission_thresholds"),
             )
         )
     return out

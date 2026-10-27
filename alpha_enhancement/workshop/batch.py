@@ -1,7 +1,7 @@
 """Batch auto-workshop over entire simulation history.
 
 Scans sim logs, selects the best representative alpha per field (dedup), then
-routes each record through the shared workshop policy from alpha_enhancement/workshop.core.
+routes each record through the shared workshop policy from alpha_enhancement.workshop.core.
 
 Shared routing rules:
   negate   — fitness <= -1.2, excluding concentration >= 40%
@@ -78,7 +78,6 @@ from alpha_enhancement.workshop.core import (
     _make_candidate,
     _looks_like_fastexpr,
 )
-from alpha_enhancement.workshop.repair import _outermost_call
 from alpha_enhancement.workshop.records import load_records
 from alpha_enhancement.workshop.scoring import (
     prescore_seeds,
@@ -88,6 +87,7 @@ from alpha_enhancement.workshop.scoring import (
 from alpha_enhancement.workshop.simulation import submit_candidate_batch
 from core.logs import merge_session_to_master
 from core.robustness import record_robustness_score, reward_multiplier
+from core.quality import standalone_passes as _standalone_passes
 
 DEFAULT_SIM_GLOBS = [
     str(ROOT / "*" / "artifacts" / "*sim*.jsonl"),
@@ -203,7 +203,7 @@ def _is_grammar_record(record: dict) -> bool:
     path = Path(source_path)
     if path.name.startswith("grammar_"):
         return True
-    return "alpha_discovery/grammar_method" in path.parts and path.name == "all_sim.jsonl"
+    return "grammar_method" in path.parts and path.name == "all_sim.jsonl"
 
 
 def _filter_records_for_source(records: list[dict], args) -> list[dict]:
@@ -850,15 +850,6 @@ def _rank_key(record: dict) -> tuple[float, float, float]:
         _admission_delta_sort(record),
         fitness,
         _score_float(record.get("is_sharpe"), default=-999.0),
-    )
-
-
-def _standalone_passes(record: dict) -> bool:
-    return (
-        record.get("status") == "done"
-        and (record.get("is_sharpe") or 0.0) >= 1.25
-        and (record.get("is_fitness") or 0.0) >= 1.0
-        and is_passing(record)
     )
 
 

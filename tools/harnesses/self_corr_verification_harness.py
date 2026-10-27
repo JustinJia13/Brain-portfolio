@@ -43,11 +43,6 @@ def _make_series(n: int, fn) -> dict[str, float]:
     return result
 
 
-def _make_levels(n: int, fn) -> dict[str, float]:
-    """Build a raw (levels) series — fn gives the value directly."""
-    return {f"2020-{i:05d}": fn(i) for i in range(1, n + 1)}
-
-
 def run_unit_tests() -> int:
     """Run offline unit tests. Returns number of failures."""
     import json
@@ -939,15 +934,6 @@ def _pnl_stats(pnl: dict[str, float]) -> str:
     first5 = [f"{v:.5g}" for v in vals[:5]]
     return (f"n={len(vals)}  min={mn:.5g}  max={mx:.5g}  "
             f"mean={mean:.5g}  std={stdev:.5g}  first5={first5}")
-
-
-def _diff_pnl(pnl: dict[str, float]) -> dict[str, float]:
-    """First-difference a PnL series (levels → daily changes)."""
-    keys = sorted(pnl)
-    result = {}
-    for i in range(1, len(keys)):
-        result[keys[i]] = pnl[keys[i]] - pnl[keys[i - 1]]
-    return result
 
 
 def _corr_matrix(pnls: dict[str, dict[str, float]]) -> None:

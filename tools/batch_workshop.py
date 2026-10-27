@@ -1,4 +1,4 @@
-"""CLI wrapper for :mod:`alpha_enhancement/workshop.batch`."""
+"""CLI wrapper for :mod:`alpha_enhancement.workshop.batch`."""
 
 from __future__ import annotations
 

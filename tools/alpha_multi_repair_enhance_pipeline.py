@@ -19,18 +19,18 @@ Chains three stages in sequence:
     Outputs final_batch.jsonl (submittable) and final_report.txt (human comparison table).
 
 Usage:
-    python -m alpha_multi.repair_enhance_pipeline \\
+    python tools/alpha_multi_repair_enhance_pipeline.py \\
         --sim-log alpha_discovery/grammar_method/artifacts/all_sim.jsonl \\
         --fields-csv all_fields.csv \\
         --credentials brain.txt
 
 Skip already-done stages (resume):
-    python -m alpha_multi.repair_enhance_pipeline \\
+    python tools/alpha_multi_repair_enhance_pipeline.py \\
         --sim-log alpha_discovery/grammar_method/artifacts/all_sim.jsonl \\
         --skip-repair --skip-enhance
 
 Dry run (no Brain submission):
-    python -m alpha_multi.repair_enhance_pipeline \\
+    python tools/alpha_multi_repair_enhance_pipeline.py \\
         --sim-log alpha_discovery/grammar_method/artifacts/all_sim.jsonl \\
         --dry-run
 """

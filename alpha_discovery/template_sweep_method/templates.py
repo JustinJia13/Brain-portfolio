@@ -13,7 +13,7 @@ If no {w} placeholder is present but .windows is non-empty, all integers in [2, 
 in the expression are swept one-at-a-time (same integer replaced uniformly per pass).
 
 Usage:
-    from alpha_discovery/template_sweep_method.templates import AlphaTemplate, ALL_SETTINGS_VARIANTS
+    from alpha_discovery.template_sweep_method.templates import AlphaTemplate, ALL_SETTINGS_VARIANTS
 
     ALPHA_TEMPLATES.append(
         AlphaTemplate(
@@ -58,12 +58,6 @@ NEUTRALIZATION_VARIANTS: list[dict] = [
     {"neutralization": "INDUSTRY"},
     {"neutralization": "SECTOR"},
     {"neutralization": "MARKET"},
-]
-
-DECAY_VARIANTS: list[dict] = [
-    {"decay": 1},
-    {"decay": 4},
-    {"decay": 8},
 ]
 
 

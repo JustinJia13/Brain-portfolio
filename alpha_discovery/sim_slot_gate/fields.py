@@ -24,7 +24,7 @@ from functools import lru_cache
 
 import numpy as np
 
-_HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_HERE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 _META_JSON = os.path.join(_HERE, "datafield_metadata.json")
 _FIELDS_CSV = os.path.join(_HERE, "all_fields.csv")
 
@@ -32,11 +32,6 @@ _TOKEN_RE = re.compile(r"[a-z0-9]+")
 _STOP = frozenset(
     "the a an of for and or to in on by per with is are total value last "
     "data company equity number net".split()
-)
-
-# group identifiers are not fields — never embed them as data fields
-GROUP_TOKENS = frozenset(
-    "market sector industry subindustry country none exchange".split()
 )
 
 

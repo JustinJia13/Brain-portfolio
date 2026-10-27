@@ -12,11 +12,20 @@ selected (wiki exemplars, archaeology, theory promotion, review).
 
 from __future__ import annotations
 
+from typing import Any
+
 from core.robustness import record_robustness_score
 
 PASS_SHARPE = 1.25
 PASS_FITNESS = 1.0
 PASS_TURNOVER = 0.70
+
+# BRAIN's self-correlation rule: a candidate more than SELF_CORR_LIMIT correlated with an
+# existing alpha is acceptable only if its IS Sharpe beats that alpha's by the multiplier.
+SELF_CORR_LIMIT = 0.70
+SELF_CORR_SHARPE_MULTIPLIER = 1.10
+# Weight this concentrated in a few names is treated as fake signal by every lane.
+CONCENTRATION_LIMIT = 0.40
 
 
 def is_submittable(rec: dict) -> bool:
@@ -43,14 +52,16 @@ def quality_rank_key(rec: dict) -> tuple[int, float, float]:
     )
 
 
-__all__ = ["is_submittable", "quality_rank_key", "PASS_SHARPE", "PASS_FITNESS", "PASS_TURNOVER"]
-
 # ---------------------------------------------------------------------------
 # The submittable predicate. A simulated alpha is submittable only when EVERY
 # BRAIN check passes -- including concentrated-weight and sub-universe, not just
 # sharpe/fitness/turnover. This lives here, not in the enhancement engine, because
 # every lane needs it and the shared layer must not depend upward.
 # ---------------------------------------------------------------------------
+
+# Checks that are warnings only and never block submission or workshop routing.
+IGNORED_CHECKS: frozenset[str] = frozenset({"SELF_CORRELATION", "UNITS"})
+
 
 def resolve_checks(record: dict) -> list[dict]:
     """Get checks list, falling back to raw_alpha_detail.is.checks."""
@@ -81,3 +92,33 @@ def is_passing(record: dict) -> bool:
         if c.get("result") != "PASS":
             return False
     return True
+
+
+def _float(value: Any) -> float | None:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def standalone_passes(record: dict) -> bool:
+    """Done, IS Sharpe and fitness at the pass bars, and every submission check passes."""
+    return (
+        record.get("status") == "done"
+        and (_float(record.get("is_sharpe")) or -999.0) >= PASS_SHARPE
+        and (_float(record.get("is_fitness")) or -999.0) >= PASS_FITNESS
+        and is_passing(record)
+    )
+
+
+__all__ = [
+    "is_submittable",
+    "quality_rank_key",
+    "PASS_SHARPE",
+    "PASS_FITNESS",
+    "PASS_TURNOVER",
+    "standalone_passes",
+    "SELF_CORR_LIMIT",
+    "SELF_CORR_SHARPE_MULTIPLIER",
+    "CONCENTRATION_LIMIT",
+]

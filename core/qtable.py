@@ -4,8 +4,8 @@ Two-level Q-table that learns which (cluster, operator) and (field, operator)
 combinations are dead ends, then permanently prunes them from the search space.
 
 Design:
-- Q(cluster_id, specific_op)   — Level 1: cluster × operator  (MIN_OBS_L1=4)
-- Q(field_id,   specific_op)   — Level 2: field × operator    (MIN_OBS_L2=6)
+- Q(cluster_id, specific_op)   — Level 1: cluster × operator  (MIN_OBS_L1=8)
+- Q(field_id,   specific_op)   — Level 2: field × operator    (MIN_OBS_L2=12)
 - Both updated from every simulation result with the same reward.
 - Prune when mean_q < DEAD_THRESHOLD after the level's MIN_OBS observations.
 - Pruning is one-way: entries are never un-pruned.
@@ -21,6 +21,7 @@ from typing import TYPE_CHECKING
 
 from core.field_catalogs import derive_fields
 from core.robustness import compute_robustness, reward_multiplier
+from core.quality import CONCENTRATION_LIMIT, SELF_CORR_LIMIT, SELF_CORR_SHARPE_MULTIPLIER
 
 if TYPE_CHECKING:
     from .feedback import SimResult
@@ -206,7 +207,7 @@ def compute_q_reward(result: "SimResult") -> float:
 
     # Concentration: >= 40% = fake signal (hard zero); < 40% = workshop-fixable (soft)
     if not result.concentrated_weight_ok:
-        if result.max_concentration is not None and result.max_concentration >= 0.40:
+        if result.max_concentration is not None and result.max_concentration >= CONCENTRATION_LIMIT:
             return 0.0
         base *= 0.75
 
@@ -217,11 +218,11 @@ def compute_q_reward(result: "SimResult") -> float:
     # Self-correlation: signed max correlation with competition portfolio.
     # Negative correlation = good diversification, no penalty.
     if result.max_self_correlation is not None:
-        if result.max_self_correlation >= 0.70:
+        if result.max_self_correlation >= SELF_CORR_LIMIT:
             benchmark_sharpe = result.max_self_correlation_alpha_sharpe
             if benchmark_sharpe is None or benchmark_sharpe <= 0.0:
                 return 0.0
-            if result.is_sharpe + 1e-12 < 1.10 * benchmark_sharpe:
+            if result.is_sharpe + 1e-12 < SELF_CORR_SHARPE_MULTIPLIER * benchmark_sharpe:
                 return 0.0
 
     return base
@@ -854,7 +855,7 @@ def _bootstrap_dedupe_key(rec: dict, expression: str) -> tuple[str, str]:
 # Incremental on-disk Q-table update
 # ---------------------------------------------------------------------------
 
-_GRAMMAR_ARTIFACTS = Path(__file__).parent / "artifacts"
+_GRAMMAR_ARTIFACTS = Path(__file__).resolve().parents[1] / "alpha_discovery" / "grammar_method" / "artifacts"
 DEFAULT_QTABLE_PATH = _GRAMMAR_ARTIFACTS / "all_qtable.json"
 
 
@@ -867,7 +868,7 @@ def update_qtable_from_records(
     Loads the existing qtable (or creates empty), updates it with the new
     records, and saves back.  Skips records with no fields or degenerate signal.
 
-    Used by alpha_workshop and alpha_search pipeline so that every simulation
+    Used by the workshop and the template sweep pipeline so that every simulation
     — not just grammar pipeline runs — feeds back into the Q-table.
 
     Returns the number of records that contributed to the update.

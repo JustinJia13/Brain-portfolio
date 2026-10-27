@@ -23,7 +23,6 @@ from typing import Any, Callable, Mapping, Sequence
 import numpy as np
 
 from core.expr.models import CandidateSpec, DataProfile, FieldCluster
-from core.feedback import SimResult
 from .grammar import (
     BrainGrammar,
     GrammarConfig,

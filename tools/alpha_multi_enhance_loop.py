@@ -2,15 +2,15 @@
 
 Usage:
     # Dry run (no Brain submission — prints the plan only)
-    python -m alpha_multi.enhance_loop \\
-        --sim-log alpha_search/artifacts/all_sim.jsonl \\
+    python tools/alpha_multi_enhance_loop.py \\
+        --sim-log artifacts/sim/master.jsonl \\
         --enhance-sim-log alpha_multi/artifacts/enhance_sim.jsonl \\
         --fields-csv all_fields.csv \\
         --n-iterations 1 --top-n 5 --dry-run
 
     # Live run
-    python -m alpha_multi.enhance_loop \\
-        --sim-log alpha_search/artifacts/all_sim.jsonl \\
+    python tools/alpha_multi_enhance_loop.py \\
+        --sim-log artifacts/sim/master.jsonl \\
         --enhance-sim-log alpha_multi/artifacts/enhance_sim.jsonl \\
         --fields-csv all_fields.csv \\
         --n-iterations 3 --credentials brain.txt
@@ -276,7 +276,7 @@ def run_enhance_loop(args: argparse.Namespace) -> None:
         print(f"History saved: {history_file}")
 
     print("\nEnhancement loop complete.")
-    print(f"Results: python -m alpha_search.pipeline status --sim-log {enhance_sim_log}")
+    print(f"Results: python -m alpha_discovery.template_sweep_method.pipeline status --sim-log {enhance_sim_log}")
 
 
 def _build_results_summary(results: list[dict]) -> str:

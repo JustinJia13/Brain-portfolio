@@ -2,7 +2,7 @@
 
 Commands
 --------
-build       Generate a JSONL plan from ALPHA_TEMPLATES (alpha_search/templates.py).
+build       Generate a JSONL plan from ALPHA_TEMPLATES (templates.py).
 submit      Submit a JSONL plan to WorldQuant Brain.
 repair      Scan sim logs for near-misses, generate repair variants.
 status      Print performance statistics from simulation logs.
@@ -12,21 +12,21 @@ refine      Disabled legacy combo optimizer.
 Quick-start examples
 --------------------
 # Build and submit all alpha template variants:
-python -m alpha_search.pipeline run \\
-    --sim-log alpha_search/artifacts/alpha_sim.jsonl
+python -m alpha_discovery.template_sweep_method.pipeline run \\
+    --sim-log artifacts/sweep/alpha_sim.jsonl
 
 # Build plan only (inspect before submitting):
-python -m alpha_search.pipeline build \\
-    --output alpha_search/artifacts/alpha_batch.jsonl
+python -m alpha_discovery.template_sweep_method.pipeline build \\
+    --output artifacts/sweep/alpha_batch.jsonl
 
 # Submit a pre-built plan:
-python -m alpha_search.pipeline submit \\
-    --plan alpha_search/artifacts/alpha_batch.jsonl \\
-    --sim-log alpha_search/artifacts/alpha_sim.jsonl
+python -m alpha_discovery.template_sweep_method.pipeline submit \\
+    --plan artifacts/sweep/alpha_batch.jsonl \\
+    --sim-log artifacts/sweep/alpha_sim.jsonl
 
 # Show stats:
-python -m alpha_search.pipeline status \\
-    --sim-log alpha_search/artifacts/alpha_sim.jsonl
+python -m alpha_discovery.template_sweep_method.pipeline status \\
+    --sim-log artifacts/sweep/alpha_sim.jsonl
 """
 
 from __future__ import annotations
@@ -34,8 +34,8 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-# Ensure alpha_search artifacts directory exists
-Path("alpha_search/artifacts").mkdir(parents=True, exist_ok=True)
+# Ensure the sweep artifacts directory exists
+Path("artifacts/sweep").mkdir(parents=True, exist_ok=True)
 
 
 def _build(args: argparse.Namespace) -> None:
@@ -96,7 +96,7 @@ def _run(args: argparse.Namespace) -> None:
     from alpha_discovery.template_sweep_method.sweep import build_alpha_plan
     from core.brain.submit import run
 
-    plan_path = getattr(args, "plan", None) or "alpha_search/artifacts/alpha_batch.jsonl"
+    plan_path = getattr(args, "plan", None) or "artifacts/sweep/alpha_batch.jsonl"
     build_alpha_plan(output_path=plan_path)
 
     run(
@@ -162,14 +162,14 @@ def _merge_sim_log(sim_log: str) -> None:
 
 def _make_parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(
-        prog="python -m alpha_search.pipeline",
+        prog="python -m alpha_discovery.template_sweep_method.pipeline",
         description="Hypothesis-driven alpha search pipeline.",
     )
     sub = root.add_subparsers(dest="command", required=True)
 
     # ---- build ----
     p_build = sub.add_parser("build", help="Generate JSONL plan from ALPHA_TEMPLATES.")
-    p_build.add_argument("--output", default="alpha_search/artifacts/alpha_batch.jsonl")
+    p_build.add_argument("--output", default="artifacts/sweep/alpha_batch.jsonl")
 
     # ---- submit ----
     p_submit = sub.add_parser("submit", help="Submit a JSONL plan to Brain.")

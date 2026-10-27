@@ -34,7 +34,7 @@ from . import db_adapter
 from .db_adapter import TURNOVER_FLOOR
 from .features import default_featurizer
 
-_HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_HERE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 MODEL_PATH = os.path.join(_HERE, "alpha_discovery/sim_slot_gate", "surrogate.pkl")
 
 QUANTILES = (0.16, 0.50, 0.84)

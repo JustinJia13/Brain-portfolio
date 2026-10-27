@@ -209,9 +209,9 @@ this will be honest; do not read the synthetic numbers as the live verdict.
 PY=${PYTHON:-python3}
 
 # (A) ADOPT-NOW — dedup c_max + turnover hard-kill go LIVE (not gated by cutover):
-$PY -c "from alpha_discovery/sim_slot_gate.cutover import save_state; save_state('reliable',3.0,'adopt-now dedup+turnover')"
+$PY -c "from alpha_discovery.sim_slot_gate.cutover import save_state; save_state('reliable',3.0,'adopt-now dedup+turnover')"
 #     then run the live pipeline with the gate authority read from state:
-$PY -m alpha_discovery/grammar_method.run_pipeline --fields-csv all_fields.csv --rounds 4 --n-samples 390 \
+$PY -m alpha_discovery.grammar_method.run_pipeline --fields-csv all_fields.csv --rounds 4 --n-samples 390 \
     --budget 10 --batch-size 3 --max-candidates 0 --refetch-clusters --delay 1 \
     --credentials brain2.txt --gate-mode auto
 
@@ -219,14 +219,14 @@ $PY -m alpha_discovery/grammar_method.run_pipeline --fields-csv all_fields.csv -
 #     (same run command as above; logs land in artifacts/gate_shadow.jsonl)
 
 # (C) CUTOVER MONITOR — 3-condition status + power + recommendation:
-$PY -m alpha_discovery/sim_slot_gate.cutover --beta 3.0
-$PY -m alpha_discovery/sim_slot_gate.cutover --beta 2.5      # compare operating points on the same logs
+$PY -m alpha_discovery.sim_slot_gate.cutover --beta 3.0
+$PY -m alpha_discovery.sim_slot_gate.cutover --beta 2.5      # compare operating points on the same logs
 
 # (D) CUTOVER FLIP — make the quality surrogate authoritative (ONLY flips if all
 #     conditions PASS & powered; otherwise prints HOLD/KEEP-ACCUMULATING):
-$PY -m alpha_discovery/sim_slot_gate.cutover --beta 3.0 --apply
+$PY -m alpha_discovery.sim_slot_gate.cutover --beta 3.0 --apply
 #     (live runs already on --gate-mode auto pick up 'full' on the next round)
 
 # (E) ROLLBACK kill-switch — run each round / periodically (auto-reverts full->reliable):
-$PY -m alpha_discovery/sim_slot_gate.cutover rollback
+$PY -m alpha_discovery.sim_slot_gate.cutover rollback
 ```

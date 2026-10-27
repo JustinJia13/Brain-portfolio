@@ -1,6 +1,6 @@
 """Channel-level unit tests (§9, Object A).
 
-    ${PYTHON:-python3} -m alpha_discovery/sim_slot_gate.tests.test_channels
+    ${PYTHON:-python3} -m alpha_discovery.sim_slot_gate.tests.test_channels
 """
 
 from __future__ import annotations

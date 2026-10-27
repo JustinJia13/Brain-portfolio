@@ -23,7 +23,7 @@ DEFAULT_FIELD_CSV = ROOT / "all_fields.csv"
 DEFAULT_LOG_PATHS = (
     ROOT / "artifacts" / "sim" / "master.jsonl",
     ROOT / "artifacts" / "workshop" / "workshop_sim.jsonl",
-    ROOT / "alpha_discovery/legacy.llm_grammar_control_method" / "artifacts" / "llm_sim.jsonl",
+    ROOT / "alpha_discovery/legacy/llm_grammar_control_method" / "artifacts" / "llm_sim.jsonl",
     ROOT / "artifacts" / "portfolio_admission" / "ranked.jsonl",
 )
 

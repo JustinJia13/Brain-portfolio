@@ -7,7 +7,7 @@ the proposer throughout the session.  Each has one well-defined job:
   LLMFailurePatternAgent   — which patterns the LLM keeps proposing that fail Brain checks
   PoolHurtPatternAgent     — which submittable patterns consistently hurt the pool score
 
-All agents write a JSON artifact to alpha_discovery/legacy.llm_grammar_control_method/artifacts/ and return the JSON string.
+All agents write a JSON artifact to alpha_discovery/legacy/llm_grammar_control_method/artifacts/ and return the JSON string.
 On any LLM call or parse failure: log a warning, return "", leave the artifact empty.
 """
 
@@ -106,7 +106,7 @@ class ExhaustionAnalysisAgent:
     """Identifies exhausted search regions and frontier opportunities.
 
     Input:  alltime_op_counts dict + Q-table exploration summary string
-    Output: alpha_discovery/legacy.llm_grammar_control_method/artifacts/exhaustion_analysis.json
+    Output: alpha_discovery/legacy/llm_grammar_control_method/artifacts/exhaustion_analysis.json
     """
 
     def __init__(
@@ -189,7 +189,7 @@ class LLMFailurePatternAgent:
 
     Input:  pre-aggregated failure data from llm_sim.jsonl
             {primary_op: {fail_check: {n_fail, n_total, fail_rate, examples}}}
-    Output: alpha_discovery/legacy.llm_grammar_control_method/artifacts/llm_failure_analysis.json
+    Output: alpha_discovery/legacy/llm_grammar_control_method/artifacts/llm_failure_analysis.json
     """
 
     def __init__(
@@ -293,7 +293,7 @@ class PoolHurtPatternAgent:
     Input:  top-30 pool-hurting examples (any grade) from expression_portfolio_scores.json
             joined with sim records to get grade/fields/primary_op.
             Sorted by contribution delta ascending (worst first).
-    Output: alpha_discovery/legacy.llm_grammar_control_method/artifacts/pool_hurt_analysis.json
+    Output: alpha_discovery/legacy/llm_grammar_control_method/artifacts/pool_hurt_analysis.json
     """
 
     def __init__(

@@ -22,7 +22,8 @@ from dataclasses import asdict, dataclass, field
 
 import numpy as np
 
-from . import db_adapter
+from core.quality import PASS_FITNESS, PASS_TURNOVER
+
 from .db_adapter import TURNOVER_FLOOR
 from .redundancy import RedundancyIndex
 from .signature import Signature, build_signature
@@ -34,8 +35,8 @@ class GateParams:
     # quality thresholds (Discovery: submission needs sharpe>=1.25, fitness>=1.0,
     # turnover<=0.7; sub-universe-sharpe limit is low ~0.3). Tuned by the backtest.
     tau_sub: float = 0.30      # min plausible sub-universe Sharpe
-    tau_fit: float = 1.00      # min plausible fitness (SUBMIT_MIN_FITNESS)
-    tau_to: float = 0.70       # max plausible turnover (SUBMIT_MAX_TURNOVER)
+    tau_fit: float = PASS_FITNESS    # min plausible fitness (the BRAIN pass bar)
+    tau_to: float = PASS_TURNOVER    # max plausible turnover (the BRAIN pass bar)
     # psi caps ~0.68 and the optimistic adj subtracts beta*sigma_corr(~0.19), so
     # tau_corr must sit below ~0.49 to ever fire; 0.35 kills corr_model >~0.9
     # (genuine structural duplicates -> predicted PnL-corr ~0.55). Backtest-tuned.

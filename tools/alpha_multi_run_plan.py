@@ -6,7 +6,7 @@ This is a thin wrapper around alpha_discovery/grammar_method's submission logic 
 3. Logs results to sim.jsonl (same format as alpha_discovery/grammar_method's runner)
 
 Usage:
-    python -m alpha_multi.run_plan \\
+    python tools/alpha_multi_run_plan.py \\
         --plan-path alpha_multi/artifacts/pv1-fundamental6_batch1.jsonl \\
         --simulation-log alpha_multi/artifacts/pv1-fundamental6_sim.jsonl \\
         --run-log alpha_multi/artifacts/pv1-fundamental6_runner.log \\
@@ -31,22 +31,11 @@ if str(ROOT) not in sys.path:
 
 from core.brain.api import sign_in, fetch_yearly_stats_with_retry
 from core.logs import MASTER, merge_session_to_master, run_log_path
+from core.selfcorr import get_alpha_detail
+from core.brain.submit import DEFAULT_SETTINGS as _BRAIN_DEFAULT_SETTINGS
 
 
-DEFAULT_SIMULATION_SETTINGS = {
-    "instrumentType": "EQUITY",
-    "region": "USA",
-    "universe": "TOP3000",
-    "delay": 1,
-    "decay": 0,
-    "neutralization": "SUBINDUSTRY",
-    "truncation": 0.01,
-    "pasteurization": "ON",
-    "unitHandling": "VERIFY",
-    "nanHandling": "OFF",
-    "language": "FASTEXPR",
-    "visualization": False,
-}
+DEFAULT_SIMULATION_SETTINGS = dict(_BRAIN_DEFAULT_SETTINGS)  # single source: core.brain.submit
 
 
 def parse_args() -> argparse.Namespace:
@@ -139,13 +128,6 @@ def wait_for_completion(session, url, *, sleep_seconds, credentials_path: str = 
         except Exception as exc:
             logging.warning("wait_for_completion: %s", exc)
             time.sleep(sleep_seconds)
-
-
-def get_alpha_detail(session, alpha_id: str) -> dict[str, Any]:
-    try:
-        return session.get(f"https://api.worldquantbrain.com/alphas/{alpha_id}").json()
-    except Exception:
-        return {}
 
 
 def build_record(

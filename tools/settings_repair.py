@@ -28,7 +28,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from core import llm as anthropic  # noqa: E402
 from core.json_utils import parse_json_array  # noqa: E402
 from core.brain.submit import DEFAULT_SETTINGS  # noqa: E402
-from core.logs import merge_session_to_master, session_log_path  # noqa: E402
+from core.logs import merge_session_to_master
 from core.prompts import load_prompt  # noqa: E402
 from core.quality import is_submittable, quality_rank_key  # noqa: E402
 from core.robustness import record_robustness_score  # noqa: E402

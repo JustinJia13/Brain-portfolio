@@ -1,6 +1,6 @@
 """Alpha-LLM semantic novelty gate.
 
-This module is intentionally local to alpha_discovery/legacy.llm_grammar_control_method. It uses the alpha_discovery/legacy.llm_grammar_control_method
+This module is intentionally local to alpha_discovery.legacy.llm_grammar_control_method. It uses the alpha_discovery.legacy.llm_grammar_control_method
 similarity history for deterministic neighbor retrieval, then asks an LLM critic
 only about candidates with meaningful neighbor overlap or portfolio-risk
 neighbors.
@@ -92,7 +92,7 @@ class SemanticNoveltyResult:
 
 
 class AlphaSemanticCriticAgent:
-    """Anthropic-backed semantic critic for alpha_discovery/legacy.llm_grammar_control_method candidates."""
+    """Anthropic-backed semantic critic for alpha_discovery.legacy.llm_grammar_control_method candidates."""
 
     def __init__(
         self,
@@ -108,7 +108,7 @@ class AlphaSemanticCriticAgent:
     def score_candidates(self, *, payload: dict[str, Any]) -> Any:
         if self._client is None:
             if not self.api_key:
-                raise ValueError("No OpenAI API key for alpha_discovery/legacy.llm_grammar_control_method semantic critic")
+                raise ValueError("No OpenAI API key for alpha_discovery.legacy.llm_grammar_control_method semantic critic")
             from core import llm as anthropic
 
             self._client = anthropic.Anthropic(api_key=self.api_key)

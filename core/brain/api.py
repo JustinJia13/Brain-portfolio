@@ -24,7 +24,6 @@ _AUTH_RECENT_SUCCESS_SECONDS = 30.0
 _PERSONA_AUTH_POLL_SECONDS = 5.0
 _PERSONA_AUTH_TIMEOUT_SECONDS = 300.0
 _PERSONA_STATUS_MAX_POSTS = 3
-_ROOT = Path(__file__).resolve().parents[2]
 
 
 def _int_env(name: str, default: int) -> int:

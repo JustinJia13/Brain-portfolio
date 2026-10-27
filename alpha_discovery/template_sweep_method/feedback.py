@@ -7,8 +7,8 @@ Reads one or more simulation logs and computes per-template statistics:
 - Most common failing checks
 
 Usage:
-    python -m alpha_search.feedback --sim-log artifacts/model16_sim.jsonl
-    python -m alpha_search.feedback --sim-log artifacts/*.jsonl
+    python -m alpha_discovery.template_sweep_method.feedback --sim-log artifacts/model16_sim.jsonl
+    python -m alpha_discovery.template_sweep_method.feedback --sim-log artifacts/*.jsonl
 """
 
 from __future__ import annotations

@@ -3,7 +3,7 @@
 This is the small, explicit-alpha path for cases where a user wants to bypass
 batch autoworkshop source selection and send chosen seeds directly to repair or
 enhance. Generation, submission, inline feedback, admission, and reporting are
-delegated to :mod:`alpha_enhancement/workshop.batch`.
+delegated to :mod:`alpha_enhancement.workshop.batch`.
 """
 
 from __future__ import annotations

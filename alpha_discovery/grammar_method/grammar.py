@@ -43,21 +43,18 @@ _D_UNARY       = ops_by_category("unary")
 
 @dataclass(frozen=True)
 class GrammarConfig:
-    """Knobs for the CFG sampler.  Only two free parameters matter for search quality:
-    exploration_fraction and ucb_c — everything else is an operator-set decision."""
+    """Single source of truth for the grammar's hyperparameters.
+
+    run_pipeline's --budget, --n-samples, --min-coverage and --alpha-binary-prob take their
+    defaults from this class, so changing a value here changes the default run. A flag
+    passed on the command line still overrides it for that run."""
 
     budget: int = 10                   # max Δk budget K (inclusive); paper (α-Sem-k) optimal K=10
     n_samples: int = 500               # candidates to generate per batch
     diversity_threshold: float = 0.80  # Jaccard ceiling; above → reject as duplicate
-    exploration_fraction: float = 0.30 # retained for API compatibility; sampler is uniform
     min_coverage: float = 0.0          # champion.coverage minimum for a cluster to qualify.
-    # Set to 0.0 to include event-driven / sector-specific fields that are
-    # sparse by design (earnings surprises, short interest, option flow).
-    # The coverage-seeded cold-start prior already down-weights low-coverage
-    # clusters (exploit term ≈ coverage at cold start), so the bandit self-
-    # corrects: sparse-but-productive fields surface quickly; useless ones stay
-    # suppressed.  Use 0.50 to restrict to broad market fields only.
-    ucb_c: float = 1.4                 # UCB exploration constant
+    # 0.0 includes event-driven / sector-specific fields that are sparse by design
+    # (earnings surprises, short interest, option flow); 0.50 restricts to broad-market fields.
     skeleton_oversample_factor: int = 3  # pool oversampling multiplier for novelty ranking
 
     # Lookback windows (days)
@@ -144,7 +141,7 @@ class GrammarConfig:
     # Enabled only when budget >= 9 (each sub-alpha needs K≥3).
     # Probs controlled by alpha_binary_prob (per-sample gate, like trade_when_prob).
     allowed_alpha_binary_ops: tuple[str, ...] = ("+", "-")
-    alpha_binary_prob: float = 0.5      # fraction of eligible samples that attempt alpha_binary
+    alpha_binary_prob: float = 0.7      # fraction of eligible samples that attempt alpha_binary (K>=9)
 
     # ── Scalar constant operands (deferred — disabled by default) ──────────
     # When scalar_constants is non-empty and scalar_constant_prob > 0, the
@@ -522,57 +519,6 @@ class BrainGrammar:
             if budget >= 4 and n_profiles >= 2 and self._cfg.allowed_group_weighted_ops:
                 feasible.append("expr_group_weighted_op") # Δk=2; needs ≥4 so inner Expr has budget≥2 for TS op
 
-        return feasible
-
-    def feasible_ts_productions(
-        self, budget: int, ts_depth: int, n_profiles: int = 2
-    ) -> list[str]:
-        """Return which TSExpr productions are available at this budget.
-
-        Deprecated: the unified grammar uses feasible_expr_productions().
-        Retained for backward compatibility with tests and external audit code.
-        ts_depth is no longer used internally (depth is now a unified counter).
-
-        Args:
-            budget:     Δk budget remaining when entering the TSExpr non-terminal.
-            ts_depth:   retained for API compatibility; ignored.
-            n_profiles: number of distinct profiles (paired ops need ≥2).
-        """
-        if budget < 2:
-            return []
-        feasible: list[str] = ["ts_rolling", "ts_delta_op"]  # Δk=2 each
-        if budget >= 3 and n_profiles >= 2:
-            feasible.append("ts_paired")     # Δk=3
-            feasible.append("ts_regression") # Δk=3
-        if budget >= 4:
-            feasible.append("ts_delta_rolling")  # Δk=4 (compound)
-        if budget >= 4 and ts_depth >= 1:
-            feasible.append("ts_rolling_of_ts")  # Δk=2 outer + inner TSExpr
-        if budget >= 5 and ts_depth >= 1 and n_profiles >= 2:
-            feasible.append("ts_paired_of_ts")   # Δk=3 outer + two inner TSExprs
-        return feasible
-
-    def feasible_field_productions(
-        self, budget: int, depth_remaining: int = 2
-    ) -> list[str]:
-        """Return which FieldExpr productions are available at this budget.
-
-        Deprecated: the unified grammar uses feasible_expr_productions().
-        Retained for backward compatibility with tests and external audit code.
-
-        Args:
-            budget:          Δk budget remaining when entering the FieldExpr non-terminal.
-            depth_remaining: remaining FieldExpr nesting depth (0 = field literals only).
-        """
-        if budget < 0:
-            return []
-        feasible: list[str] = ["field"]  # Δk=0, always
-        if budget >= 1 and depth_remaining >= 1:
-            feasible.append("unary")   # Δk=1
-        if budget >= 2 and depth_remaining >= 1:
-            feasible.append("binary")  # Δk=arity (2..max_variadic_arity)
-        if budget >= 3 and depth_remaining >= 1:
-            feasible.append("if_else") # Δk=3
         return feasible
 
     # ------------------------------------------------------------------
@@ -1116,26 +1062,6 @@ _T = TypeVar("_T")
 # only for backward compatibility with external imports; they are not used by
 # the grammar sampler.
 # ---------------------------------------------------------------------------
-
-DATASET_WEIGHTS: dict[str, float] = {
-    "model":       1.0,
-    "analyst":     1.0,
-    "fundamental": 1.0,
-    "news":        1.0,
-    "option":      1.0,
-    "pv":          1.0,
-    "socialmedia": 1.0,
-}
-_DATASET_WEIGHT_DEFAULT = 1.0
-
-
-def _dataset_weight(dataset_id: str) -> float:
-    """Return sampling weight for a field based on its dataset prefix."""
-    ds = dataset_id.lower()
-    for prefix, w in DATASET_WEIGHTS.items():
-        if ds.startswith(prefix):
-            return w
-    return _DATASET_WEIGHT_DEFAULT
 
 
 def _rng_choice(rng: np.random.Generator, seq: Sequence[_T]) -> _T:

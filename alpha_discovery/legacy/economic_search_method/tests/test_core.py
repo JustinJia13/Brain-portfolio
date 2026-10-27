@@ -158,7 +158,7 @@ class PackageReorgCompatibilityTests(unittest.TestCase):
             "alpha_search.submit",
             "alpha_multi.run_plan",
             "tools.batch_workshop",
-            "alpha_discovery/legacy.economic_search_method.cli",
+            "alpha_discovery.legacy.economic_search_method.cli",
         ]
         for module in modules:
             with self.subTest(module=module):

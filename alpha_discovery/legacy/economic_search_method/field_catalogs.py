@@ -121,7 +121,7 @@ def resolve_delay_field_csv(
     raise FileNotFoundError(
         "Missing delay-aware field catalog for delay "
         f"{target_delay}. Expected {candidate}, or pass --fields-csv with a delay column. "
-        "Build one with: python -m alpha_discovery/legacy.economic_search_method.cli fields --delay "
+        "Build one with: python -m alpha_discovery.legacy.economic_search_method.cli fields --delay "
         f"{target_delay} --credentials brain.txt"
     )
 

@@ -1,6 +1,6 @@
 """Submit screening expressions to Brain and parse results.
 
-Reuses submit_alpha / wait_for_completion from alpha_discovery/grammar_method.run_pipeline
+Reuses submit_alpha / wait_for_completion from alpha_discovery.grammar_method.run_pipeline
 so we don't duplicate the retry / re-auth logic.
 """
 
@@ -90,7 +90,7 @@ class ScreeningResult:
     def as_record(self) -> dict[str, Any]:
         return {
             "logged_at": self.logged_at,
-            "search_lane": "alpha_discovery/legacy.operator_skeleton_method",
+            "search_lane": "operator_search",
             "template_id": self.template_id,
             "expression": self.expression,
             "field_a": self.field_a,

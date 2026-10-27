@@ -2,7 +2,7 @@
 
 Default usage from repo root:
 
-    python -m alpha_discovery/probe_method.build_plan \
+    python -m alpha_discovery.probe_method.build_plan \
         --clusters alpha_discovery/grammar_method/artifacts/all_clusters.json \
         --out artifacts/probe/probe_plan.jsonl \
         --pack core \
@@ -10,7 +10,7 @@ Default usage from repo root:
 
 Submit later with the existing submitter:
 
-    python -m core/brain.submit \
+    python -m core.brain.submit \
         --plan artifacts/probe/probe_plan.jsonl \
         --sim-log artifacts/probe/probe_sim.jsonl \
         --batch-size 3

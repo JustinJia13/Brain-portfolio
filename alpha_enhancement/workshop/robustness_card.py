@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from core.brain.submit import DEFAULT_SETTINGS, _regime_key
-from alpha_enhancement.workshop.core import is_passing, record_regime
+from alpha_enhancement.workshop.core import is_passing
 
 
 EXPRESSION_CHECKS: tuple[tuple[str, str, float], ...] = (

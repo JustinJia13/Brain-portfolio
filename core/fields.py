@@ -1,6 +1,6 @@
 """Field normalization, tagging, and clustering for the alpha_discovery/grammar_method pipeline.
 
-Copied from alpha_search/fields.py + alpha_search/tagging.py — no dependency on alpha_search.
+Originally copied from the retired alpha_search package (fields.py + tagging.py); no dependency on it.
 """
 
 from __future__ import annotations
@@ -34,7 +34,7 @@ def normalize_category(category: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Field tagging (inlined from alpha_search/tagging.py)
+# Field tagging (inlined from the retired alpha_search tagging module)
 # ---------------------------------------------------------------------------
 
 SAFE_DENOMINATOR_KEYWORDS = (

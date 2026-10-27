@@ -1,14 +1,14 @@
 """Scan a sim.jsonl for near-miss alphas and emit a repair batch for submission.
 
 Usage:
-    python -m alpha_multi.repair_batch \\
+    python tools/alpha_multi_repair_batch.py \\
         --simulation-log alpha_discovery/grammar_method/artifacts/fundamental6_sim.jsonl \\
         --output alpha_multi/artifacts/repair_batch.jsonl \\
         --min-sharpe 1.25 --min-fitness 1.0 \\
         --top-n 10
 
 Then submit the repair batch:
-    python -m alpha_multi.run_plan \\
+    python tools/alpha_multi_run_plan.py \\
         --plan-path alpha_multi/artifacts/repair_batch.jsonl \\
         --simulation-log alpha_multi/artifacts/repair_sim.jsonl
 """
@@ -155,7 +155,7 @@ def main() -> None:
     print(f"\nRepair batch written → {output_path}")
     print(f"Total repair candidates: {len(unique_candidates)}")
     print(f"\nNext step:")
-    print(f"  python -m alpha_multi.run_plan \\")
+    print(f"  python tools/alpha_multi_run_plan.py \\")
     print(f"      --plan-path {output_path} \\")
     print(f"      --simulation-log {output_path.parent / 'repair_sim.jsonl'}")
 

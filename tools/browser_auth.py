@@ -30,6 +30,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from core.brain.api import auth_attempt_budget_status, load_credentials, reserve_auth_attempt
+from core.brain.api import _windows_executable
 
 
 API_AUTH_URL = "https://api.worldquantbrain.com/authentication"
@@ -55,17 +56,6 @@ def _is_wsl() -> bool:
         release = ""
     marker = f"{version}\n{release}"
     return "microsoft" in marker or "wsl" in marker
-
-
-def _windows_executable(name: str) -> str:
-    for candidate in (
-        f"/mnt/c/WINDOWS/System32/{name}",
-        f"/mnt/c/WINDOWS/system32/{name}",
-        name,
-    ):
-        if candidate == name or Path(candidate).exists():
-            return candidate
-    return name
 
 
 def _wsl_to_windows_path(path: Path) -> str:
@@ -239,33 +229,6 @@ def _post_existing_auth_url(session: requests.Session, url: str, *, timeout: flo
             result["biometric_url"] = location_url
         elif _is_persona_url(location_url):
             result["persona_url"] = location_url
-    result["body_preview"] = response.text[:500]
-    return result
-
-
-def _auth_status_probe(session: requests.Session, method: str, *, timeout: float) -> dict[str, Any]:
-    result: dict[str, Any] = {
-        "auth_url": API_AUTH_URL,
-        "method": method.upper(),
-        "ok": False,
-        "status_code": None,
-        "content_type": None,
-        "retry_after": None,
-        "ratelimit_reset": None,
-        "body_preview": "",
-        "error": None,
-    }
-    try:
-        response = session.request(method.upper(), API_AUTH_URL, timeout=timeout)
-    except requests.RequestException as exc:
-        result["error"] = str(exc)
-        return result
-
-    result["ok"] = response.ok
-    result["status_code"] = response.status_code
-    result["content_type"] = response.headers.get("Content-Type")
-    result["retry_after"] = response.headers.get("Retry-After")
-    result["ratelimit_reset"] = response.headers.get("RateLimit-Reset")
     result["body_preview"] = response.text[:500]
     return result
 

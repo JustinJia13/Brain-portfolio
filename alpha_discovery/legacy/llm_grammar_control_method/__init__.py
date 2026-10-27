@@ -6,7 +6,7 @@ Replaces random Q-table sampling with an LLM-guided loop:
   3. ExplorationMemory + MemoryDistiller: LLM distills results into persistent facts
 
 Usage:
-    python -m alpha_discovery/legacy.llm_grammar_control_method.runner --rounds 5 --batch-size 40
+    python -m alpha_discovery.legacy.llm_grammar_control_method.runner --rounds 5 --batch-size 40
 """
 
 from .memory import ExplorationMemory, MemoryDistiller, MemoryFact

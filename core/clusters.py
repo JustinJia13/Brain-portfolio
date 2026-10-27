@@ -7,7 +7,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from core.fields import build_data_profiles, cluster_profiles, filter_profiles
-from core.expr.models import DataProfile, FieldCluster
+from core.expr.models import FieldCluster
 
 
 def _numeric_allowed_types(allow_vector: bool) -> tuple[str, ...]:

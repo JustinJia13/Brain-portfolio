@@ -11,9 +11,9 @@ run on `is_sharpe` (abundant, full span), and sub-Sharpe is flagged transfer-
 UNVERIFIED.
 
     PY=/home/.../envs/worldquant/bin/python
-    $PY -m alpha_discovery/sim_slot_gate.verify build_cache      # featurize corpus once
-    $PY -m alpha_discovery/sim_slot_gate.verify b1               # the HARD GATE
-    $PY -m alpha_discovery/sim_slot_gate.verify all              # every test + report
+    $PY -m alpha_discovery.sim_slot_gate.verify build_cache      # featurize corpus once
+    $PY -m alpha_discovery.sim_slot_gate.verify b1               # the HARD GATE
+    $PY -m alpha_discovery.sim_slot_gate.verify all              # every test + report
 """
 
 from __future__ import annotations
@@ -31,11 +31,10 @@ from sklearn.ensemble import HistGradientBoostingRegressor
 from . import db_adapter as db
 from .features import default_featurizer
 
-_HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_HERE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 RESULTS = os.path.join(_HERE, "test_results")
 CACHE = os.path.join(RESULTS, "_phi_cache.npz")
 CACHE_EXPRS = os.path.join(RESULTS, "_phi_cache_exprs.json")
-QLEVELS = (0.16, 0.50, 0.84)
 
 
 # --------------------------------------------------------------------------- #
@@ -146,7 +145,7 @@ def g1():
 def b2():
     """Feature-group ablations: held-out IC delta per group (sufficiency)."""
     d, t = _load(); X = d["X"]; sh = d["sharpe"]; tr, te, _ = _split(t)
-    from .features import N_SCALAR, N_OP_HASH, N_PATH_HASH, N_CAT
+    from .features import N_SCALAR, N_OP_HASH, N_PATH_HASH
     groups = {"scalars": (0, N_SCALAR), "op_hash": (N_SCALAR, N_SCALAR + N_OP_HASH),
               "path_ngrams": (N_SCALAR + N_OP_HASH, N_SCALAR + N_OP_HASH + N_PATH_HASH),
               "field_cat": (N_SCALAR + N_OP_HASH + N_PATH_HASH, X.shape[1])}

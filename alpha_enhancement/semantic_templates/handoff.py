@@ -25,8 +25,9 @@ from alpha_enhancement.semantic_templates.core import (
     select_template_fields_with_agent,
     validate_template,
 )
-from alpha_enhancement.workshop.core import is_passing, record_workshop_key
+from alpha_enhancement.workshop.core import record_workshop_key
 from alpha_enhancement.workshop.robustness_card import record_score_addition
+from core.quality import standalone_passes as _standalone_passes
 
 
 @dataclass(frozen=True)
@@ -368,15 +369,6 @@ def _summary_rank_key(record: dict[str, Any]) -> tuple[float, float, float, floa
         _float(record.get("is_sharpe")) or -1e9,
         -(corr if corr is not None else 9.0),
         -(turnover if turnover is not None else 9.0),
-    )
-
-
-def _standalone_passes(record: dict[str, Any]) -> bool:
-    return (
-        record.get("status") == "done"
-        and (_float(record.get("is_sharpe")) or -999.0) >= 1.25
-        and (_float(record.get("is_fitness")) or -999.0) >= 1.0
-        and is_passing(record)
     )
 
 

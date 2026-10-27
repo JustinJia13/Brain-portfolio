@@ -14,36 +14,6 @@ import numpy as np
 
 from . import filters
 
-# --------------------------------------------------------------------------- #
-# Temporal channel
-# --------------------------------------------------------------------------- #
-# Fallback similarity between TS *classes* when a concrete |H| is unavailable
-# (e.g. an operator with no spectral template).  Used rarely; the primary path
-# is the exact spectral overlap below.
-_CLASS_MATCH = {
-    ("lowpass", "lowpass"): 1.0,
-    ("highpass", "highpass"): 1.0,
-    ("bandpass", "bandpass"): 1.0,
-    ("nonlinear_envelope", "nonlinear_envelope"): 1.0,
-    ("allpass", "allpass"): 1.0,
-    ("lowpass", "highpass"): 0.0,
-    ("lowpass", "bandpass"): 0.4,
-    ("lowpass", "nonlinear_envelope"): 0.8,
-    ("lowpass", "allpass"): 0.7,
-    ("highpass", "bandpass"): 0.6,
-    ("highpass", "nonlinear_envelope"): 0.2,
-    ("highpass", "allpass"): 0.5,
-    ("bandpass", "nonlinear_envelope"): 0.4,
-    ("bandpass", "allpass"): 0.5,
-    ("nonlinear_envelope", "allpass"): 0.6,
-}
-
-
-def class_match(c1: str | None, c2: str | None) -> float:
-    if c1 is None or c2 is None:
-        return 0.5
-    return _CLASS_MATCH.get((c1, c2)) or _CLASS_MATCH.get((c2, c1), 0.5)
-
 
 def omega_time(h1: np.ndarray | None, h2: np.ndarray | None) -> float:
     """Spectral overlap of two magnitude responses, in [0,1].
@@ -126,13 +96,3 @@ def omega_cs(w1: str | None, w2: str | None, table: dict | None = None) -> float
     return float(sim.get(frozenset([f1, f2]), 0.85))
 
 
-def load_warp_table(d: dict | None) -> dict:
-    """Build a calibrated warp-similarity table from a {"a|b": value} mapping."""
-    if not d:
-        return dict(_WARP_SIM)
-    out = dict(_WARP_SIM)
-    for key, val in d.items():
-        parts = key.split("|")
-        if len(parts) == 2:
-            out[frozenset(parts)] = float(val)
-    return out

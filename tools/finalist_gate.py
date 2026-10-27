@@ -7,7 +7,7 @@ a pass/weak/fail robustness card per finalist. IS peaks that collapse under
 perturbation are exactly the alphas that decay out-of-sample — they get
 status "fail" and should not be submitted.
 
-Reuses alpha_enhancement/workshop.robustness_card for variant generation and verdicts,
+Reuses alpha_enhancement.workshop.robustness_card for variant generation and verdicts,
 and the shared workshop submission boundary (which skips variants already in
 the log — historical sims are free evidence).
 

@@ -7,7 +7,7 @@ Submission flow per batch:
   4. Append one JSON record per alpha to the simulation log
 
 Usage:
-    python -m alpha_search.submit
+    python -m core.brain.submit
         --plan artifacts/model16_batch.jsonl
         --sim-log artifacts/model16_sim.jsonl
         --batch-size 3

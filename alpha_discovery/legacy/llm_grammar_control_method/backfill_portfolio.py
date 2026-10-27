@@ -5,8 +5,8 @@ other specified sim logs, fetches Brain contribution score with local fallback,
 persists results, and optionally rebuilds all_qtable.json with portfolio-aware rewards.
 
 Usage (from world_quant/ root):
-    python -m alpha_discovery/legacy.llm_grammar_control_method.backfill_portfolio --credentials brain.txt
-    python -m alpha_discovery/legacy.llm_grammar_control_method.backfill_portfolio --credentials brain.txt --max-fetch 100 --no-rebuild
+    python -m alpha_discovery.legacy.llm_grammar_control_method.backfill_portfolio --credentials brain.txt
+    python -m alpha_discovery.legacy.llm_grammar_control_method.backfill_portfolio --credentials brain.txt --max-fetch 100 --no-rebuild
 """
 
 from __future__ import annotations
@@ -75,10 +75,10 @@ def _discover_all_sim_logs() -> list[Path]:
         root / "artifacts" / "*sim*.jsonl",
         root / "artifacts" / "workshop" / "*sim*.jsonl",
         root / "alpha_discovery/grammar_method" / "artifacts" / "*sim*.jsonl",
-        root / "alpha_discovery/legacy.llm_grammar_control_method" / "artifacts" / "*sim*.jsonl",
+        root / "alpha_discovery/legacy/llm_grammar_control_method" / "artifacts" / "*sim*.jsonl",
         root / "alpha_search" / "artifacts" / "*sim*.jsonl",
-        root / "alpha_discovery/legacy.economic_search_method" / "artifacts" / "*sim*.jsonl",
-        root / "alpha_discovery/legacy.economic_search_method" / "artifacts" / "continuous" / "*sim*.jsonl",
+        root / "alpha_discovery/legacy/economic_search_method" / "artifacts" / "*sim*.jsonl",
+        root / "alpha_discovery/legacy/economic_search_method" / "artifacts" / "continuous" / "*sim*.jsonl",
     ]
     paths: list[Path] = []
     for pattern in patterns:

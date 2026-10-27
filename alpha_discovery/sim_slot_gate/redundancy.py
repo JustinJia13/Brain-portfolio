@@ -22,7 +22,6 @@ fully vectorised (fast enough for the budget backtest's millions of evaluations)
 
 from __future__ import annotations
 
-import os
 
 import numpy as np
 
@@ -55,17 +54,6 @@ class RedundancyIndex:
             if val > best:
                 best = val
         return best
-
-    def argmax_pool(self, cand: Signature):
-        """(predicted_corr, pool_index) of the closest pool member."""
-        if cand is None or not self.pool_sigs:
-            return 0.0, -1
-        best, bi = 0.0, -1
-        for i, P in enumerate(self.pool_sigs):
-            val = float(self.psi.predict(abs(self.model.corr_model_sig(cand, P))))
-            if val > best:
-                best, bi = val, i
-        return best, bi
 
 
 class CoverageIndex:

@@ -24,6 +24,7 @@ from core.robustness import compute_robustness, normalize_yearly_stats
 from alpha_discovery.theory_method import context as ctx
 from alpha_discovery.theory_method.economist import TheoryEconomistAgent
 from alpha_discovery.theory_method.enumerate_ import enumerate_family
+from alpha_discovery.theory_method.runner import THEORY_DIR
 
 MASTER = Path("artifacts/sim/master.jsonl")
 OUT = Path("artifacts/theory/decompose_test.jsonl")

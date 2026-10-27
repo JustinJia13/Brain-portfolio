@@ -27,6 +27,7 @@ from core.expr.models import DataProfile, FieldCluster
 from alpha_discovery.grammar_method.novelty import TestedFingerprintRegistry
 from core.qtable import QTable, SkeletonCounter
 from alpha_discovery.grammar_method.run_pipeline import _filter_clusters_by_field_types, _group_profiles_from_clusters, _load_clusters
+from alpha_discovery.grammar_method.probe_prior import _float, _preferred_values
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -230,109 +231,6 @@ def _preferred_choices(row: PriorRow, kind: str, choices: Sequence[Any]) -> list
     return [choice for choice in choices if choice in values]
 
 
-def _preferred_values(row: PriorRow, kind: str) -> tuple[Any, ...]:
-    family = row.probe_family
-    template = row.probe_template
-    negative = row.preferred_direction == "negative" or template.endswith("_neg")
-    window = _template_window(template)
-
-    if kind == "alpha_production":
-        if family == "level":
-            return ("raw_expr", "cs_op", "group_op")
-        if family in {"relative_value", "time_series_rank", "time_series_zscore", "delta_reversal"}:
-            return ("group_op", "double_group_op")
-        if family == "smooth_level":
-            return ("group_op", "group_window_op", "raw_expr")
-        if family == "self_residual":
-            return ("group_op", "raw_expr")
-
-    if kind == "expr_production":
-        if family == "level":
-            return ("field", "unary", "expr_cs_op", "expr_group_op")
-        if family == "relative_value":
-            return ("expr_group_op", "expr_cs_op", "field")
-        if family in {"time_series_rank", "time_series_zscore", "smooth_level"}:
-            return ("ts_rolling", "expr_group_op")
-        if family == "delta_reversal":
-            return ("ts_delta_op", "ts_rolling", "expr_group_op")
-        if family == "self_residual":
-            return ("ts_regression", "ts_paired", "ts_rolling")
-
-    if kind == "group_op":
-        if "grp_zscore" in template or family == "time_series_zscore":
-            return ("group_zscore", "group_neutralize")
-        if "grp_rank" in template or family in {"relative_value", "time_series_rank", "delta_reversal"}:
-            return ("group_rank", "group_zscore")
-        return ("group_rank", "group_zscore", "group_neutralize")
-
-    if kind == "cs_op":
-        if family == "level" or "cs_rank" in template:
-            return ("rank", "zscore", "winsorize")
-        return ("rank", "zscore")
-
-    if kind == "ts_rolling_op":
-        if family == "time_series_rank" or template.startswith("ts_rank"):
-            return ("ts_rank",)
-        if family == "time_series_zscore" or template.startswith("ts_zscore"):
-            return ("ts_zscore",)
-        if family == "smooth_level" or template.startswith("smooth_level"):
-            return ("ts_mean", "ts_decay_linear", "ts_backfill")
-        if family == "delta_reversal":
-            return ("ts_av_diff", "ts_rank", "ts_mean")
-        if family == "self_residual":
-            return ("ts_av_diff", "ts_zscore", "ts_mean")
-
-    if kind == "ts_delta_op":
-        if family == "delta_reversal" or template.startswith("delta_rev"):
-            return ("ts_delta", "last_diff_value")
-        if negative:
-            return ("ts_delta",)
-
-    if kind == "ts_paired_op":
-        if family == "self_residual":
-            return ("ts_regression", "ts_corr", "ts_covariance")
-        if family == "delta_reversal":
-            return ("ts_corr", "ts_covariance")
-
-    if kind == "unary_op":
-        if negative:
-            return ("reverse",)
-        if family == "level":
-            return ("log", "winsorize", "hump")
-        if family == "smooth_level":
-            return ("hump", "winsorize")
-
-    if kind == "window":
-        if window is not None:
-            return (window,)
-        if family == "smooth_level":
-            return (20, 40)
-        if family == "time_series_rank":
-            return (60, 120)
-        if family == "time_series_zscore":
-            return (120,)
-        if family == "self_residual":
-            return (60, 120)
-
-    if kind == "delta_window":
-        if window is not None:
-            return (window,)
-        if family == "delta_reversal":
-            return (5, 20)
-
-    if kind == "binary_op" and family == "self_residual":
-        return ("-", "subtract")
-
-    return ()
-
-
-def _template_window(template: str) -> int | None:
-    for part in template.split("_"):
-        if part.isdigit():
-            return int(part)
-    return None
-
-
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--clusters", default=str(DEFAULT_CLUSTERS))
@@ -383,7 +281,6 @@ def main() -> None:
         budget=args.budget,
         n_samples=args.n_samples,
         min_coverage=args.min_coverage,
-        exploration_fraction=1.0,
     )
 
     raw_planner = GrammarPlanner(
@@ -557,15 +454,6 @@ def _numeric_members(cluster: FieldCluster) -> list[DataProfile]:
         member for member in cluster.members
         if member.field_type.upper() in {"MATRIX", "VECTOR"}
     ]
-
-
-def _float(value: Any) -> float:
-    try:
-        if value is None:
-            return 0.0
-        return float(value)
-    except (TypeError, ValueError):
-        return 0.0
 
 
 def _mean(values: list[float]) -> float:
