@@ -4,16 +4,15 @@ A systematic search for cross-sectional equity alphas on the WorldQuant BRAIN pl
 
 ## The competition
 
-You submit **formulaic alphas** — single expressions in BRAIN's `FASTEXPR` language:
+We submit **formulaic alphas**: single expressions in BRAIN's `FASTEXPR` language:
 
 ```
 group_rank(ts_mean(ts_zscore(returns, 20), 10), subindustry)
 ```
 
 The platform backtests each one and awards points from an **in-sample score** and an
-**out-of-sample score**. Points accrue to your **portfolio**, not to the individual alpha, so a
-good alpha that merely repaints something you already submitted is worth nothing. What counts
-is the *marginal* contribution of adding it.
+**out-of-sample score**. Points added based on additive performance on an equal weight **portfolio**, not to the individual alpha, so a
+good but repeatitive alpha is worth nothing. We want *marginal* contribution of adding alpha.
 
 The search space is effectively unbounded — **7,642 data fields** × **70 operators**
 (`core/expr/operators.py`), composable to arbitrary depth. And the thing that limits you is not
@@ -23,40 +22,28 @@ per account**.
 
 ## The baseline: random grammar search
 
-Everything here starts from one published idea.
 
 > **Alpha Discovery via Grammar-Guided Learning and Search** — Han Yang, Dong Hao, Zhuohan
-> Wang, Qi Shi, Xingtong Li. The *AlphaCFG* framework.
-> (The paper itself is not redistributed in this repository.)
+> Wang, Qi Shi, Xingtong Li. The *AlphaCFG* framework. (Grammar alpha discovery.pdf)
 
-Its first move is the one worth stealing: stop treating an alpha as a *string* to be mutated
-and treat it as a **derivation tree from a context-free grammar**. The grammar is written so
+Treat alpha as a **derivation tree from a context-free grammar**. The grammar is written so
 that every tree it can produce is a syntactically valid and financially interpretable
 expression, which removes the entire class of wasted work spent generating and then rejecting
 malformed candidates.
 
-The second move bounds the space. The paper's `α-Sem-k` variant assigns each production rule a
+Then bounds the space. The paper's `α-Sem-k` variant assigns each production rule a
 cost `Δk` and caps the total at a maximum length `K`, enforcing the bound *during* derivation
 so every expansion step stays inside the feasible region. The grammar in
 `alpha_discovery/grammar_method/grammar.py` implements this directly, with `Δk` costs taken
-from the paper's rule table and `K=10`.
+from the paper's rule table and `K=10` (hyper parameter adjustable).
 
-**So the baseline is: sample that bounded grammar uniformly at random, simulate the draws, keep
-what passes.** That is the reference point every other method in this repository is measured
-against, and it is a far stronger baseline than it sounds — a valid-by-construction sampler over
-a size-controlled space is already much better than unstructured search.
 
 ### Where this project deliberately departs from the paper
 
-AlphaCFG's own contribution *on top of* the grammar is a learned search policy: it casts
+AlphaCFG's own contribution *on top of* the grammar is a learned search policy using RL: it casts
 discovery as a tree-structured Markov decision process and solves it with grammar-aware Monte
 Carlo Tree Search, encoding partial trees with a Tree-LSTM that feeds shared value and policy
-networks.
-
-That is the right design when rollouts are cheap. Here they are not. A "rollout" is a metered
-BRAIN simulation — minutes long, 3 at a time, and rate-limited — so the thousands of rollouts
-MCTS needs to become useful are simply unaffordable. The learned policy would spend the entire
-budget learning to search instead of searching.
+networks. Although the idea of framing the problem as decision process is maintained, the RL framework is discarded since under Brain, each simulation cost around 1-5 min and we can only run 3 concurrent simulation, making data gathering extremely expensive. Also, here search space/ environment completely changes as we submit an alpha as repeated alpha won't create value, exploitation is not clearly defined. 
 
 So this project keeps the grammar and the size budget and **replaces the learned search policy
 with cheap persistent pruning**: a Q-table over field–operator combinations, a structural
@@ -66,10 +53,9 @@ UCB-guided search side was attempted and archived —
 `alpha_discovery/legacy/archived_shims/alpha_grammar/ucb_legacy.py` — because a bandit cannot
 work when pulling an arm costs the scarce resource you are trying to conserve.
 
-## Two halves
+## Alpha Discovery vs Alpha Enhancement
 
-Everything splits cleanly in two, and so does the repository.
-
+In this project, the entire alpha generation process is split into 1. alpha discover process to disccover useful alpha candidates that gets send to 2. alpha enhancement process that leverages LLM to enhance an alpha. 
 ```mermaid
 flowchart TB
     SPACE[("search space<br/>7642 fields times 70 operators")]
@@ -132,7 +118,7 @@ each method's own README.
 | Method | The design |
 |---|---|
 | [**grammar_method**](alpha_discovery/grammar_method/README.md) | The baseline above: sample the bounded CFG, canonicalize commutative operands so equivalent trees collapse, and stack persistent prune datastores in front of the simulator. The productive generator. |
-| [**probe_method**](alpha_discovery/probe_method/README.md) | Don't mine blind. Spend one cheap simulation per *field cluster* on a fixed operator pack, so cost scales with clusters rather than fields × operators, and use the result as a prior over where to sample. |
+| [**probe_method**](alpha_discovery/probe_method/README.md) | First spend one cheap simulation per *field cluster* on a fixed operator pack, so cost scales with clusters rather than fields × operators, and use the result as a prior over where to sample. |
 | [**theory_method**](alpha_discovery/theory_method/README.md) | Have an LLM pre-register a falsifiable economic mechanism as a structured card, then let a *deterministic* enumerator render the expression family from it. The LLM never writes FASTEXPR; verdicts are issued per family, not per alpha. |
 | [**template_sweep_method**](alpha_discovery/template_sweep_method/README.md) | The inverse bet: assume the useful functional forms are already known and search only the field and window bindings. Small enough to sweep exhaustively. |
 | [**sim_slot_gate**](alpha_discovery/sim_slot_gate/README.md) | The pre-screen itself — predict from an expression's structure whether it is redundant or likely weak, and decline to simulate it. |
@@ -140,14 +126,10 @@ each method's own README.
 
 ## The enhancement engine
 
-[`alpha_enhancement/`](alpha_enhancement/README.md) exists because of a negative result that
-reproduced three times: an LLM asked to *generate* alphas loses to random grammar sampling.
-The diagnosis was that the model was being asked to predict profitability from expression text
-alone, with no feedback.
+[`alpha_enhancement/`](alpha_enhancement/README.md): Note that in discovery methods, LLM performed worse than random grammar sampling. Since LLM works better with good prior, a better way to leverage its power is to provide it with sample alpha and a **specific named
+failing check** — and it becomes a constrained repair task with a stated objective,, then ask it to enhance it. 
 
-Change that one condition — hand it an alpha with a measured backtest and a **specific named
-failing check** — and it becomes a constrained repair task with a stated objective, which is
-something an LLM is good at. `route_record()` dispatches each hand-picked record to one of
+ `route_record()` dispatches each hand-picked record to one of
 three lanes:
 
 - **negate** — right structure, wrong sign. Flip and re-simulate; no LLM needed.
@@ -156,10 +138,9 @@ three lanes:
   check and metrics in the prompt, under a hard round cap).
 - **enhance** — the alpha already passes; make it stronger without making it fragile.
 
-## Reinforcement, on the side
+## Reinforcement
 
-Two components are neither generators nor repairers. They turn accumulated results back into
-better generation, which is why they sit to the side of the main flow:
+I also tried to use the idea of reinforcement in the discovery loop:
 
 - [`core/wiki/`](core/wiki/README.md) aggregates every simulation — win *or* failure — into a
   per-cluster posterior, exported back as the grammar lane's sampling prior. A region
@@ -199,7 +180,7 @@ copy the `.example` files and fill them in. An end-to-end run needs a live accou
 simulation budget, but the grammar derivation, the gate's calibrated parameters, the PnL-only
 scoring path and the unit tests all run offline.
 
-## Reference docs
+## Reference docs (For AI)
 
 | Doc | What it is |
 |---|---|
@@ -207,17 +188,12 @@ scoring path and the unit tests all run offline.
 | [`ASSUMPTIONS.md`](ASSUMPTIONS.md) | 29 falsifiable assumptions with resolved statuses, plus dated amendments where a result overturned an earlier belief |
 | [`dedup.md`](dedup.md) | Measures the failure mode before proposing a fix: most simulation budget was going into regions already proved dead |
 
-## What the search found
+## Some results 
 
-Read in order, the discovery designs tell one story, and it is worth stating plainly because it
-is the reason the repository is shaped the way it is.
 
 Three successive attempts to put an LLM in the **generator** seat all lost to random sampling
 from the bounded grammar — first writing expressions directly, then steering the grammar's
-distribution instead, then constraining operator skeletons by economic role. Each failure ruled
-out the previous explanation, and what survived was not "the model was too weak" but something
-structural: **an LLM given no feedback cannot tell which expressions will make money**, and no
-amount of scaffolding around the generation step changes that.
+distribution instead, then constraining operator skeletons by economic role. **Simply asking LLM to generate alpha is no good, prior is needed**.
 
 Two things did work. Giving the model **feedback** — a measured backtest and a named failing
 check — turns generation into repair, and the enhancement engine's success rate on hand-picked
@@ -226,6 +202,4 @@ simulate** paid off, because the binding constraint turned out to be redundancy 
 quality: of a batch of candidates that were *all* already submittable, robust and locally
 de-correlated, only about one in six actually raised the portfolio score.
 
-Hence the final shape — a strong random baseline, cheap pruning in front of it, results fed
-back as a prior, and the AI applied to repair rather than invention. Per-method numbers are at
-the end of each method README.
+Future work could be mainly working around getting a good alpha discovery pipeline to be more efficient, I know people who are able to discover efficient alpha in a much faster fashion with template format/ human prior, which I didn't find a way to incorperate into my methods. 
