@@ -138,13 +138,13 @@ three lanes:
   check and metrics in the prompt, under a hard round cap).
 - **enhance** — the alpha already passes; make it stronger without making it fragile.
 
-Repair itself comes in two shapes, and the distinction is the engine's main design idea. The
-**workshop** triages the whole simulation history on metrics and makes one pass per record,
-wrapping expressions to clear a named check — fast, but it can satisfy a check while destroying
-the reason the alpha worked. The **semantic workshop** takes a single seed through three rounds
-with a *diagnostic* agent that is forbidden to write expressions and a *generator* agent that
-is forbidden to diagnose, and it is explicitly barred from parameter chasing: a repair is only
-valid if the alpha's **signal identity** survives it. Both are explained in
+Two components share the name "workshop", and they differ in **what they produce**. The
+**workshop** repairs or enhances a given alpha — its output is better variants of that one
+expression, and nothing reusable survives the run. The **semantic workshop** instead abstracts
+the alpha into a **typed semantic template**: a named signal identity, four field-role slots
+(main signal, secondary, gating, neutralizer), and the axes along which it may legitimately be
+varied. That template is then bound to new fields, so the lane generalises from "this alpha
+works" to "this *kind* of alpha works, and here are its slots". Both are explained in
 [`alpha_enhancement/README.md`](alpha_enhancement/README.md).
 
 ## Reinforcement

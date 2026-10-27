@@ -51,73 +51,71 @@ A fourth component, `semantic_templates/`, abstracts families that were *already
 typed-slot templates and binds new fields into those slots — exploiting what worked rather than
 repairing what failed.
 
-### Two workshops: triage and identity-preserving repair
+### Two workshops: repairing an alpha vs. abstracting a template
 
-The engine contains two different things both called "workshop", and the difference matters
-more than the shared name suggests. They answer different questions and they fail in different
-ways.
+The engine contains two components both called "workshop". They share more than the name:
+**both** take a measured alpha, **both** run roughly three rounds of generate → simulate →
+feed the results back (`workshop/batch.py` runs *"N rounds of (LLM generate → simulate →
+feedback) for one alpha"*; the semantic runner loops `for round_index in (1, 2, 3)`), and
+**both** forbid parameter chasing. That last rule is engine-wide policy, not a feature of
+either one — `agents/repair.py` states *"Parameter-only variants are invalid, even if they
+might improve the backtest"*, `agents/enhance.py` and the semantic generator repeat it, and
+the semantic generator lists *"No parameter-only variants"* under Hard rules.
 
-**The workshop** (`workshop/batch.py`, `workshop/alpha.py`, `workshop/targeted.py`) is
-**breadth**. It scans the whole simulation history, keeps the best representative per field,
-and triages each record on its *metrics*: fitness below a floor routes to negate, a repairable
-failing check with acceptable concentration routes to repair, a fully passing alpha routes to
-enhance. Each record then gets one pass through its lane. The repair agent
-(`agents/repair.py`) takes a near-miss and suggests fixes by **wrapping the original expression
-with operators** chosen to address the named failing check.
+The real difference is **what each one produces**.
 
-That is the right tool for processing a population, and it has an obvious failure mode: wrapping
-an expression until a check goes green can satisfy the check while destroying the reason the
-alpha worked. You end up with something that passes and means nothing.
+**The workshop** (`workshop/batch.py`, `workshop/alpha.py`, `workshop/targeted.py`, driven by
+`agents/repair.py` and `agents/enhance.py`) produces **better variants of that one alpha**. The
+repair agent is handed a near-miss plus its failing checks, few-shot examples of similar passing
+alphas from the same dataset, and previously successful repair pairs, and it *"suggests FASTEXPR
+repair expressions by wrapping the original expression with appropriate operators."* The output
+stays bound to the original expression. Nothing is abstracted; when the run ends you have a
+repaired alpha and nothing reusable.
 
-**The semantic workshop** (`workshop/semantic.py`, `agents/semantic_workshop.py`) is **depth**,
-and it exists to avoid exactly that. It takes a *single* seed and runs three rounds:
+**The semantic workshop** (`workshop/semantic.py`, `agents/semantic_workshop.py`) produces a
+**typed semantic template** — a reusable specification of the *kind* of signal the alpha
+represents. Its diagnostic agent does not emit FASTEXPR at all (*"You do NOT generate FASTEXPR
+expressions"*); it returns a JSON object naming the signal and its slots:
 
+```json
+{
+  "signal_identity":      "short label",
+  "semantic_template":    "typed template family",
+  "field_roles": {
+    "main_signal":        "role and field(s)",
+    "secondary_fields":   "compatible secondary field types",
+    "gate_fields":        "compatible trade_when/gating fields",
+    "neutralizer_fields": "compatible neutralizer/control fields"
+  },
+  "valid_mutation_axes":  ["axis", "..."],
+  "invalid_mutations":    ["mutation to avoid", "..."],
+  "failure_diagnosis":    "diagnosis based on metrics and robustness",
+  "overfit_risk":         "low|medium|high",
+  "recommendation":       "generate|repair|abandon"
+}
 ```
-seed → diagnostic → generator → simulate → robustness card
-     → diagnostic update → generator → simulate → robustness card
-     → diagnostic update → generator → simulate → final summary
-```
 
-Two things make it different from the plain repair lane.
+That is the artifact the lane exists to produce. The generator agent is then *constrained by*
+it — it receives the diagnostic object and must keep new fields *"semantically compatible with
+the diagnostic template"* — and on success `semantic_templates/handoff.py` passes the template
+into the template pipeline, where architect, field-selector and router agents **bind those slots
+to new fields** and build candidates for signals the original alpha never touched.
 
-**The division of labour between two agents is enforced.** The diagnostic agent's system prompt
-opens with *"You do NOT generate FASTEXPR expressions. Your job is to turn a grammar or workshop
-seed into a semantic template and a failure/repair hypothesis."* The generator agent writes
-expressions but does no diagnosis, and the runner submits only its `expression` field, ignoring
-its rationale. So the component that reasons about *why* the alpha failed cannot shortcut its
-way to an answer by emitting a formula, and the component that writes formulas never gets to
-decide what the problem was. This is the same separation the
-[theory method](../alpha_discovery/theory_method/README.md) applies on the generation side.
-
-**It is explicitly forbidden from parameter chasing.** The diagnostic agent is instructed:
-*"Do not recommend parameter chasing. Valid repairs must preserve or explicitly reframe the
-semantic signal identity."* It is also told *"Do not optimize exact robustness rows; use
-robustness only to diagnose whether signal identity is stable"*. And on the trap of optimising
-the wrong objective: *"If score addition improves while standalone quality deteriorates,
-diagnose that as a watchlist/fragile outcome, not a solved alpha."*
-
-That is what "semantic" means here. The unit being repaired is not the expression string and
-not the failing metric — it is the **signal identity**, the economic claim the alpha is making.
-A repair is only valid if that claim survives, or if the diagnosis says plainly that it has been
-reframed into a different one.
-
-The round structure is what lets this work: the robustness card from each simulation goes back
-to the diagnostic agent, so round 2 is conditioned on measured evidence about whether the
-identity held, not on the LLM's own guess. The card is deliberately diagnostic only — it
-excludes delay perturbations and `sign(A)` checks — so it cannot be optimised against. Three
-rounds is a hard cap, which is what stops a failing repair from looping on the simulation budget.
-
-Once a seed has been worked up this way, `semantic_templates/` takes over (on by default) and
-abstracts the result into a typed template for reuse.
+So the two lanes sit at different levels of abstraction. The workshop asks how to fix this
+expression. The semantic workshop asks what kind of signal this is, which field types can fill
+each of its roles, and along which axes it may be varied — and answers in a form that
+generalises past the alpha it started from. The split is visible in the code: the identifiers
+`semantic_template`, `signal_identity`, `field_roles` and `mutation_axes` appear **nowhere** in
+the plain workshop or its agents, and 41 times across the semantic path.
 
 | | the workshop | the semantic workshop |
 |---|---|---|
-| Unit of work | a population, from the sim history | one seed |
-| Decides by | metric thresholds | a stated failure hypothesis |
-| Shape | one pass per record | 3 rounds, feedback between them |
-| Agents | one repair/enhance agent | diagnostic + generator, separated |
-| Repairs by | wrapping the expression | preserving or reframing signal identity |
-| Guards against | wasted LLM calls on hopeless records | passing a check while losing the signal |
+| **Produces** | repaired/enhanced variants of one alpha | a typed template: signal identity, four field-role slots, valid and invalid mutation axes |
+| Unit of work | a population, triaged from the sim history | one seed, worked up in depth |
+| Repairs by | wrapping the original expression | reframing the signal, within declared mutation axes |
+| LLM structure | one repair/enhance agent | diagnostic agent (no FASTEXPR) + generator agent constrained by its template |
+| Reusable after? | no — output is tied to that expression | yes — handed to `semantic_templates/` to bind to new fields |
+| Shared with the other | 3 feedback rounds, parameter-only edits banned, measured input only | same |
 
 ```mermaid
 flowchart TD
