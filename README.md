@@ -145,7 +145,7 @@ the alpha into a **typed semantic template**: a named signal identity, four fiel
 (main signal, secondary, gating, neutralizer), and the axes along which it may legitimately be
 varied. That template is then bound to new fields, so the lane generalises from "this alpha
 works" to "this *kind* of alpha works, and here are its slots". Both are explained in
-[`alpha_enhancement/README.md`](alpha_enhancement/README.md).
+[`alpha_enhancement/README.md`](alpha_enhancement/README.md). Idea is to utilize semantic cards for potential template worthy of alpha discovery furthur.
 
 ## Reinforcement
 
