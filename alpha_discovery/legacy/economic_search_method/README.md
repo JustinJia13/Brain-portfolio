@@ -106,8 +106,6 @@ repository. The credentials path is relative to the `legacy/` directory.
 
 ## Results
 
-Ran 2531 Brain simulations across 107 theory branches (artifacts/continuous/*_sim.jsonl plus economic_delay0/1_probe_sim.jsonl). Of the 1611 that completed, exactly 1 passed every Brain check (0.06 percent); median IS Sharpe was 0.08, 60 percent of sims were pure noise with absolute Sharpe under 0.5, and only 5.2 percent cleared the Sharpe 1.25 bar even ignoring the other checks. Branch adjudication across the 217 dirs in artifacts/theories (decision_delay*.json) was 76 KILL, 26 ITERATE, 5 EXPAND, 0 PROMOTE - no theory ever produced a standalone passer with positive marginal portfolio contribution. The decisive finding is that the gates were not the bottleneck: the deterministic validator rejected only 53 of 2994 LLM-written expressions (1.8 percent) and the semantic gate quarantined 18 of 2941 (0.6 percent, median similarity 38 of 100), so roughly 98 percent of what the LLM wrote was well-formed AND certified novel AND still carried no signal. Grammar search over the same account yields 1.74 percent submittable, so this lane underperformed the dumb generator by two orders of magnitude. PIPELINE.md records the architectural correction (lines 192-194): in the successor alpha_discovery/theory_method/ the LLM declares clusters, operators, horizons and skeletons but never final expressions.
-
 ### Why it was retired
 
 The expressions were well-formed, passed validation, and were certified novel by the index. They

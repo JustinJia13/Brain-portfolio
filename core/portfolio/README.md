@@ -100,8 +100,6 @@ stage cannot run headless.
 
 ## Results
 
-The gate is where "good alphas" go to die, and that is the point. Of 72 brain re-simulations of candidates that were ALL already submittable, robust and locally de-correlated, only 12 actually raised the competition score (POSITIVE_BRAIN_SCORE_DELTA, best +482); 51 were rejected for a non-positive delta (worst -1251) and 9 for HIGH_GLOBAL_CORR -- a ~17% score-add hit rate among alphas every sim-level filter had already blessed (artifacts/theory/promote_run.log, 72 [admit] rows). A standalone re-rank of the top 50 workshop candidates returned 50/50 REJECT HIGH_GLOBAL_CORR (artifacts/portfolio_admission/ranked.txt), which is the empirical argument for the lane's existence: structural novelty in the expression does not imply PnL novelty in the portfolio. PIPELINE.md "Two Pools" and "Stage 2.7" sections state the rule that only a brain re-sim confirms score-add; dedup.md records the same failure mode (the anl4_adjusted_netincome cluster, theory_0268's -161 delta).
-
 This gate is where good alphas go to die, and that is the point. Of a batch of candidates that
 were **all** already submittable, robust and locally de-correlated, only about one in six
 actually raised the portfolio score; the rest were rejected for a non-positive delta or for high

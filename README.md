@@ -206,7 +206,6 @@ scoring path and the unit tests all run offline.
 | [`CALIBRATION_REPORT.md`](CALIBRATION_REPORT.md) | Validation of the pre-screen, including a result it retracted after finding temporal leakage in its own backtest |
 | [`ASSUMPTIONS.md`](ASSUMPTIONS.md) | 29 falsifiable assumptions with resolved statuses, plus dated amendments where a result overturned an earlier belief |
 | [`dedup.md`](dedup.md) | Measures the failure mode before proposing a fix: most simulation budget was going into regions already proved dead |
-| [`PIPELINE.md`](PIPELINE.md) | Stage-by-stage map of the code space |
 
 ## What the search found
 

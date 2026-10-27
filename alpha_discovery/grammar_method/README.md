@@ -104,6 +104,26 @@ flowchart TD
     LOG -->|"16188 done, 281 fully submittable, about 2 pct"| WS
 ```
 
+### A worked example of why constraints belong in the derivation
+
+One pattern this grammar refuses to build, and the reasoning behind the refusal:
+
+```
+signed_power(kth_element(FIELD, W, k=K), ts_zscore(FIELD, W2))
+```
+
+`kth_element` deliberately selects extreme values. `signed_power` then raises them to a
+*dynamic* exponent — `ts_zscore` — so for an outlier the result is `x^N = ±inf`. Once a weight
+is infinite nothing downstream can recover: `group_neutralize` cannot neutralise an infinity, so
+the entire portfolio weight collapses onto a single stock. The alpha looks spectacular and is
+pure artefact.
+
+The important part is that this is not fixable by post-filtering, because by the time you have
+the expression you have already paid to generate it, and a simulation would score it as a
+concentration failure without telling you why. The composition itself is unsound. So the
+constraint lives in the derivation step: the grammar will not put an unbounded-range operator
+into a dynamic exponent in the first place.
+
 ## The code
 
 | File | LOC | What it does |
@@ -136,5 +156,25 @@ interrupted. Inspect the full flag set with `--help`.
 
 ## Results
 
-Measured on artifacts/sim/master.jsonl (2026-06): 18,506 grammar-lane records of 91,969 total, 16,188 completed, 482 at IS Sharpe >= 1.25 (3.0%), and 281 passing every submission gate including concentrated-weight and sub-universe (1.7% hit rate). That is the repo's best generator — the separate decompose-expand variant scored 0/100 submittable (memory note llm-generator-underperforms), which is why PIPELINE.md keeps grammar running as the background evidence collector. Two honest negatives sit inside the lane. (1) dedup.md's measurement over 84,717 records: only 7.9% of (skeleton, field-set) cells ever recur, 92.3% of cells top out below Sharpe 1.25, and 90.5% of sim budget is spent in cells history already proved dead — so identity dedup was solving the wrong problem. (2) The lane's own Q-table pruner is effectively inert: I verified 9 of 8987 L1 and 19 of 22640 L2 entries pruned (<0.15%), matching CALIBRATION_REPORT.md line 112 and ASSUMPTIONS.md G3, where the alpha_discovery/sim_slot_gate surrogate challenger dominates it (46% slots saved at 0.91 quality-zone recall, McNemar chi2 = 1816). The real pre-sim cull today is the 3x novelty oversample-and-trim plus that gate, not the Q-table.
+This is the productive generator, and the reference point the rest of the repository is
+measured against. It accounts for the largest share of the simulation ledger by a wide margin,
+and its submittable rate is roughly an order of magnitude above every lane that tried to put an
+LLM in the generator seat.
 
+Two honest negatives sit inside it.
+
+**The Q-table pruner is effectively inert.** Measured on the real production artifact, well
+under 0.1% of its buckets ever reach the prune threshold, so it is saving essentially no
+simulation slots while appearing to learn. The real pre-simulation cull is the novelty
+oversample-and-trim plus the [pre-screen](../sim_slot_gate/README.md), not the Q-table. This was
+found by the screen's own champion/challenger harness — see
+[`../../CALIBRATION_REPORT.md`](../../CALIBRATION_REPORT.md).
+
+**Identity dedup was solving the wrong problem.** [`../../dedup.md`](../../dedup.md) measured
+that the repeat rate across (skeleton, field-set) cells is low, so literal duplication was
+never the budget leak. The leak was re-exploring neighbourhoods the history had already proved
+dead — a prediction problem, not a blocklist problem.
+
+Both are cases where a mechanism that looked like it was working turned out, on measurement, not
+to be. Neither was removed quietly: the Q-table still runs, and the replacement is held in
+shadow until its pre-declared conditions are met.

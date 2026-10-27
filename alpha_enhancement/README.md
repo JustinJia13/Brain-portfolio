@@ -143,8 +143,6 @@ python -m alpha_enhancement.workshop.alpha \
 
 ## Results
 
-This is the lane that empirically works, and the only one whose LLM calls pay for themselves. `artifacts/workshop/workshop_summary_20260620.txt` records the 2026-06-17 to 06-19 slice: 587 sims (enhance 327, repair 230, negate 30) -> 211 submittable (36%) -> 206 PROMOTE / 219 REJECT, 309 with positive score delta; the standouts were repair-lane fnd6_itci composites at Sharpe 2.1-2.3, fitness 2+. Contrast with the memory note `llm-generator-underperforms.md`: the same model proposing mechanisms from scratch went 0/100 submittable. Settings-repair is the cheapest sub-lane: 446 sims in `settings_repair_sim.jsonl` yielded 112 submittable rows in `settings_repair_submittable.jsonl` (~25%) by changing decay/neutralization alone. The honest failure mode is also on record - `artifacts/workshop/workshop_summary.txt` (2026-06-22) reads "56 simulated -> 22 standalone-passing -> 0 admission-promoted, REJECT=22", 18 of them HIGH_GLOBAL_CORR: once the workshop has mined a signal family hard, its own variants become near-duplicates of each other and the portfolio corr gate, not the alpha gate, becomes binding.
-
 ### What is and is not evidenced
 
 The workshop is the only lane in the project whose LLM calls clearly pay for themselves — its

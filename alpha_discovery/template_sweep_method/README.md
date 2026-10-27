@@ -24,8 +24,8 @@ The part worth a closer look is `regime_check.py`. It evaluates the **same expre
 settings grid **declared in advance** — neutralization, decay, truncation, universe — rather
 than searching settings for the best result. That distinction is the whole anti-overfit point:
 a pre-declared grid measures robustness, while an adaptive search over the same grid
-manufactures it. `../../PIPELINE.md` explicitly warns against using template variants as an
-adaptive parameter search loop, and that warning is why this lane is retained in a narrow role.
+manufactures it. The project's standing rule is that template variants must never be run as an
+adaptive parameter search loop, and that rule is why this lane is retained in a narrow role.
 
 `consolidate_logs.py` was a one-time migration that folded scattered per-lane sim logs into the
 single `artifacts/sim/master.jsonl` ledger. It has already run.
@@ -54,7 +54,7 @@ python -m alpha_discovery.template_sweep_method.sweep --help
 python tools/regime_check.py --help
 ```
 
-`../../PIPELINE.md` keeps `pipeline.py` alive for deliberate compatibility experiments only.
+`pipeline.py` is kept for deliberate compatibility experiments only, not as a live generator.
 
 ## Results
 
@@ -64,7 +64,7 @@ folded into `artifacts/sim/master.jsonl` by its own `consolidate_logs.py` migrat
 grammar.
 
 Its durable contribution is not a set of alphas but the **regime-check device**, which is still
-used as a robustness probe on finalists, and the negative lesson recorded in `../../PIPELINE.md`:
+used as a robustness probe on finalists, and the negative lesson it taught:
 template variants must not be run as an adaptive parameter search, because sweeping settings and
 then reporting the best one is overfitting with extra steps.
 

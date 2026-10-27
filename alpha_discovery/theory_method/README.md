@@ -108,8 +108,6 @@ entirely through `tools/theory_lane.py`.
 
 ## Results
 
-Negative result, documented honestly. `artifacts/theory/theories.jsonl` holds 327 family verdicts: 49 VALIDATED, 223 FALSIFIED, 55 INCONCLUSIVE — a 15 pct family-validation rate that stayed flat as the mechanism registry grew to 872 cards (197 of them falsified). The grammar lane's 1.74 pct submittable yield beat it, and the few theory winners were portfolio-redundant rather than additive: theory_0268 came back at self-correlation 0.67 with brain_score_delta -161 (cited in dedup.md, Stage 2 section). The decompose-and-expand variant of the same idea — LLM reads a proven robust alpha and re-routes the edge through other fields (`core/prompts/theory_decompose.md`, `tools/decompose_test.py`) — scored 0 of 100 submittable on brain, median sharpe 0.12 against seeds at ~2.2, with 71 pct pure noise. The measurement in dedup.md explains why: 92.3 pct of the 75.8k (skeleton, field-set) cells in the 84,717-record measured slice are weak and only 5.8 pct contain a submittable winner, so a card scoring "100 pct novel" is by construction 100 pct inside the dead mass. Novelty and signal are in direct tension. Lesson recorded: an alpha's edge is a specific field-by-structure interaction, not a portable abstract mechanism, so put the intelligence in SELECTION, not GENERATION.
-
 ### What the negative result actually says
 
 The mechanism registry grew to 872 cards, of which 197 are falsified, and the family validation

@@ -95,8 +95,6 @@ python tools/archaeology_bootstrap.py --min-sims 20
 
 ## Results
 
-Empirically the lane is a falsification engine first and a generator second. From 91,969 master sim records it produced 587 clusters with evidence and 454 narrative pages (wiki/index.md header: "mechanisms: 872 (46 validated, 197 falsified), clusters with evidence: 587"), i.e. falsified mechanisms outnumber validated ones 4.3 to 1 and 468 falsified gists over 128 clusters now sit in the graveyard blocking re-proposal. The posterior separates clusters sharply: model16 earnings-sustainability got 740 sims for 0 submittables while analyst4 revision clusters hit 0.30-0.36 submittable rates with median robustness 0.455-1.0, and export_priors turns that into 332 prior rows (probability 0.0135 to 0.689) while 255 of 587 clusters are dropped to zero grammar weight entirely. Archaeology confirms the governing retro-as-prior rule rather than contradicting it: of 89 retro cards registered, only 2 ever earned live_confirmed, which is why PIPELINE.md states "Retro (archaeology) theories are PRIOR, not posterior: they need a live confirmation family before VALIDATED" and why family.py caps retro Beta pseudo-counts at 5. Note the honest caveat recorded in the grammar lane's own argparse help: the cluster catalog covers only about 7 percent of the live field universe, so the default sampler is uniform and the wiki prior is opt-in via --grammar-sampler probe_prior.
-
 The striking thing about the posterior is its shape: **falsified mechanisms outnumber validated
 ones by more than four to one**, and roughly half the clusters with any evidence have too
 little of it to support a directional prior and are dropped.
