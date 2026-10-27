@@ -14,7 +14,7 @@ aggregated into a per-cluster posterior, and that posterior is exported back as 
 lane's sampling prior. A region repeatedly proven dead gets down-weighted in future derivation.
 It is the one edge in the system that feeds results back into generation.
 
-## How it discovers alpha
+## How it works
 
 `generate.py` reads the full simulation ledger and aggregates it per field cluster into
 structured statistics, then has an LLM write a short narrative page per cluster so the evidence

@@ -3,18 +3,44 @@
 ## The problem
 
 The space of FASTEXPR expressions is unbounded under composition: 7,642 fields, 70 operators,
-and no limit on nesting depth. Enumerating it is hopeless and hand-writing expressions explores
-a vanishing fraction of it.
+and no limit on nesting depth. Enumerating it is hopeless, mutating expression strings produces
+mostly malformed candidates, and hand-writing them explores a vanishing fraction of the space.
 
-This method's bet is that alpha discovery is a **search** problem, not an **authoring** problem.
-Instead of guessing good expressions, define a **context-free grammar** whose productions each
-cost `Δk` against a total budget `K`. That does three useful things at once: it bounds depth, it
-makes the reachable set explicit rather than implicit in someone's taste, and it turns the task
-from "invent an alpha" into "sample the grammar cheaply, then refuse to simulate the bad draws".
+This method is the project's **baseline**, and it is an implementation of a published idea:
 
-Since the binding constraint is the simulation slot and not candidate supply, the generator is
-deliberately over-productive and the engineering effort goes into the **refusal** stack that
-sits between it and the simulator.
+> **Alpha Discovery via Grammar-Guided Learning and Search** — Han Yang, Dong Hao, Zhuohan
+> Wang, Qi Shi, Xingtong Li. The *AlphaCFG* framework. (Not redistributed here.)
+
+Two ideas are taken from it. First, treat an alpha not as a string but as a **derivation tree
+from a context-free grammar**, written so that every tree the grammar can produce is already
+syntactically valid and financially interpretable — which deletes the entire category of work
+spent generating and then rejecting malformed expressions. Second, bound the space: the paper's
+`α-Sem-k` variant gives each production rule a cost `Δk` and caps the total at a maximum length
+`K`, enforcing that bound *during* derivation so every expansion stays inside the feasible
+region.
+
+Both are implemented directly in `grammar.py` — see its module docstring and the production
+table, which take the `Δk` costs from the paper's rule table with `K=10`.
+
+### Where this departs from the paper
+
+AlphaCFG's contribution *on top of* the grammar is a learned search policy: alpha discovery as
+a tree-structured Markov decision process, solved with grammar-aware Monte Carlo Tree Search
+over Tree-LSTM encodings of partial trees, guided by value and policy networks.
+
+That assumes rollouts are cheap. Here a rollout is a metered BRAIN simulation — minutes long,
+three at a time — so the thousands MCTS needs to become useful are unaffordable; the policy
+would consume the whole budget learning to search rather than searching. The paper's UCB-guided
+search side was in fact attempted and then archived
+([`../legacy/archived_shims/alpha_grammar/ucb_legacy.py`](../legacy/archived_shims/alpha_grammar/ucb_legacy.py)),
+because a bandit is the wrong frame when pulling an arm costs the very resource you are trying
+to conserve.
+
+So this lane keeps the grammar and the size budget, **samples it uniformly at random**, and puts
+the engineering effort into cheap persistent *refusal* instead of learned selection. Since the
+binding constraint is the simulation slot and not candidate supply, the generator is
+deliberately over-productive and everything interesting happens in the stack between it and the
+simulator.
 
 ## How it discovers alpha
 

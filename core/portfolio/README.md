@@ -14,7 +14,7 @@ So the real admission question is marginal, not absolute: **does total score inc
 alpha joins what is already there?** That is a different and much harder test than "is this
 alpha good", and it is the last gate before submission.
 
-## How it discovers alpha
+## How it decides
 
 Two paths to the same question, at different cost.
 

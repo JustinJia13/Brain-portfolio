@@ -4,151 +4,170 @@ A systematic search for cross-sectional equity alphas on the WorldQuant BRAIN pl
 
 ## The competition
 
-BRAIN runs a quant competition (this work targets `IQC2026S1`). You submit **formulaic
-alphas** — single expressions in BRAIN's `FASTEXPR` language, for example:
+You submit **formulaic alphas** — single expressions in BRAIN's `FASTEXPR` language:
 
 ```
 group_rank(ts_mean(ts_zscore(returns, 20), 10), subindustry)
 ```
 
-Each submission is backtested by the platform and earns points from two scores: an
-**in-sample score** on the historical window you can see, and an **out-of-sample score** on
-the window you cannot. Points accrue to your **portfolio**, not to the alpha. That last
-detail drives everything downstream: an alpha that is excellent but merely repaints something
-you already submitted adds nothing. What counts is the *marginal* score of adding it.
+The platform backtests each one and awards points from an **in-sample score** and an
+**out-of-sample score**. Points accrue to your **portfolio**, not to the individual alpha, so a
+good alpha that merely repaints something you already submitted is worth nothing. What counts
+is the *marginal* contribution of adding it.
 
-An alpha only becomes submittable if it passes **every** platform check, not just the headline
-ones — in-sample Sharpe, fitness and turnover, but also concentrated weight, sub-universe
-Sharpe, units, and self-correlation against your existing portfolio.
+The search space is effectively unbounded — **7,642 data fields** × **70 operators**
+(`core/expr/operators.py`), composable to arbitrary depth. And the thing that limits you is not
+imagination but **measurement cost**: an expression tells you nothing until it is simulated,
+there is no cheap partial-sim probe, and the platform allows only **3 concurrent simulations
+per account**.
 
-## The foundational problem: navigating a vast search space
+## The baseline: random grammar search
 
-The expression space is effectively unbounded:
+Everything here starts from one published idea.
 
-| | |
-|---|---|
-| Data fields | **7,642** (`all_fields.csv`) — price/volume, fundamentals, analyst, news, sentiment, options, models |
-| Operators | **70** (`core/expr/operators.py`) — time-series, cross-sectional, group, arithmetic, transformational |
-| Composition | Arbitrary depth, so the reachable set grows super-exponentially |
+> **Alpha Discovery via Grammar-Guided Learning and Search** — Han Yang, Dong Hao, Zhuohan
+> Wang, Qi Shi, Xingtong Li. The *AlphaCFG* framework.
+> (The paper itself is not redistributed in this repository.)
 
-And the thing that stops you is not imagination — it is **measurement cost**. A candidate
-expression tells you nothing until it is simulated, there is no cheap partial-sim probe, and
-the platform allows only **3 concurrent simulations per account**. Simulation is the scarce
-resource, and every candidate you simulate is one you cannot spend elsewhere.
+Its first move is the one worth stealing: stop treating an alpha as a *string* to be mutated
+and treat it as a **derivation tree from a context-free grammar**. The grammar is written so
+that every tree it can produce is a syntactically valid and financially interpretable
+expression, which removes the entire class of wasted work spent generating and then rejecting
+malformed candidates.
 
-So the real question is never "what expression should I write?" It is:
+The second move bounds the space. The paper's `α-Sem-k` variant assigns each production rule a
+cost `Δk` and caps the total at a maximum length `K`, enforcing the bound *during* derivation
+so every expansion step stays inside the feasible region. The grammar in
+`alpha_discovery/grammar_method/grammar.py` implements this directly, with `Δk` costs taken
+from the paper's rule table and `K=10`.
 
-> **Which candidate is worth a simulation slot?**
+**So the baseline is: sample that bounded grammar uniformly at random, simulate the draws, keep
+what passes.** That is the reference point every other method in this repository is measured
+against, and it is a far stronger baseline than it sounds — a valid-by-construction sampler over
+a size-controlled space is already much better than unstructured search.
 
-## The approach: two engines
+### Where this project deliberately departs from the paper
 
-The discovery process is split in two, which is also how this repository is organised.
+AlphaCFG's own contribution *on top of* the grammar is a learned search policy: it casts
+discovery as a tree-structured Markov decision process and solves it with grammar-aware Monte
+Carlo Tree Search, encoding partial trees with a Tree-LSTM that feeds shared value and policy
+networks.
+
+That is the right design when rollouts are cheap. Here they are not. A "rollout" is a metered
+BRAIN simulation — minutes long, 3 at a time, and rate-limited — so the thousands of rollouts
+MCTS needs to become useful are simply unaffordable. The learned policy would spend the entire
+budget learning to search instead of searching.
+
+So this project keeps the grammar and the size budget and **replaces the learned search policy
+with cheap persistent pruning**: a Q-table over field–operator combinations, a structural
+fingerprint registry, and a cross-run posterior, all of which only ever *remove* candidates and
+all of which persist to disk so the next session starts from accumulated evidence. The paper's
+UCB-guided search side was attempted and archived —
+`alpha_discovery/legacy/archived_shims/alpha_grammar/ucb_legacy.py` — because a bandit cannot
+work when pulling an arm costs the scarce resource you are trying to conserve.
+
+## Two halves
+
+Everything splits cleanly in two, and so does the repository.
 
 ```mermaid
-flowchart TD
+flowchart TB
     SPACE[("search space<br/>7642 fields times 70 operators")]
-    DIG["alpha_discovery<br/>the raw alpha digging engine"]
-    GATE{"alpha_discovery/sim_slot_gate<br/>is this candidate worth a slot"}
-    SIM["BRAIN simulation<br/>3 concurrent per account"]
-    LEDGER[("artifacts/sim/master.jsonl<br/>91969 simulated alphas with metrics")]
-    HAND{"researcher hand-picks<br/>which measured alphas to work on"}
-    ENH["alpha_enhancement<br/>the AI enhancement engine"]
-    LANES["three lanes<br/>negate / repair / enhance"]
-    ADMIT{"core/portfolio<br/>does total score go UP"}
-    WIKI[("core/wiki<br/>per-cluster posterior")]
-    SUBMIT[("submitted to the competition")]
-    DROP[("discarded, no slot spent")]
 
-    SPACE -->|"field clusters and operator vocabulary"| DIG
-    DIG -->|"candidate FASTEXPR"| GATE
-    GATE -->|"predicted redundant or low quality"| DROP
-    GATE -->|"survivor"| SIM
-    SIM -->|"metrics and named failing checks"| LEDGER
-    LEDGER -->|"a measured alpha, good or bad"| HAND
-    HAND -->|"curated expression list"| ENH
-    ENH -->|"route_record dispatches"| LANES
-    LANES -->|"repaired or improved variant"| GATE
-    LEDGER -->|"every result, win or failure"| WIKI
-    WIKI -.->|"sampling prior, dead clusters down-weighted"| DIG
+    subgraph GEN["ALPHA GENERATION — build a candidate from nothing"]
+        direction TB
+        DISC["alpha discovery module<br/>one per method"]
+        SCREEN{"cheap pre-screen<br/>refuse before paying for a simulation"}
+    end
+
+    SIMBUS["BRAIN simulation<br/>the metered shared resource"]
+    LEDGER[("simulation ledger<br/>every alpha with its metrics and its failed checks")]
+
+    subgraph ENH["ALPHA ENHANCEMENT — improve an alpha that was already measured"]
+        direction TB
+        PICK{"researcher hand-picks<br/>what is worth working on"}
+        ENGINE["alpha enhancement module<br/>negate / repair / enhance"]
+    end
+
+    subgraph SIDE["REINFORCEMENT — results fed back into generation"]
+        direction TB
+        POST[("posterior over where signal is and is not")]
+        TMPL[("typed templates from promoted families")]
+    end
+
+    ADMIT{"portfolio admission<br/>does total score actually rise"}
+    OUT[("submitted to the competition")]
+    DROP[("discarded")]
+
+    SPACE -->|"field clusters and operator vocabulary"| DISC
+    DISC -->|"candidate expression"| SCREEN
+    SCREEN -->|"predicted not worth it"| DROP
+    SCREEN -->|"survivor"| SIMBUS
+    SIMBUS -->|"metrics and named failing checks"| LEDGER
+    LEDGER -->|"a measured alpha, passing or failing"| PICK
+    PICK -->|"curated expression list"| ENGINE
+    ENGINE -->|"repaired or extended variant"| SIMBUS
+    LEDGER -->|"every result, win or failure"| POST
+    LEDGER -->|"families that were promoted"| TMPL
+    POST -.->|"sampling prior"| DISC
+    TMPL -.->|"slots to bind new fields into"| DISC
     LEDGER -->|"passes every check"| ADMIT
     ADMIT -->|"no marginal score, or too correlated"| DROP
-    ADMIT -->|"raises portfolio score"| SUBMIT
+    ADMIT -->|"raises portfolio score"| OUT
 ```
 
-**1. `alpha_discovery/` — the raw alpha digging engine.** Generates candidates and, crucially,
-decides which ones to *refuse* to simulate. One subpackage per method, each with its own
-README laying out how it frames the problem:
+The dividing line is **whether the alpha already has a backtest**. Generation works from the
+field catalog and produces candidates nobody has measured. Enhancement only ever works on a
+record that has been simulated, so it always has metrics and a named failure to aim at. The two
+halves share one simulation bus and one ledger.
 
-| Method | Frames the search as | README |
-|---|---|---|
-| `grammar_method/` | sample a context-free grammar over FASTEXPR under a depth budget | [README](alpha_discovery/grammar_method/README.md) |
-| `probe_method/` | map where signal lives first, with one cheap probe per field cluster | [README](alpha_discovery/probe_method/README.md) |
-| `theory_method/` | pre-register an economic mechanism, then enumerate a designed family | [README](alpha_discovery/theory_method/README.md) |
-| `template_sweep_method/` | fix the functional forms, search only the bindings | [README](alpha_discovery/template_sweep_method/README.md) |
-| `sim_slot_gate/` | **don't generate — predict.** Is this candidate worth a slot? | [README](alpha_discovery/sim_slot_gate/README.md) |
-| `legacy/` | three retired methods, archived with their reasoning | [README](alpha_discovery/legacy/README.md) |
+Note the one manual step: **selection from the ledger into enhancement is hand-picked.** The
+researcher reads the ledger and decides what deserves budget; nothing promotes itself.
 
-**2. `alpha_enhancement/` — the AI enhancement engine.** Takes an alpha that **already has a
-measured backtest and a named failing check** and improves it with LLM agents, routing each
-record to one of three lanes — **negate**, **repair**, **enhance**. Selection into this engine
-is **hand-picked by the researcher**, not automatic.
-See [`alpha_enhancement/README.md`](alpha_enhancement/README.md).
+## The discovery designs
 
-**Supporting layers.** [`core/`](core/README.md) is the shared platform — BRAIN API, the
-FASTEXPR operator registry and expression models, the Q-table, self-correlation, the
-submittable predicate, the portfolio score-add gate, the wiki posterior. `tools/` holds the
-operational CLIs.
+Each attacks the same space under a different assumption. Specifics, code and results are in
+each method's own README.
 
-## What the search actually found
+| Method | The design |
+|---|---|
+| [**grammar_method**](alpha_discovery/grammar_method/README.md) | The baseline above: sample the bounded CFG, canonicalize commutative operands so equivalent trees collapse, and stack persistent prune datastores in front of the simulator. The productive generator. |
+| [**probe_method**](alpha_discovery/probe_method/README.md) | Don't mine blind. Spend one cheap simulation per *field cluster* on a fixed operator pack, so cost scales with clusters rather than fields × operators, and use the result as a prior over where to sample. |
+| [**theory_method**](alpha_discovery/theory_method/README.md) | Have an LLM pre-register a falsifiable economic mechanism as a structured card, then let a *deterministic* enumerator render the expression family from it. The LLM never writes FASTEXPR; verdicts are issued per family, not per alpha. |
+| [**template_sweep_method**](alpha_discovery/template_sweep_method/README.md) | The inverse bet: assume the useful functional forms are already known and search only the field and window bindings. Small enough to sweep exhaustively. |
+| [**sim_slot_gate**](alpha_discovery/sim_slot_gate/README.md) | The pre-screen itself — predict from an expression's structure whether it is redundant or likely weak, and decline to simulate it. |
+| [**legacy/**](alpha_discovery/legacy/README.md) | Three retired designs: LLM writes the expression; LLM steers the grammar's distribution; operator skeleton fixed first. Archived with the reasoning that killed each. |
 
-The headline result is negative, and it reproduced four times: **an LLM asked to generate
-alphas loses to random grammar sampling.** It becomes useful only once it is handed a measured
-backtest and a named failing check to repair. That finding is why the repository is shaped the
-way it is — intelligence in *selection* and *repair*, not in generation.
+## The enhancement engine
 
-| Approach | Where | Result | Submittable |
-|---|---|---|---|
-| LLM writes the expression itself | `alpha_discovery/legacy/economic_search_method/` | 1 of 1,611 completed sims passed every check | **0.06%** |
-| LLM steers the grammar's distribution | `alpha_discovery/legacy/llm_grammar_control_method/` | 19 of 3,066 completed sims clean on every check | **0.62%** |
-| Operator skeleton fixed first | `alpha_discovery/legacy/operator_skeleton_method/` | no promoted alpha ever reached the ledger | **0** |
-| LLM pre-registers a mechanism card | `alpha_discovery/theory_method/` | 49 of 327 families validated, 88 queued, 12 raised score | **15% of families** |
-| Random CFG + stacked prune datastores | `alpha_discovery/grammar_method/` | 281 of 16,188 completed sims clear every gate | **1.74%** |
-| LLM repairs a *measured* alpha | `alpha_enhancement/` | 211 of 587 sims submittable | **36%** |
+[`alpha_enhancement/`](alpha_enhancement/README.md) exists because of a negative result that
+reproduced three times: an LLM asked to *generate* alphas loses to random grammar sampling.
+The diagnosis was that the model was being asked to predict profitability from expression text
+alone, with no feedback.
 
-Two further results shaped the design:
+Change that one condition — hand it an alpha with a measured backtest and a **specific named
+failing check** — and it becomes a constrained repair task with a stated objective, which is
+something an LLM is good at. `route_record()` dispatches each hand-picked record to one of
+three lanes:
 
-- **Redundancy, not quality, is the binding constraint.** Of 72 candidates that were *all*
-  already submittable, robust and locally de-correlated, only **12 raised the portfolio score**
-  (16.7%). A separate batch of 50 was rejected 50/50 for high global correlation.
-- **Novelty and signal are close to independent.** The retired economic-search lane certified
-  every candidate as novel through a SQLite novelty index and still returned one passer in
-  1,611 simulations. A novelty index cannot substitute for a quality predictor.
+- **negate** — right structure, wrong sign. Flip and re-simulate; no LLM needed.
+- **repair** — fix a named failing check. Either *settings repair* (change neutralization,
+  decay, truncation; expression untouched) or *semantic repair* (LLM rewrite, with the failing
+  check and metrics in the prompt, under a hard round cap).
+- **enhance** — the alpha already passes; make it stronger without making it fragile.
 
-## The finding this project is built around
+## Reinforcement, on the side
 
-The sim-slot gate's champion/challenger harness falsified the mechanism it was built to
-replace. The grammar lane's two-level Q-table pruner — the component that was supposed to be
-learning — was measured on the real production artifact and found **inert**: 9 of 8,987
-level-1 buckets and 19 of 22,640 level-2 buckets prune, 0.089%. It was saving ~0% of
-simulation slots while appearing to work.
+Two components are neither generators nor repairers. They turn accumulated results back into
+better generation, which is why they sit to the side of the main flow:
 
-The replacement beats it decisively out-of-time (McNemar χ²=1816), but it **has not been cut
-over**. Three cutover conditions were pre-declared *before* the results came in; two pass, and
-the third — live shadow confirmation — remains underpowered. So the gate runs in
-`mode: reliable`, where only the redundancy and turnover branches are authoritative and the
-quality surrogate stays in shadow.
-
-The same harness also caught an error in its own earlier result. An initial run reported a
-0.91 quality-zone recall at β=2.0, but that came from a **random** train/test split — which
-leaks across time in an append-only simulation log. On an honest time split, β=2.0 actually
-holds only 0.76 quality-zone recall, so the operating point was moved to **β=2.5**, which after
-feature pruning gives **46% of slots saved at 0.91 quality-zone recall**. The superseded figure
-is kept in [`CALIBRATION_REPORT.md`](CALIBRATION_REPORT.md) beside the corrected one rather than
-quietly replaced.
-
-Note what the gate is actually saving *today*: in `mode: reliable` only the redundancy and
-turnover hard-kills fire, and that floor is **5% of slots saved at 79% recall**. The 46% figure
-is the shadow-mode projection for the configuration that has not been cut over.
+- [`core/wiki/`](core/wiki/README.md) aggregates every simulation — win *or* failure — into a
+  per-cluster posterior, exported back as the grammar lane's sampling prior. A region
+  repeatedly proven dead gets down-weighted in future derivation, so the search compounds
+  instead of re-paying for the same dead ends.
+- [`alpha_enhancement/semantic_templates/`](alpha_enhancement/README.md) abstracts families
+  that were *already promoted* into typed-slot templates and binds new fields into them —
+  exploiting what worked, rather than repairing what failed.
 
 ## Repository layout
 
@@ -156,74 +175,58 @@ is the shadow-mode projection for the configuration that has not been cut over.
 core/                  shared platform, depends on nothing above it
   brain/                 BRAIN REST API: auth, submit, poll, metric and PnL fetches
   expr/                  FASTEXPR vocabulary: operator registry, expression/field models
-  qtable.py              the shared Q-table (written by several lanes)
+  qtable.py              the shared Q-table
   selfcorr.py            self-correlation, portfolio PnL, sim-record construction
-  clusters.py            field-cluster catalog construction and caching
   quality.py             the submittable predicate and the quality ordering
-  robustness.py          year-consistency score, the repo-wide selection criterion
   portfolio/             score-add admission gate         -> README
-  wiki/                  per-cluster posterior, exported back as a prior -> README
+  wiki/                  per-cluster posterior            -> README
   prompts/               every LLM prompt template, kept as data
-alpha_discovery/       the raw alpha digging engine        -> README per method
-alpha_enhancement/     the AI enhancement engine           -> README
-  workshop/              lane routing, repair orchestration, robustness cards
-  agents/                the LLM agents
-  semantic_templates/    typed reuse of promoted families
+alpha_discovery/       alpha generation, one subpackage per method   -> README per method
+alpha_enhancement/     the AI enhancement engine                    -> README
 tools/                 operational CLIs over all three layers
-  harnesses/             manual diagnostics (not pytest-collectable)
-samples/               truncated real output from each lane, as evidence of a run
+samples/               truncated real output from each lane
 ```
 
-The layering is enforced and verified: `core` imports nothing from `alpha_discovery` or
-`alpha_enhancement`, and `alpha_enhancement -> alpha_discovery` edges are **zero**. One
-deliberate exception is annotated in place — `core/brain/submit.py`'s opt-in `--auto-workshop`
-CLI path lazily imports the workshop.
-
-## Documents worth reading first
-
-| Doc | What it is |
-|---|---|
-| [`CALIBRATION_REPORT.md`](CALIBRATION_REPORT.md) | The gate's validation: time-split frontier, champion/challenger, the inert-Q-table finding, the three cutover conditions, and the retracted figure |
-| [`ASSUMPTIONS.md`](ASSUMPTIONS.md) | 29 falsifiable assumptions with resolved statuses — 12 PASS, 11 PARTIAL, 6 FAIL, 1 UNTESTED — plus dated amendments where a result overturned an earlier belief |
-| [`dedup.md`](dedup.md) | Measures the failure mode before proposing a fix: 90.5% of simulation budget went into regions history had already proved dead |
-| [`PIPELINE.md`](PIPELINE.md) | Stage-by-stage map of the code space |
-| [`alpha_discovery/sim_slot_gate/metric.md`](alpha_discovery/sim_slot_gate/metric.md) | Design doc for the two gate objects |
+Layering is enforced and verified: `core` imports nothing from either pillar, and
+`alpha_enhancement → alpha_discovery` edges are **zero**. One deliberate exception is annotated
+in place — `core/brain/submit.py`'s opt-in `--auto-workshop` CLI path lazily imports the
+workshop.
 
 ## Running it
 
-See [`SETUP.md`](SETUP.md): `pip install -r requirements.txt`, then supply credentials by
-copying the `.example` files at the repository root.
+See [`SETUP.md`](SETUP.md). Credentials are read from plaintext files at the repository root;
+copy the `.example` files and fill them in. An end-to-end run needs a live account and
+simulation budget, but the grammar derivation, the gate's calibrated parameters, the PnL-only
+scoring path and the unit tests all run offline.
 
-Every discovery lane submits to a metered external API, so an end-to-end run needs live
-credentials and a simulation budget. What is inspectable **offline**:
+## Reference docs
 
-```bash
-# the gate's unit tests — no account, no network
-python -m alpha_discovery.sim_slot_gate.tests.test_parse       # 13/13
-python -m alpha_discovery.sim_slot_gate.tests.test_channels    #   9/9
-python -m alpha_discovery.sim_slot_gate.tests.test_corr_model  # 11/11
-python -m alpha_discovery.sim_slot_gate.tests.test_surrogate   # acceptance checks
-```
+| Doc | What it is |
+|---|---|
+| [`CALIBRATION_REPORT.md`](CALIBRATION_REPORT.md) | Validation of the pre-screen, including a result it retracted after finding temporal leakage in its own backtest |
+| [`ASSUMPTIONS.md`](ASSUMPTIONS.md) | 29 falsifiable assumptions with resolved statuses, plus dated amendments where a result overturned an earlier belief |
+| [`dedup.md`](dedup.md) | Measures the failure mode before proposing a fix: most simulation budget was going into regions already proved dead |
+| [`PIPELINE.md`](PIPELINE.md) | Stage-by-stage map of the code space |
 
-Also offline: grammar derivation and its prune datastores (pure functions over
-`all_fields.csv`), the gate's calibrated parameters in
-`alpha_discovery/sim_slot_gate/metric_params.json`, the PnL-only scoring path in
-`core/portfolio/local_admission.py`, and the truncated run output in `samples/`.
+## What the search found
 
-## Known rough edges
+Read in order, the discovery designs tell one story, and it is worth stating plainly because it
+is the reason the repository is shaped the way it is.
 
-Stated here rather than left to be discovered:
+Three successive attempts to put an LLM in the **generator** seat all lost to random sampling
+from the bounded grammar — first writing expressions directly, then steering the grammar's
+distribution instead, then constraining operator skeletons by economic role. Each failure ruled
+out the previous explanation, and what survived was not "the model was too weak" but something
+structural: **an LLM given no feedback cannot tell which expressions will make money**, and no
+amount of scaffolding around the generation step changes that.
 
-- `alpha_discovery/grammar_method/run_pipeline.py` is still ~1,190 lines and mixes argparse,
-  BRAIN submission and record construction. Its platform-level helpers were lifted into
-  `core/selfcorr.py` and `core/clusters.py` to break a dependency cycle, but the module itself
-  wants splitting further.
-- The quality surrogate is **not** cut over; only two of the gate's four branches are
-  authoritative. Condition 3 is unmet, not ignored.
-- `alpha_enhancement/semantic_templates/` is wired and default-on but has produced no
-  surviving output. Built, not yet evidenced.
-- Promotion into the competition pool requires interactive biometric auth on the submission
-  account, so that stage cannot run headless.
-- `core/brain/api.py` assumes WSL with a Windows browser on the host.
-- `alpha_discovery/legacy/` is archived and not imported by active code. Two archived one-off
-  scripts had import-time side effects and are now guarded inert.
+Two things did work. Giving the model **feedback** — a measured backtest and a named failing
+check — turns generation into repair, and the enhancement engine's success rate on hand-picked
+input is an order of magnitude above any generation lane. And spending effort on **what not to
+simulate** paid off, because the binding constraint turned out to be redundancy rather than
+quality: of a batch of candidates that were *all* already submittable, robust and locally
+de-correlated, only about one in six actually raised the portfolio score.
+
+Hence the final shape — a strong random baseline, cheap pruning in front of it, results fed
+back as a prior, and the AI applied to repair rather than invention. Per-method numbers are at
+the end of each method README.

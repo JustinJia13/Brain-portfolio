@@ -2,12 +2,14 @@
 
 ## The problem
 
-Every other method here asks "what should I simulate next?". This one asks the question that
-actually binds: **is this candidate worth a simulation slot at all?**
+The other methods here generate candidates. This one generates nothing — it sits in front of the
+simulator and answers a narrower question: **is this particular candidate worth a slot?**
 
-The platform allows 3 concurrent simulations per account and there is no cheap partial-sim
-probe — a candidate yields nothing until it has had a full backtest. So simulation is the scarce
-resource, and the highest-leverage intervention is not a better generator but a better *refusal*.
+That question only exists because of a platform constraint. BRAIN allows 3 concurrent
+simulations per account, and there is no cheap partial-sim probe, so a candidate yields no
+information at all until it has had a full backtest. The constraint is arbitrary rather than
+fundamental — a different platform would move the number — but while it holds, candidates are
+cheap and measurements are not, and it is worth spending some effort on refusal.
 
 [`../../dedup.md`](../../dedup.md) measured how bad the waste was: across an 84,717-record slice,
 **90.5% of simulation budget went into regions the existing history had already proved dead**,
@@ -18,7 +20,7 @@ one — it means identity-based dedup was solving the wrong problem. The waste w
 So the gate is a predictor, and because a predictor that is confidently wrong is worse than no
 predictor, it is built to know where it is ignorant.
 
-## How it discovers alpha
+## How it screens candidates
 
 Two objects answer two different questions, and a third decides whether to trust them.
 
@@ -135,9 +137,9 @@ python -m alpha_discovery.sim_slot_gate.tests.test_surrogate   # acceptance chec
 
 Built and validated, partially live. Per CALIBRATION_REPORT.md (2026-06-19): structure does predict future quality — time-split rank-IC 0.296 on the median Sharpe head, 0.332 after pruning hashed phi features, with 4.77x top-decile lift over a 7.6% base rate, and it transfers across the biggest regime shift in the data. Held-out quantile coverage is within ~0.02-0.035 of nominal on all four heads (surrogate_coverage.json: 0.831/0.834/0.836/0.832 at the 0.84 level), which is the acceptance test the design actually chose over R-squared. Authoritative TIME-split budget backtest (test_results/G3_budget_backtest_timesplit.json, n=6000, base good 7.6%): beta=2.0 saves 71% of slots at 67% quality-zone recall; the shipped default beta=2.5 saves 45% at 85% in-zone recall (0.91 post-prune, G3_postprune.json); beta=3.0 saves 20% at 93%. NOTE a correction the lane made on itself: the widely-quoted "71% saved at 91% recall" pairing came from a RANDOM-split backtest and was retracted as temporal leakage — the default beta was raised 2.0 to 2.5 as a result. Robustness floor verified: with B's quality branch zeroed, good_killed_quality = 0 and reliable-kills-only still saves 5% at 79% recall, so it fails safe. Champion/challenger (test_results/champion_challenger.json, n=77,785 scored, base good 7.4%) found the incumbent q-table quality pruner effectively INERT — 9 of 8,987 level-1 buckets and 19 of 22,640 level-2 buckets prune, 0% slots saved at the production threshold, exactly the dedup.md failure mode — while the challenger reaches 38% saved at 92% recall and, on disagreement cells, skips 2,790 bad alphas vs the champion's 336 (McNemar chi-sq = 1816, p ~ 0). Live rollout is honest and incomplete: 13,580 shadow decisions logged to artifacts/gate_shadow.jsonl, 375 joined to realised outcomes; cond2 calibration 0.037 PASS and cond3 novelty 1.1% PASS, but cond1 quality-zone recall is underpowered (1 in-zone good observed against ~197 needed for h=0.04), so cutover_state.json still reads mode=reliable — the behavioural-dedup c_max and turnover hard-kills are authoritative, the quality surrogate is still shadow-only. It was never trusted on faith.
 
-### Two findings that justify the whole subsystem
+### What it measured
 
-**1. It falsified the mechanism it was built to replace.** The incumbent two-level Q-table
+**1. It falsified the pruner it was built to replace.** The incumbent two-level Q-table
 pruner, measured on the real production artifact, prunes **9 of 8,987 level-1 buckets and 19 of
 22,640 level-2 buckets** — 0.089%. It was saving ~0% of simulation slots while appearing to
 learn. The challenger dominates it out-of-time (McNemar χ²=1816).

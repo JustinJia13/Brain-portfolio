@@ -19,16 +19,21 @@ __pycache__/
 venv/
 
 # ---- Generated research artifacts (regenerable; multi-GB in a live run) ----
-# Anchored with a leading slash so these only match at the repo root --
+# Anchored with a leading slash where the rule should only bite at the repo root --
 # an unanchored `wiki/` would also swallow samples/wiki/.
 /artifacts/
-*/artifacts/
+**/artifacts/
 # ...except the field-cluster catalog. It is generated, but four modules hardcode this
-# exact path (wq_alpha/theory/context.py, wq_alpha/workshop/semantic.py,
-# wq_alpha/semantic_templates/core.py, alpha_probe/build_plan.py), and the grammar
-# lane cannot be exercised offline without it. Regenerate: tools/refresh_fields_csv.py
-!alpha_grammar/artifacts/
-!alpha_grammar/artifacts/all_clusters.json
+# exact path (alpha_discovery/theory_method/context.py,
+# alpha_enhancement/workshop/semantic.py, alpha_enhancement/semantic_templates/core.py,
+# alpha_discovery/probe_method/build_plan.py) and the grammar lane cannot be exercised
+# offline without it. Regenerate with: tools/refresh_fields_csv.py
+# Un-ignore the directory so git can walk it, re-ignore its contents, then allow the
+# single file -- otherwise the whole artifacts dir would be committable again.
+!alpha_discovery/grammar_method/artifacts/
+alpha_discovery/grammar_method/artifacts/*
+!alpha_discovery/grammar_method/artifacts/all_clusters.json
+
 /records/
 /wiki/
 /logs/
