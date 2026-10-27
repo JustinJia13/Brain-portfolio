@@ -39,9 +39,9 @@ it and re-simulate. No LLM involved.
 **repair** — the alpha fails a *named* check, and the repair is targeted at that check. This
 splits in two. **Settings repair** changes neutralization, decay, truncation or universe while
 leaving the expression untouched — often the right move for a concentration or turnover
-failure, and it needs no LLM at all. **Semantic repair** asks an LLM to rewrite the expression,
-but always with the failing check and the measured metrics in the prompt, and under a hard cap
-on rounds so a failing repair cannot loop indefinitely.
+failure, and it needs no LLM at all. **Expression repair** asks an LLM to rewrite the formula,
+always with the failing check and the measured metrics in the prompt — see the next section for
+the two different ways this is done.
 
 **enhance** — the alpha already passes. The question is whether it can be made stronger without
 becoming fragile, which is why robustness scoring rather than raw fitness is the acceptance
@@ -50,6 +50,74 @@ criterion.
 A fourth component, `semantic_templates/`, abstracts families that were *already promoted* into
 typed-slot templates and binds new fields into those slots — exploiting what worked rather than
 repairing what failed.
+
+### Two workshops: triage and identity-preserving repair
+
+The engine contains two different things both called "workshop", and the difference matters
+more than the shared name suggests. They answer different questions and they fail in different
+ways.
+
+**The workshop** (`workshop/batch.py`, `workshop/alpha.py`, `workshop/targeted.py`) is
+**breadth**. It scans the whole simulation history, keeps the best representative per field,
+and triages each record on its *metrics*: fitness below a floor routes to negate, a repairable
+failing check with acceptable concentration routes to repair, a fully passing alpha routes to
+enhance. Each record then gets one pass through its lane. The repair agent
+(`agents/repair.py`) takes a near-miss and suggests fixes by **wrapping the original expression
+with operators** chosen to address the named failing check.
+
+That is the right tool for processing a population, and it has an obvious failure mode: wrapping
+an expression until a check goes green can satisfy the check while destroying the reason the
+alpha worked. You end up with something that passes and means nothing.
+
+**The semantic workshop** (`workshop/semantic.py`, `agents/semantic_workshop.py`) is **depth**,
+and it exists to avoid exactly that. It takes a *single* seed and runs three rounds:
+
+```
+seed → diagnostic → generator → simulate → robustness card
+     → diagnostic update → generator → simulate → robustness card
+     → diagnostic update → generator → simulate → final summary
+```
+
+Two things make it different from the plain repair lane.
+
+**The division of labour between two agents is enforced.** The diagnostic agent's system prompt
+opens with *"You do NOT generate FASTEXPR expressions. Your job is to turn a grammar or workshop
+seed into a semantic template and a failure/repair hypothesis."* The generator agent writes
+expressions but does no diagnosis, and the runner submits only its `expression` field, ignoring
+its rationale. So the component that reasons about *why* the alpha failed cannot shortcut its
+way to an answer by emitting a formula, and the component that writes formulas never gets to
+decide what the problem was. This is the same separation the
+[theory method](../alpha_discovery/theory_method/README.md) applies on the generation side.
+
+**It is explicitly forbidden from parameter chasing.** The diagnostic agent is instructed:
+*"Do not recommend parameter chasing. Valid repairs must preserve or explicitly reframe the
+semantic signal identity."* It is also told *"Do not optimize exact robustness rows; use
+robustness only to diagnose whether signal identity is stable"*. And on the trap of optimising
+the wrong objective: *"If score addition improves while standalone quality deteriorates,
+diagnose that as a watchlist/fragile outcome, not a solved alpha."*
+
+That is what "semantic" means here. The unit being repaired is not the expression string and
+not the failing metric — it is the **signal identity**, the economic claim the alpha is making.
+A repair is only valid if that claim survives, or if the diagnosis says plainly that it has been
+reframed into a different one.
+
+The round structure is what lets this work: the robustness card from each simulation goes back
+to the diagnostic agent, so round 2 is conditioned on measured evidence about whether the
+identity held, not on the LLM's own guess. The card is deliberately diagnostic only — it
+excludes delay perturbations and `sign(A)` checks — so it cannot be optimised against. Three
+rounds is a hard cap, which is what stops a failing repair from looping on the simulation budget.
+
+Once a seed has been worked up this way, `semantic_templates/` takes over (on by default) and
+abstracts the result into a typed template for reuse.
+
+| | the workshop | the semantic workshop |
+|---|---|---|
+| Unit of work | a population, from the sim history | one seed |
+| Decides by | metric thresholds | a stated failure hypothesis |
+| Shape | one pass per record | 3 rounds, feedback between them |
+| Agents | one repair/enhance agent | diagnostic + generator, separated |
+| Repairs by | wrapping the expression | preserving or reframing signal identity |
+| Guards against | wasted LLM calls on hopeless records | passing a check while losing the signal |
 
 ```mermaid
 flowchart TD
@@ -140,6 +208,29 @@ python -m alpha_enhancement.workshop.batch \
 python -m alpha_enhancement.workshop.alpha \
     --expr-file my_picks.txt --credentials brain2.txt
 ```
+
+The semantic workshop is a separate entry point, because it works one seed at a time:
+
+```bash
+# dry run: show the diagnostic and the round-1 plan without simulating
+python tools/semantic_workshop.py --dry-run
+
+# three rounds on one named seed
+python -m alpha_enhancement.workshop.semantic \
+    --seed-expr "group_rank(ts_mean(ts_zscore(returns, 20), 10), subindustry)" \
+    --credentials brain2.txt \
+    --diagnostics-jsonl artifacts/workshop/semantic_diagnostics.jsonl \
+    --summary-txt artifacts/workshop/semantic_summary.txt
+
+# or let it pick seeds out of a sim log
+python -m alpha_enhancement.workshop.semantic \
+    --sim-log artifacts/sim/master.jsonl --max-seeds 5 \
+    --credentials brain2.txt
+```
+
+`--diagnostics-jsonl` is worth passing: it records each round's failure hypothesis, which is the
+artifact that makes the lane auditable after the fact. Add `--no-semantic-template-auto` to stop
+it handing successful seeds on to `semantic_templates/`.
 
 ## Results
 
